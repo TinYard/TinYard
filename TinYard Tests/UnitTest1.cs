@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace TinYard_Tests
+namespace TinYard.Tests
 {
     [TestClass]
     public class UnitTest1
