@@ -2,6 +2,6 @@
 {
     public interface IExtension
     {
-        void Install();
+        void Install(IContext context);
     }
 }

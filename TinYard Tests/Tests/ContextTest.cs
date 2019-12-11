@@ -52,5 +52,15 @@ namespace TinYard.Tests
                 Assert.Fail();
             }
         }
+
+        [TestMethod]
+        public void Context_Passes_Itself_To_Extension_On_Install()
+        {
+            _testExtension = new TestExtension();
+            _context.Install(_testExtension);
+            _context.Initialize();
+
+            Assert.AreEqual(_context, _testExtension.context);
+        }
     }
 }

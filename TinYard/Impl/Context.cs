@@ -33,7 +33,7 @@ namespace TinYard
             _extensionsInstalled = new List<IExtension>();
             foreach(IExtension currentExtension in _extensionsToInstall)
             {
-                currentExtension.Install();
+                currentExtension.Install(this);
                 _extensionsInstalled.Add(currentExtension);
             }
 

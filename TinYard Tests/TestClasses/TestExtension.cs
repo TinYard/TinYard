@@ -4,9 +4,11 @@ namespace TinYard_Tests.TestClasses
 {
     public class TestExtension : IExtension
     {
-        public void Install()
+        public IContext context;
+
+        public void Install(IContext context)
         {
-            
+            this.context = context;    
         }
     }
 }
