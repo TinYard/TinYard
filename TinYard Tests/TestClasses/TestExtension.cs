@@ -8,7 +8,7 @@ namespace TinYard_Tests.TestClasses
 
         public void Install(IContext context)
         {
-            this.context = context;    
+            this.context = context;
         }
     }
 }

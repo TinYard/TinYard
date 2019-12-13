@@ -9,6 +9,8 @@ namespace TinYard
         private List<IExtension> _extensionsToInstall;
         private List<IExtension> _extensionsInstalled;
 
+        private bool _initialized = false;
+
         public Context()
         {
             _extensionsToInstall = new List<IExtension>();
@@ -30,6 +32,11 @@ namespace TinYard
 
         public void Initialize()
         {
+            if (_initialized)
+                throw new ApplicationException("Context already initialized");
+
+            _initialized = true;
+
             _extensionsInstalled = new List<IExtension>();
             foreach(IExtension currentExtension in _extensionsToInstall)
             {

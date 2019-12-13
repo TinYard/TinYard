@@ -62,5 +62,20 @@ namespace TinYard.Tests
 
             Assert.AreEqual(_context, _testExtension.context);
         }
+
+        [TestMethod]
+        public void Context_Throws_On_Multiple_Initializations()
+        {
+            try
+            {
+                _context.Initialize();
+                _context.Initialize();
+                Assert.Fail();//If we make it here, we failed and didn't error
+            }
+            catch (Exception e)
+            {
+                Assert.IsInstanceOfType(e, typeof(Exception));
+            }
+        }
     }
 }
