@@ -44,7 +44,7 @@ namespace TinYard
             PreExtensionsInstalled?.Invoke();
 
             InstallExtensions();
-            
+
             //Invoke anything listening to when Extensions are finished installing
             PostExtensionsInstalled?.Invoke();
         }
@@ -62,8 +62,8 @@ namespace TinYard
                 {
                     throw new ApplicationException("Extension " + currentExtension.ToString() + " already installed");
                 }
-            }            
-            
+            }
+
             _extensionsToInstall.Clear();
         }
     }
