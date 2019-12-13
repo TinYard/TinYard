@@ -6,8 +6,13 @@ namespace TinYard
 {
     public class Context : IContext
     {
+        //Properties
+        public event Action PostExtensionsInstalled;
+        public event Action PreExtensionsInstalled;
+
+        //Private variables
         private List<IExtension> _extensionsToInstall;
-        private List<IExtension> _extensionsInstalled;
+        private HashSet<IExtension> _extensionsInstalled;
 
         private bool _initialized = false;
 
@@ -18,8 +23,6 @@ namespace TinYard
 
         public IContext Install(IExtension extension)
         {
-            //TODO : Check if we've already got this extension in the list
-
             _extensionsToInstall.Add(extension);
 
             return this;
@@ -37,13 +40,30 @@ namespace TinYard
 
             _initialized = true;
 
-            _extensionsInstalled = new List<IExtension>();
-            foreach(IExtension currentExtension in _extensionsToInstall)
+            //Let anything know we're about to install extensions
+            PreExtensionsInstalled?.Invoke();
+
+            InstallExtensions();
+            
+            //Invoke anything listening to when Extensions are finished installing
+            PostExtensionsInstalled?.Invoke();
+        }
+
+        private void InstallExtensions()
+        {
+            _extensionsInstalled = new HashSet<IExtension>();
+            foreach (IExtension currentExtension in _extensionsToInstall)
             {
                 currentExtension.Install(this);
-                _extensionsInstalled.Add(currentExtension);
-            }
+                bool added = _extensionsInstalled.Add(currentExtension);
 
+                //We don't want any extensions installed multiple times
+                if (!added)
+                {
+                    throw new ApplicationException("Extension " + currentExtension.ToString() + " already installed");
+                }
+            }            
+            
             _extensionsToInstall.Clear();
         }
     }
