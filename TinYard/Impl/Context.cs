@@ -7,8 +7,8 @@ namespace TinYard
     public class Context : IContext
     {
         //Properties
-        public event Action PostExtensionsInstalled;
         public event Action PreExtensionsInstalled;
+        public event Action PostExtensionsInstalled;
 
         //Private variables
         private List<IExtension> _extensionsToInstall;
