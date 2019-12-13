@@ -70,9 +70,32 @@ namespace TinYard.Tests
             {
                 _context.Initialize();
                 _context.Initialize();
-                Assert.Fail();//If we make it here, we failed and didn't error
+                //Context should throw an error as it should only be initialized once.
+                //If we make it here, we failed and didn't error.
+                Assert.Fail();
             }
             catch (Exception e)
+            {
+                Assert.IsInstanceOfType(e, typeof(Exception));
+            }
+        }
+
+        [TestMethod]
+        public void Context_Throws_On_Same_Extension_Multiple_Times()
+        {
+            _testExtension = new TestExtension();
+
+            try
+            {
+                _context.Install(_testExtension);
+                _context.Install(_testExtension);
+
+                _context.Initialize();
+                //Initialize should throw an error because of the same extension twice
+                //If we make it to the line below then it's not throwing as it should
+                Assert.Fail();
+            }
+            catch(Exception e)
             {
                 Assert.IsInstanceOfType(e, typeof(Exception));
             }
