@@ -47,6 +47,8 @@ namespace TinYard
 
             //Invoke anything listening to when Extensions are finished installing
             PostExtensionsInstalled?.Invoke();
+
+            //TODO : Add running of Added Config files
         }
 
         private void InstallExtensions()

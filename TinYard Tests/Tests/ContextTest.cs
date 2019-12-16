@@ -40,6 +40,16 @@ namespace TinYard.Tests
         }
 
         [TestMethod]
+        public void Context_Configures_Extension()
+        {
+            _testExtension = new TestExtension();
+            _context.Install(_testExtension).Configure(new TestConfig());
+            _context.Initialize();
+
+            Assert.IsTrue(_context.ContainsExtension(_testExtension));
+        }
+
+        [TestMethod]
         public void Context_Initializes_With_No_Errors()
         {
             try

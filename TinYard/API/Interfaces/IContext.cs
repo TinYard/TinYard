@@ -8,7 +8,8 @@ namespace TinYard.API.Interfaces
         event Action PostExtensionsInstalled;
 
         IContext Install(IExtension extension);
-        
+        IContext Configure(IConfig configuration);
+
         void Initialize();
 
         bool ContainsExtension(IExtension extension);
