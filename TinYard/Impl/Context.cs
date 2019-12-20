@@ -10,20 +10,34 @@ namespace TinYard
         public event Action PreExtensionsInstalled;
         public event Action PostExtensionsInstalled;
 
+        public event Action PreConfigsInstalled;
+        public event Action PostConfigsInstalled;
+
         //Private variables
         private List<IExtension> _extensionsToInstall;
         private HashSet<IExtension> _extensionsInstalled;
+
+        private List<IConfig> _configsToInstall;
+        private HashSet<IConfig> _configsInstalled;
 
         private bool _initialized = false;
 
         public Context()
         {
             _extensionsToInstall = new List<IExtension>();
+            _configsToInstall = new List<IConfig>();
         }
 
         public IContext Install(IExtension extension)
         {
             _extensionsToInstall.Add(extension);
+
+            return this;
+        }
+
+        public IContext Configure(IConfig config)
+        {
+            _configsToInstall.Add(config);
 
             return this;
         }
@@ -48,7 +62,11 @@ namespace TinYard
             //Invoke anything listening to when Extensions are finished installing
             PostExtensionsInstalled?.Invoke();
 
-            //TODO : Add running of Added Config files
+            PreConfigsInstalled?.Invoke();
+
+            InstallConfigs();
+
+            PostConfigsInstalled?.Invoke();
         }
 
         private void InstallExtensions()
@@ -67,6 +85,26 @@ namespace TinYard
             }
 
             _extensionsToInstall.Clear();
+        }
+
+        private void InstallConfigs()
+        {
+            _configsInstalled = new HashSet<IConfig>();
+
+            foreach(IConfig currentConfig in _configsToInstall)
+            {
+                currentConfig.Configure();
+
+                bool added = _configsInstalled.Add(currentConfig);
+
+                //We don't want configs installed multiple times
+                if(!added)
+                {
+                    throw new ApplicationException("Config " + currentConfig.ToString() + " already configured");
+                }
+            }
+
+            _configsToInstall.Clear();
         }
     }
 }

@@ -6,6 +6,8 @@ namespace TinYard.API.Interfaces
     {
         event Action PreExtensionsInstalled;
         event Action PostExtensionsInstalled;
+        event Action PreConfigsInstalled;
+        event Action PostConfigsInstalled;
 
         IContext Install(IExtension extension);
         IContext Configure(IConfig configuration);
