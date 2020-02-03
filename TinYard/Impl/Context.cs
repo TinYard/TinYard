@@ -17,6 +17,8 @@ namespace TinYard
         public event Action PreConfigsInstalled;
         public event Action PostConfigsInstalled;
 
+        public event Action PostInitialize;
+
         //Private variables
         private List<IExtension> _extensionsToInstall;
         private HashSet<IExtension> _extensionsInstalled;
@@ -78,8 +80,6 @@ namespace TinYard
             if (_initialized)
                 throw new ContextException("Context already initialized");
 
-            _initialized = true;
-
             //Install bundles first as they'll be adding to the extensions and configs list - Don't want this happening when we're enumerating those lists
             PreBundlesInstalled?.Invoke();
 
@@ -100,6 +100,10 @@ namespace TinYard
             InstallConfigs();
 
             PostConfigsInstalled?.Invoke();
+
+            _initialized = true;
+
+            PostInitialize?.Invoke();
         }
 
         private void InstallBundles()
