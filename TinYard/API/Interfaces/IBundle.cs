@@ -1,7 +1,6 @@
 ﻿namespace TinYard.API.Interfaces
 {
-    public interface IBundle
+    public interface IBundle : IExtension
     {
-        void Install(IContext context);
     }
 }

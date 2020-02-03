@@ -10,10 +10,12 @@ namespace TinYard.API.Interfaces
         event Action PostConfigsInstalled;
 
         IContext Install(IExtension extension);
+        IContext Install(IBundle bundle);
         IContext Configure(IConfig configuration);
 
         void Initialize();
 
         bool ContainsExtension(IExtension extension);
+        bool ContainsExtension<T>() where T : IExtension;
     }
 }
