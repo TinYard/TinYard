@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using TinYard.API.Interfaces;
+using TinYard.Impl.Exceptions;
 using TinYard_Tests.TestClasses;
 
 namespace TinYard.Tests
@@ -35,8 +36,7 @@ namespace TinYard.Tests
             _testExtension = new TestExtension();
             _context.Install(_testExtension);
             _context.Initialize();
-
-            Assert.IsTrue(_context.ContainsExtension(_testExtension));
+            //Assert nothing, if it doesn't throw it's a success
         }
 
         [TestMethod]
@@ -45,22 +45,25 @@ namespace TinYard.Tests
             _testExtension = new TestExtension();
             _context.Install(_testExtension).Configure(new TestConfig());
             _context.Initialize();
+            //Assert nothing, if it doesn't throw it's a success
+        }
 
-            Assert.IsTrue(_context.ContainsExtension(_testExtension));
+        [TestMethod]
+        public void Context_Installs_Bundle()
+        {
+            IBundle testBundle = new TestBundle();
+            _context.Install(testBundle);
+            _context.Initialize();
+
+            //Assert nothing, if it doesn't throw it's a success
         }
 
         [TestMethod]
         public void Context_Initializes_With_No_Errors()
         {
-            try
-            {
-                _context.Initialize();
-                Assert.IsTrue(true);//If we make it here, no errors thrown
-            }
-            catch (Exception)
-            {
-                Assert.Fail();
-            }
+            //Assert nothing, if it doesn't throw it's a success
+            _context.Initialize();
+            Assert.IsTrue(true);
         }
 
         [TestMethod]
@@ -76,18 +79,11 @@ namespace TinYard.Tests
         [TestMethod]
         public void Context_Throws_On_Multiple_Initializations()
         {
-            try
+            Assert.ThrowsException<ContextException>(() =>
             {
                 _context.Initialize();
                 _context.Initialize();
-                //Context should throw an error as it should only be initialized once.
-                //If we make it here, we failed and didn't error.
-                Assert.Fail();
-            }
-            catch (Exception e)
-            {
-                Assert.IsInstanceOfType(e, typeof(Exception));
-            }
+            });
         }
 
         [TestMethod]
@@ -95,20 +91,13 @@ namespace TinYard.Tests
         {
             _testExtension = new TestExtension();
 
-            try
+            Assert.ThrowsException<ContextException>(() =>
             {
                 _context.Install(_testExtension);
                 _context.Install(_testExtension);
 
                 _context.Initialize();
-                //Initialize should throw an error because of the same extension twice
-                //If we make it to the line below then it's not throwing as it should
-                Assert.Fail();
-            }
-            catch(Exception e)
-            {
-                Assert.IsInstanceOfType(e, typeof(Exception));
-            }
+            });
         }
     }
 }

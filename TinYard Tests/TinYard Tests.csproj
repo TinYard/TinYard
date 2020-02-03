@@ -49,6 +49,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="TestClasses\TestBundle.cs" />
     <Compile Include="TestClasses\TestConfig.cs" />
     <Compile Include="TestClasses\TestExtension.cs" />
     <Compile Include="Tests\ContextTest.cs" />
