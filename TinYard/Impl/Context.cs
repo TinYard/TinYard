@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using TinYard.API.Interfaces;
+using TinYard.Impl.Exceptions;
 
 namespace TinYard
 {
@@ -9,6 +10,9 @@ namespace TinYard
         //Properties
         public event Action PreExtensionsInstalled;
         public event Action PostExtensionsInstalled;
+        
+        public event Action PreBundlesInstalled;
+        public event Action PostBundlesInstalled;
 
         public event Action PreConfigsInstalled;
         public event Action PostConfigsInstalled;
@@ -17,6 +21,9 @@ namespace TinYard
         private List<IExtension> _extensionsToInstall;
         private HashSet<IExtension> _extensionsInstalled;
 
+        private List<IBundle> _bundlesToInstall;
+        private HashSet<IBundle> _bundlesInstalled;
+
         private List<IConfig> _configsToInstall;
         private HashSet<IConfig> _configsInstalled;
 
@@ -24,6 +31,7 @@ namespace TinYard
 
         public Context()
         {
+            _bundlesToInstall = new List<IBundle>();
             _extensionsToInstall = new List<IExtension>();
             _configsToInstall = new List<IConfig>();
         }
@@ -32,6 +40,13 @@ namespace TinYard
         {
             _extensionsToInstall.Add(extension);
 
+            return this;
+        }
+
+        public IContext Install(IBundle bundle)
+        {
+            _bundlesToInstall.Add(bundle);
+            
             return this;
         }
 
@@ -47,12 +62,30 @@ namespace TinYard
             return _extensionsInstalled != null ? _extensionsInstalled.Contains(extension) : false;
         }
 
+        public bool ContainsExtension<T>() where T : IExtension
+        {
+            foreach(IExtension extension in _extensionsInstalled)
+            {
+                if (extension.GetType() == typeof(T))
+                    return true;
+            }
+
+            return false;
+        }
+
         public void Initialize()
         {
             if (_initialized)
-                throw new ApplicationException("Context already initialized");
+                throw new ContextException("Context already initialized");
 
             _initialized = true;
+
+            //Install bundles first as they'll be adding to the extensions and configs list - Don't want this happening when we're enumerating those lists
+            PreBundlesInstalled?.Invoke();
+
+            InstallBundles();
+
+            PostBundlesInstalled?.Invoke();
 
             //Let anything know we're about to install extensions
             PreExtensionsInstalled?.Invoke();
@@ -69,6 +102,23 @@ namespace TinYard
             PostConfigsInstalled?.Invoke();
         }
 
+        private void InstallBundles()
+        {
+            _bundlesInstalled = new HashSet<IBundle>();
+            foreach(IBundle bundle in _bundlesToInstall)
+            {
+                bundle.Install(this);
+                bool added = _bundlesInstalled.Add(bundle);
+
+                if(!added)
+                {
+                    throw new ContextException("Bundle " + bundle.ToString() + " already installed");
+                }
+            }
+
+            _bundlesToInstall.Clear();
+        }
+
         private void InstallExtensions()
         {
             _extensionsInstalled = new HashSet<IExtension>();
@@ -80,7 +130,7 @@ namespace TinYard
                 //We don't want any extensions installed multiple times
                 if (!added)
                 {
-                    throw new ApplicationException("Extension " + currentExtension.ToString() + " already installed");
+                    throw new ContextException("Extension " + currentExtension.ToString() + " already installed");
                 }
             }
 
@@ -100,7 +150,7 @@ namespace TinYard
                 //We don't want configs installed multiple times
                 if(!added)
                 {
-                    throw new ApplicationException("Config " + currentConfig.ToString() + " already configured");
+                    throw new ContextException("Config " + currentConfig.ToString() + " already configured");
                 }
             }
 
