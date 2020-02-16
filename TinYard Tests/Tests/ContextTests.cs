@@ -1,5 +1,4 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 using TinYard.API.Interfaces;
 using TinYard.Impl.Exceptions;
 using TinYard_Tests.TestClasses;
@@ -7,7 +6,7 @@ using TinYard_Tests.TestClasses;
 namespace TinYard.Tests
 {
     [TestClass]
-    public class ContextTest
+    public class ContextTests
     {
         private IContext _context;
         private TestExtension _testExtension;
