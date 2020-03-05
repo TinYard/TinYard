@@ -1,10 +1,12 @@
-﻿namespace TinYard.API.Interfaces
+﻿using TinYard.Impl.VO;
+
+namespace TinYard.API.Interfaces
 {
     public interface IMapper
     {
-        IMapping Map<T>();
-        IMapping ToValue(object value);
+        IMappingObject Map<T>();
 
-        T GetValue<T>();
+        IMappingObject GetMapping<T>();
+        object GetMappingValue<T>();
     }
 }

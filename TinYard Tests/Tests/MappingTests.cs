@@ -36,7 +36,7 @@ namespace TinYard.Tests
 
             _mapper.Map<string>().ToValue(value);
 
-            string val2 = _mapper.GetValue<string>();
+            string val2 = (string)_mapper.GetMappingValue<string>();
             Assert.AreEqual(value, val2);
         }
     }
