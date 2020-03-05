@@ -1,29 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using TinYard.API.Interfaces;
+using TinYard.Impl.VO;
 
 namespace TinYard.Impl.Mappers
 {
     public class ValueMapper : IMapper
     {
-        private Dictionary<Type, object> _mappings = new Dictionary<Type, object>();
+        private List<IMappingObject> _mappingObjects = new List<IMappingObject>();
 
-        public T GetValue<T>()
+        public IMappingObject Map<T>()
         {
-            object value;
-            _mappings.TryGetValue(typeof(T), out value);
-
-            return (T)value;
+            var mappingObj = new MappingObject();
+            _mappingObjects.Add(mappingObj);
+            return mappingObj.Map<T>();
         }
 
-        public IMapping Map<T>()
+        public IMappingObject GetMapping<T>()
         {
-            throw new System.NotImplementedException();
+            Type type = typeof(T);
+
+            var value = _mappingObjects.First(mapping => mapping.MappedType.IsAssignableFrom(type));
+
+            return value;
         }
 
-        public IMapping ToValue(object value)
+        public object GetMappingValue<T>()
         {
-            throw new System.NotImplementedException();
+            Type type = typeof(T);
+
+            var mappingObj = _mappingObjects.First(mapping => mapping.MappedType.IsAssignableFrom(type));
+
+            return mappingObj.MappedValue;
         }
     }
 }
