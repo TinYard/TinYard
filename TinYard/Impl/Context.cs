@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using TinYard.API.Interfaces;
 using TinYard.Impl.Exceptions;
+using TinYard.Impl.Mappers;
 
 namespace TinYard
 {
     public class Context : IContext
     {
-        //Properties
+        //Timeline Properties
         public event Action PreExtensionsInstalled;
         public event Action PostExtensionsInstalled;
         
@@ -18,6 +19,10 @@ namespace TinYard
         public event Action PostConfigsInstalled;
 
         public event Action PostInitialize;
+
+        //Properties
+        public IMapper Mapper { get { return _mapper; } }
+        private IMapper _mapper;
 
         //Private variables
         private List<IExtension> _extensionsToInstall;
@@ -36,6 +41,8 @@ namespace TinYard
             _bundlesToInstall = new List<IBundle>();
             _extensionsToInstall = new List<IExtension>();
             _configsToInstall = new List<IConfig>();
+
+            _mapper = new ValueMapper();
         }
 
         public IContext Install(IExtension extension)

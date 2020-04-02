@@ -98,5 +98,11 @@ namespace TinYard.Tests
                 _context.Initialize();
             });
         }
+
+        [TestMethod]
+        public void Context_Has_Mapper()
+        {
+            Assert.IsNotNull(_context.Mapper);
+        }
     }
 }
