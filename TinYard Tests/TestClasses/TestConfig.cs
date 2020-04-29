@@ -1,7 +1,7 @@
 ﻿using System;
 using TinYard.API.Interfaces;
 
-namespace TinYard_Tests.TestClasses
+namespace TinYard.Tests.MockClasses
 {
     public class TestConfig : IConfig
     {
