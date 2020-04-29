@@ -6,7 +6,7 @@ using TinYard.Extensions.EventSystem.Tests.MockClasses;
 namespace TinYard.Extensions.EventSystem.Tests
 {
     [TestClass]
-    public class EventsTests
+    public class EventDispatcherTests
     {
         private IEventDispatcher _eventDispatcher;
 
