@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TinYard.API.Interfaces;
 using TinYard.Impl.Exceptions;
-using TinYard_Tests.TestClasses;
+using TinYard.Tests.MockClasses;
 
 namespace TinYard.Tests
 {
