@@ -84,6 +84,8 @@ namespace TinYard.Extensions.EventSystem.Impl
 
                 foreach(Delegate callback in callbacks)
                 {
+                    //Apparently Dynamic Invoke on Actions is expensive compared to on Delegates
+                    //TODO : Do something about using delegates here instead
                     if(callback.Method.GetParameters().Length == 0)
                     {
                         callback.DynamicInvoke(null);
