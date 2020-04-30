@@ -5,7 +5,7 @@ using TinYard_Tests.TestClasses;
 namespace TinYard.Tests
 {
     [TestClass]
-    public class InjectionTests
+    public class InjectionAttributeTests
     {
         [TestInitialize]
         public void Setup()
