@@ -21,6 +21,11 @@ namespace TinYard.Impl.Mappers
         {
             Type type = typeof(T);
 
+            return GetMapping(type);
+        }
+
+        public IMappingObject GetMapping(Type type)
+        {
             var value = _mappingObjects.First(mapping => mapping.MappedType.IsAssignableFrom(type));
 
             return value;
@@ -29,6 +34,11 @@ namespace TinYard.Impl.Mappers
         public object GetMappingValue<T>()
         {
             return GetMapping<T>().MappedValue;
+        }
+
+        public object GetMappingValue(Type type)
+        {
+            return GetMapping(type).MappedValue;
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using TinYard.Impl.VO;
+﻿using System;
+using TinYard.Impl.VO;
 
 namespace TinYard.API.Interfaces
 {
@@ -7,6 +8,9 @@ namespace TinYard.API.Interfaces
         IMappingObject Map<T>();
 
         IMappingObject GetMapping<T>();
+        IMappingObject GetMapping(Type type);
+
         object GetMappingValue<T>();
+        object GetMappingValue(Type type);
     }
 }
