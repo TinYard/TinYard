@@ -32,7 +32,7 @@ namespace TinYard.Extensions.EventSystem.Impl
             AddListener(type, listenerCallback as Delegate);
         }
 
-        private void AddListener(Enum type, Delegate listenerCallback)
+        public void AddListener(Enum type, Delegate listenerCallback)
         {
             if (HasListener(type))
             {
@@ -54,7 +54,7 @@ namespace TinYard.Extensions.EventSystem.Impl
             RemoveListener(type, listenerCallback as Delegate);
         }
 
-        private void RemoveListener(Enum type, Delegate listenerCallback)
+        public void RemoveListener(Enum type, Delegate listenerCallback)
         {
             if(HasListener(type))
             {
