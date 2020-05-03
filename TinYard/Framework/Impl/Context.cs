@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using TinYard.API.Interfaces;
+using TinYard.Framework.API.Interfaces;
+using TinYard.Framework.Impl.Injectors;
 using TinYard.Impl.Exceptions;
+using TinYard.Impl.Mappers;
 
 namespace TinYard
 {
     public class Context : IContext
     {
-        //Properties
+        //Timeline Properties
         public event Action PreExtensionsInstalled;
         public event Action PostExtensionsInstalled;
         
@@ -18,6 +21,13 @@ namespace TinYard
         public event Action PostConfigsInstalled;
 
         public event Action PostInitialize;
+
+        //Properties
+        public IMapper Mapper { get { return _mapper; } }
+        private IMapper _mapper;
+
+        public IInjector Injector { get { return _injector; } }
+        private IInjector _injector;
 
         //Private variables
         private List<IExtension> _extensionsToInstall;
@@ -36,6 +46,9 @@ namespace TinYard
             _bundlesToInstall = new List<IBundle>();
             _extensionsToInstall = new List<IExtension>();
             _configsToInstall = new List<IConfig>();
+
+            _mapper = new ValueMapper();
+            _injector = new TinYardInjector(this);
         }
 
         public IContext Install(IExtension extension)

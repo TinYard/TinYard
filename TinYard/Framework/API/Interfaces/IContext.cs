@@ -1,13 +1,19 @@
 ﻿using System;
+using TinYard.Framework.API.Interfaces;
 
 namespace TinYard.API.Interfaces
 {
     public interface IContext
     {
+        //Timeline properties
         event Action PreExtensionsInstalled;
         event Action PostExtensionsInstalled;
         event Action PreConfigsInstalled;
         event Action PostConfigsInstalled;
+
+        //Properties
+        IMapper Mapper { get; }
+        IInjector Injector { get; }
 
         IContext Install(IExtension extension);
         IContext Install(IBundle bundle);

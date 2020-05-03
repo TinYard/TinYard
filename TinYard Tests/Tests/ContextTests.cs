@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TinYard.API.Interfaces;
 using TinYard.Impl.Exceptions;
-using TinYard_Tests.TestClasses;
+using TinYard.Tests.MockClasses;
 
 namespace TinYard.Tests
 {
@@ -97,6 +97,18 @@ namespace TinYard.Tests
 
                 _context.Initialize();
             });
+        }
+
+        [TestMethod]
+        public void Context_Has_Mapper()
+        {
+            Assert.IsNotNull(_context.Mapper);
+        }
+
+        [TestMethod]
+        public void Context_Has_Injector()
+        {
+            Assert.IsNotNull(_context.Injector);
         }
     }
 }
