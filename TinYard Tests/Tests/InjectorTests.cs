@@ -16,7 +16,7 @@ namespace TinYard.Tests
         public void Setup()
         {
             _context = new Context();
-            _injector = new Injector(_context);
+            _injector = new TinYardInjector(_context);
         }
 
         [TestCleanup]

@@ -7,12 +7,12 @@ using TinYard.Framework.Impl.Attributes;
 
 namespace TinYard.Framework.Impl.Injectors
 {
-    public class Injector : IInjector
+    public class TinYardInjector : IInjector
     {
         IContext _context;
         IMapper _mapper;
 
-        public Injector(IContext context)
+        public TinYardInjector(IContext context)
         {
             _context = context;
             _mapper = _context.Mapper;
