@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using TinYard.API.Interfaces;
+using TinYard.Framework.API.Interfaces;
+using TinYard.Framework.Impl.Injectors;
 using TinYard.Impl.Exceptions;
 using TinYard.Impl.Mappers;
 
@@ -24,6 +26,9 @@ namespace TinYard
         public IMapper Mapper { get { return _mapper; } }
         private IMapper _mapper;
 
+        public IInjector @Injector { get { return _injector; } }
+        private IInjector _injector;
+
         //Private variables
         private List<IExtension> _extensionsToInstall;
         private HashSet<IExtension> _extensionsInstalled;
@@ -43,6 +48,7 @@ namespace TinYard
             _configsToInstall = new List<IConfig>();
 
             _mapper = new ValueMapper();
+            _injector = new TinYardInjector(this);
         }
 
         public IContext Install(IExtension extension)
