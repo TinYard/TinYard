@@ -27,7 +27,7 @@ namespace TinYard.Tests
         }
 
         [TestMethod]
-        public void Inject_is_IInjector()
+        public void Injector_is_IInjector()
         {
             Assert.IsInstanceOfType(_injector, typeof(IInjector));
         }
