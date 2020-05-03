@@ -104,5 +104,11 @@ namespace TinYard.Tests
         {
             Assert.IsNotNull(_context.Mapper);
         }
+
+        [TestMethod]
+        public void Context_Has_Injector()
+        {
+            Assert.IsNotNull(_context.Injector);
+        }
     }
 }

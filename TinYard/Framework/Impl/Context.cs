@@ -26,7 +26,7 @@ namespace TinYard
         public IMapper Mapper { get { return _mapper; } }
         private IMapper _mapper;
 
-        public IInjector @Injector { get { return _injector; } }
+        public IInjector Injector { get { return _injector; } }
         private IInjector _injector;
 
         //Private variables
