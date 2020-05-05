@@ -1,8 +1,14 @@
 ## Contribution
+---
+
+## Before contributing, please read the [Code of Conduct](CODE_OF_CONDUCT.md).
+
+---
 
 #### [Funding.](.github/FUNDING.yml)
 #### [Buy me a coffee.](https://www.buymeacoffee.com/KieranB)
 
+---
 
 #### Want to add to the project?
 
