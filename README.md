@@ -13,7 +13,6 @@
 
 
 ## What is TinYard?
----
 
 TinYard is a C# Framework.
 
@@ -27,13 +26,9 @@ The framework provides a few tools to help you do this, such as;
 
 ## Usage
 
---- 
 
 ## [Contribution](CONTRIBUTING.md)
-## [Code of Conduct](CODE_OF_CONDUCT.md)
 
---- 
-## [Funding](.github/FUNDING.yml)
----
-
-## [Buy me a coffee](https://www.buymeacoffee.com/KieranB)
+### [Code of Conduct](CODE_OF_CONDUCT.md)
+### [Funding](.github/FUNDING.yml)
+### [Buy me a coffee](https://www.buymeacoffee.com/KieranB)
