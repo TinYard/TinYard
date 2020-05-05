@@ -1,5 +1,7 @@
 # TinYard
 
+![.NET](https://github.com/KieranBond/TinYard/workflows/.NET/badge.svg)
+
 ## Table Of Contents
 
 * [TinYard](#TinYard)
