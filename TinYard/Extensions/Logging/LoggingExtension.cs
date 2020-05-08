@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using TinYard.API.Interfaces;
+﻿using TinYard.API.Interfaces;
 
 namespace TinYard.Extensions.Logging
 {
