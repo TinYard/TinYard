@@ -167,7 +167,7 @@ namespace TinYard
 
             foreach(IConfig currentConfig in _configsToInstall)
             {
-                //Inject into the config before we call configure
+                //Inject into the config before we call configure, ensuring it has anything needed
                 _injector.Inject(currentConfig);
 
                 currentConfig.Configure();
