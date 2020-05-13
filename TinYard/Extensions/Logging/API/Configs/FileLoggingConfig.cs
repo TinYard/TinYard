@@ -16,10 +16,20 @@ namespace TinYard.Extensions.Logging.API.Configs
 
         private string _fileDestination;
         private string _fileNamePrefix;
-        private int _maxLogPerFile;
+        private int _maxLogPerFile = 1000;
 
         public void Configure()
         {
+            if (string.IsNullOrEmpty(_fileDestination))
+            {
+                SetDefaultFileDestination();
+            }
+
+            if(string.IsNullOrEmpty(_fileNamePrefix))
+            {
+                SetDefaultFileNamePrefix();
+            }
+
             _fileLogger = new FileLogger(_fileDestination, _fileNamePrefix, _maxLogPerFile);
 
             _context.Mapper.Map<ILogger>().ToValue(_fileLogger);
@@ -44,6 +54,16 @@ namespace TinYard.Extensions.Logging.API.Configs
             _maxLogPerFile = maxLogs;
 
             return this;
+        }
+
+        private void SetDefaultFileDestination()
+        {
+            _fileDestination = Environment.CurrentDirectory;
+        }
+        
+        private void SetDefaultFileNamePrefix()
+        {
+            _fileNamePrefix = string.Empty;
         }
     }
 }
