@@ -49,6 +49,11 @@ namespace TinYard
 
             _mapper = new ValueMapper();
             _injector = new TinYardInjector(this);
+
+            //Ensure the context, mapper and injector are mapped for injection needs
+            _mapper.Map<IContext>().ToValue(this);
+            _mapper.Map<IMapper>().ToValue(_mapper);
+            _mapper.Map<IInjector>().ToValue(_injector);
         }
 
         public IContext Install(IExtension extension)
@@ -124,6 +129,8 @@ namespace TinYard
             _bundlesInstalled = new HashSet<IBundle>();
             foreach(IBundle bundle in _bundlesToInstall)
             {
+                //This simply passes the Context into the Bundle so that it can call
+                //context.install(extension).Configure(config);
                 bundle.Install(this);
                 bool added = _bundlesInstalled.Add(bundle);
 
@@ -160,6 +167,9 @@ namespace TinYard
 
             foreach(IConfig currentConfig in _configsToInstall)
             {
+                //Inject into the config before we call configure
+                _injector.Inject(currentConfig);
+
                 currentConfig.Configure();
 
                 bool added = _configsInstalled.Add(currentConfig);
