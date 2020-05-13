@@ -5,6 +5,8 @@ namespace TinYard.Extensions.Logging.Impl.Loggers
 {
     public class FileLogger : ILogger
     {
+        public string LastLogFilePath => _lastLogFilePath;
+
         private string _fileDestination;
         private string _fileNamePrefix;
         private int _maxLogPerFile;
@@ -51,7 +53,7 @@ namespace TinYard.Extensions.Logging.Impl.Loggers
             if(File.Exists(_lastLogFilePath))
             {
                 //Check if we've reached max logs for this file, if so - create a new one
-                if(File.ReadAllLines(_lastLogFilePath).Length > _maxLogPerFile)
+                if(File.ReadAllLines(_lastLogFilePath).Length >= _maxLogPerFile)
                 {
                     _lastLogFilePath = CreateNewLogFile();
                 }
