@@ -1,42 +1,47 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TinYard.API.Interfaces;
-using TinYard.Extensions.Logging;
-using TinYard.Impl.Exceptions;
-using TinYard.Tests.MockClasses;
+using TinYard.Extensions.Logging.API.Configs;
 
-namespace TinYard.Tests.Extensions.Logging
+namespace TinYard.Extensions.Logging.Tests
 {
     [TestClass]
     public class LoggingExtensionTests
     {
         private IContext _context;
-        private LoggingExtension _loggingExtension;
+        private LoggingExtension _extension;
 
         [TestInitialize]
         public void Setup()
         {
             _context = new Context();
+            _extension = new LoggingExtension();
         }
 
         [TestCleanup]
         public void Teardown()
         {
             _context = null;
+            _extension = null;
         }
 
         [TestMethod]
         public void LoggingExtension_is_IExtension()
         {
-            Assert.IsInstanceOfType(_loggingExtension, typeof(IExtension));
+            Assert.IsInstanceOfType(_extension, typeof(IExtension));
         }
 
         [TestMethod]
         public void Context_Installs_Extension()
         {
-            _loggingExtension = new LoggingExtension();
-            _context.Install(_loggingExtension);
+            _context.Install(_extension);
             _context.Initialize();
-            //Assert nothing, if it doesn't throw it's a success
+        }
+
+        [TestMethod]
+        public void File_Logging_Config_Configures_Without_Errors()
+        {
+            _context.Configure(new FileLoggingConfig());
+            _context.Initialize();
         }
     }
 }
