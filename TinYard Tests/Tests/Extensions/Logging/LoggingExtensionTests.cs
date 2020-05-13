@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TinYard.API.Interfaces;
 using TinYard.Extensions.Logging.API.Configs;
+using TinYard.Extensions.Logging.API.Interfaces;
 
 namespace TinYard.Extensions.Logging.Tests
 {
@@ -42,6 +43,15 @@ namespace TinYard.Extensions.Logging.Tests
         {
             _context.Configure(new FileLoggingConfig());
             _context.Initialize();
+        }
+
+        [TestMethod]
+        public void File_Logging_Config_Maps_Logger()
+        {
+            _context.Configure(new FileLoggingConfig());
+            _context.Initialize();
+
+            Assert.IsNotNull(_context.Mapper.GetMappingValue<ILogger>());
         }
     }
 }

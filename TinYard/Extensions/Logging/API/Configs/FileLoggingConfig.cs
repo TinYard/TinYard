@@ -10,7 +10,7 @@ namespace TinYard.Extensions.Logging.API.Configs
     public class FileLoggingConfig : IConfig
     {
         [Inject]
-        private IContext _context;
+        public IContext _context;
 
         private FileLogger _fileLogger;
 
