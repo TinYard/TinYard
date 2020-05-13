@@ -57,6 +57,7 @@
     <Compile Include="Tests\ContextTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tests\Extensions\EventSystem\EventDispatcherTests.cs" />
+    <Compile Include="Tests\Extensions\Logging\FileLoggerTests.cs" />
     <Compile Include="Tests\Extensions\Logging\LoggingExtensionTests.cs" />
     <Compile Include="Tests\InjectionAttributeTests.cs" />
     <Compile Include="Tests\InjectorTests.cs" />
