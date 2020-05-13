@@ -31,11 +31,40 @@ namespace TinYard.Extensions.Logging.Tests
         }
 
         [TestMethod]
-        public void File_Logging_Creates_File_In_Correct_Place()
+        public void File_Logging_Creates_File_In_Correct_Location()
         {
-            Assert.IsTrue(_testDirectory.GetFiles().Length == 0);
+            int filesInDirectory = _testDirectory.GetFiles().Length;
             _logger = new FileLogger(_testDestination);
-            Assert.IsTrue(_testDirectory.GetFiles().Length > 0);
+            Assert.IsTrue(_testDirectory.GetFiles().Length > filesInDirectory);
+        }
+
+        [TestMethod]
+        public void File_Logger_Adds_Log_To_File()
+        {
+            _logger = new FileLogger(_testDestination);
+
+            int logFileLinesLength = File.ReadAllLines(_logger.LastLogFilePath).Length;
+
+            _logger.Log("Test log");
+
+            Assert.AreNotEqual(logFileLinesLength, File.ReadAllLines(_logger.LastLogFilePath).Length);
+        }
+
+        [TestMethod]
+        public void File_Logger_Creates_New_File_At_Max_Lines()
+        {
+            int maxLines = 5;
+            _logger = new FileLogger(_testDestination, string.Empty, maxLines);
+
+            int filesInDirectory = _testDirectory.GetFiles().Length;
+
+            //<= because we want to go one over
+            for(int i = 0; i <= maxLines; i++)
+            {
+                _logger.Log(i.ToString());
+            }
+
+            Assert.AreNotEqual(filesInDirectory, _testDirectory.GetFiles().Length);
         }
     }
 }
