@@ -4,19 +4,38 @@ namespace TinYard.Extensions.Logging.Impl.Loggers
 {
     public class FileLogger : ILogger
     {
-        public void Log(string message)
+        private string _fileDestination;
+        private string _fileNamePrefix;
+        private int _maxLogPerFile;
+
+        private const string ERROR_PREFIX = "ERROR: ";
+        private const string WARNING_PREFIX = "Warning: ";
+
+        public FileLogger(string fileDestination, string fileNamePrefix, int maxLogPerFile)
         {
-            throw new System.NotImplementedException();
+            _fileDestination = fileDestination;
+            _fileNamePrefix = fileNamePrefix;
+            _maxLogPerFile = maxLogPerFile;
         }
 
-        public void LogError(string message)
+        public void Log(string message)
         {
-            throw new System.NotImplementedException();
+            Log("", message);
         }
 
         public void LogWarning(string message)
         {
-            throw new System.NotImplementedException();
+            Log(WARNING_PREFIX, message);
+        }
+
+        public void LogError(string message)
+        {
+            Log(ERROR_PREFIX, message);
+        }
+
+        private void Log(string prefix, string message)
+        {
+
         }
     }
 }
