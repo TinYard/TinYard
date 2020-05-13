@@ -48,6 +48,17 @@ namespace TinYard.Tests
         }
 
         [TestMethod]
+        public void Context_Provides_Config_Injections()
+        {
+            _testExtension = new TestExtension();
+            TestConfig config = new TestConfig();
+            _context.Install(_testExtension).Configure(config);
+            _context.Initialize();
+
+            Assert.AreEqual(_context, config.context);
+        }
+
+        [TestMethod]
         public void Context_Installs_Bundle()
         {
             IBundle testBundle = new TestBundle();
@@ -62,7 +73,6 @@ namespace TinYard.Tests
         {
             //Assert nothing, if it doesn't throw it's a success
             _context.Initialize();
-            Assert.IsTrue(true);
         }
 
         [TestMethod]
