@@ -7,7 +7,7 @@
 * [TinYard](#TinYard)
 * [Table Of Contents](#Table-Of-Contents)
 * [What is TinYard?](#What-Is-TinYard)
-* [Usage](#Usage)
+* [Using TinYard](#Using-TinYard)
 * [How to contribute](#Contribution)
     * [Monetary Contribution](#Funding.)
     * [Coffee Contribution](#Buy-me-a-coffee)
@@ -26,7 +26,7 @@ The framework provides a few tools to help you do this, such as;
 * Event System
 * Value Mapping
 
-## Usage
+## Using TinYard
 
 
 ## [Contribution](CONTRIBUTING.md)
