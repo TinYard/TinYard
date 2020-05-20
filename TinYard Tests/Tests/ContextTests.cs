@@ -146,16 +146,21 @@ namespace TinYard.Tests
 
             TestInjectable testInjectable = new TestInjectable();
 
-            //Ensure it's 0
-            Assert.AreEqual(default(int), testInjectable.Value);
+            int testValue = 5;
+            int preInjectValue = testInjectable.Value;
+
+            Assert.IsTrue(preInjectValue != testValue);
 
             //Map an int value so that we can test if it's changed later
-            _context.Mapper.Map<int>().ToValue(5);
+            _context.Mapper.Map<int>().ToValue(testValue);
 
             //Injector should run on this happening
             _context.Mapper.Map<TestInjectable>().ToValue(testInjectable);
 
-            Assert.AreEqual(5, testInjectable.Value);
+            int postInjectValue = testInjectable.Value;
+
+            Assert.IsTrue(preInjectValue != postInjectValue);
+            Assert.AreEqual(testValue, postInjectValue);
         }
     }
 }
