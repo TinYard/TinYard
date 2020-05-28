@@ -126,11 +126,46 @@ Currently, all that happens here is that the Post Initalize Hook is invoked.
 
 ### IMapper
 
-`IMapper` is simply an interface that 
+`IMapper` should be implemented by an object that is going to be providing Mapping functionality.
+
+Mapping is where we can 'map' an object, to another - They're linked.
+
+`IMapper` should also make use of `IMappingObject`'s to be consistent across implementations.
+
+An example of this is the [`ValueMapper`](#ValueMapper).
 
 #### ValueMapper
 
+`ValueMapper` is an implementation of `IMapper`, and provides a 'value' to an `interface` or `base` class.
+
+An example of how to use it:
+
+```c-sharp
+valueMapper.Map<IContext>().ToValue(context);
+```
+
+This example, means that when we request the Value of `IContext` from the `valueMapper` object, we receive the `context` object.
+
+`ValueMapper` is used as the primary `IMapper` for [`Context`](#Context).
+
 #### IMappingObject
+
+`IMappingObject` is used in tandem with `IMapper`. 
+
+`IMappingObject` has two components:
+
+* `MappedType`
+* `MappedValue`
+
+`MappedType` is the `type` that this `IMappingObject` is a reference to.
+
+So, looking at the example used in [Value Mapper](#ValueMapper):
+
+When `Map<T>()` is called on the `ValueMapper`, it returns the `IMappingObject`.
+
+Internally, `Map<T>()` calls `Map<T>()` on a newly created `IMappingObject` and then returns this newly created object. This `Map<T>()` method on IMappingObject should set the `MappedType` to the type of `T`.
+
+`MappedValue` is then the value that is set with the `ToValue<T>()` or `ToValue(object value)` methods.
 
 #### MappingObject
 
