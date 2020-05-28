@@ -69,7 +69,7 @@ The `Context`, `Mapper`, and `Injector` are then all mapped on the `Mapper` to t
 
 ##### Initialize
 
-The `Context` can only be 'Initalized' once - This means you can only call the `Initalize` method once, any more calls to it will raise a [Context Exception](#ContextException).
+The [`Context`](#Context) can only be 'Initalized' once - This means you can only call the `Initalize` method once, any more calls to it will raise a [Context Exception](#ContextException).
 
 The `Initalize` method has four steps:
 * [Install Bundles](#Install-Bundles)
@@ -92,29 +92,29 @@ Hook order:
 
 Install Bundles is the first of the four steps. It runs first, as it has a direct effect on the next two steps.
 
-[Bundles](#IBundle) should typically be just installing `IExtension`'s and `IConfig`'s.  
+[Bundles](#IBundle) should typically be just installing [`IExtension`](#IExtension)'s and [`IConfig`](#IConfig)'s.  
 
-When an `IBundle` is installed via the `Install(IBundle bundle)` method, it is added to a `private List<IBundle> _bundlesToInstall`. When the `Context` goes to install the List of `IBundle`'s it simply calls the `Install` method on each and passes itself to the Bundle, which in form then usually calls `Install(IExtension extension)` and `Configure(IConfig config)` onto the `Context`, just making the installation of multiple Extensions and Configs that are together a bit tidier.
+When an [`IBundle`](#IBundle) is installed via the `Install(IBundle bundle)` method, it is added to a `private List<IBundle> _bundlesToInstall`. When the [`Context`](#Context) goes to install the List of `IBundle`'s it simply calls the `Install` method on each and passes itself to the Bundle, which in form then usually calls `Install(IExtension extension)` and `Configure(IConfig config)` onto the [`Context`](#Context), just making the installation of multiple Extensions and Configs that are together a bit tidier.
 
 So, Bundles are simply just wrappers for installing multiple Extensions and Configs. Because of that, this is why they are installed first - So that the actual extensions and configs installation has the extensions and configs from these bundles in their lists.
 
 ##### Install Extensions
 
-Similar to the installation of Bundles, there is `private List<IExtension> _extensionsToInstall` which contains all of the `IExtension`'s that were added to the `Context` via the `Install(IExtension extension)` method. 
+Similar to the installation of Bundles, there is `private List<IExtension> _extensionsToInstall` which contains all of the [`IExtension`](#IExtension)'s that were added to the [`Context`](#Context) via the `Install(IExtension extension)` method. 
 
-This is why [Installing of bundles](####Install-Bundles) happens first, those extensions installed in the bundle are added to this list - We don't want to have to run our Install Extensions method again just for the ones in `IBundles`.
+This is why [Installing of bundles](####Install-Bundles) happens first, those extensions installed in the bundle are added to this list - We don't want to have to run our Install Extensions method again just for the ones in [`IBundles`](#IBundle).
 
-When we get to the stage of installing all of the `IExtension`'s in our list, we iterate over the list and call the `Install` method on the `IExtension`, passing the Context into the `IExtension` via the `Install` method.
+When we get to the stage of installing all of the [`IExtension`](#IExtension)'s in our list, we iterate over the list and call the `Install` method on the [`IExtension`](#IExtension), passing the Context into the [`IExtension`](#IExtension) via the `Install` method.
 
-Each `IExtension` that this method calls upon, then gets removed from the `_extensionsToInstall` list and added to a `private HashSet<IExtension> _extensionsInstalled` - This is so that we can check if it's installed later, using `ContainsExtension(IExtension)` and this also allows us to ensure it hasn't been installed previously.
+Each [`IExtension`](#IExtension) that this method calls upon, then gets removed from the `_extensionsToInstall` list and added to a `private HashSet<IExtension> _extensionsInstalled` - This is so that we can check if it's installed later, using `ContainsExtension(IExtension)` and this also allows us to ensure it hasn't been installed previously.
 
-If an `IExtension` is attempted to be installed twice, a [`ContextException`](#ContextException) is thrown.
+If an [`IExtension`](#IExtension) is attempted to be installed twice, a [`ContextException`](#ContextException) is thrown.
 
 ##### Install Configs
 
-The Install Configs step is almost identical to the [Install Extensions](#Install-Extensions) step, the only difference being that the List and Hashset are containers of `IConfigs` and instead of calling `Install` on the Config, the `Configure` method is instead called.
+The Install Configs step is almost identical to the [Install Extensions](#Install-Extensions) step, the only difference being that the List and Hashset are containers of [`IConfigs`](#IConfig) and instead of calling `Install` on the Config, the `Configure` method is instead called.
 
-You may also notice that the `IConfig` is [Injected](#Inject-Attribute) into, before the `Configure` method is called.
+You may also notice that the [`IConfig`](#IConfig) is [Injected](#Inject-Attribute) into, before the `Configure` method is called.
 
 ##### Post Initialize
 
@@ -122,7 +122,7 @@ Currently, all that happens here is that the Post Initalize Hook is invoked.
 
 #### ContextException
 
-`ContextException` is an `exception` that should only be thrown from within the `IContext`. It should primarily be thrown only when the User has used an in-proper or unwanted action with the `IContext`.
+`ContextException` is an `exception` that should only be thrown from within the [`IContext`](#IContext). It should primarily be thrown only when the User has used an in-proper or unwanted action with the [`IContext`](#IContext).
 
 ### IMapper
 
