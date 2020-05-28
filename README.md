@@ -130,13 +130,13 @@ Currently, all that happens here is that the Post Initalize Hook is invoked.
 
 Mapping is where we can 'map' an object, to another - They're linked.
 
-`IMapper` should also make use of `IMappingObject`'s to be consistent across implementations.
+`IMapper` should also make use of [`IMappingObject`](#IMappingObject)'s to be consistent across implementations.
 
 An example of this is the [`ValueMapper`](#ValueMapper).
 
 #### ValueMapper
 
-`ValueMapper` is an implementation of `IMapper`, and provides a 'value' to an `interface` or `base` class.
+`ValueMapper` is an implementation of [`IMapper`](#IMapper), and provides a 'value' to an `interface` or `base` class.
 
 An example of how to use it:
 
@@ -144,13 +144,13 @@ An example of how to use it:
 valueMapper.Map<IContext>().ToValue(context);
 ```
 
-This example, means that when we request the Value of `IContext` from the `valueMapper` object, we receive the `context` object.
+This example, means that when we request the Value of [`IContext`](#IContext) from the `valueMapper` object, we receive the `context` object - Whatever that is.
 
 `ValueMapper` is used as the primary `IMapper` for [`Context`](#Context).
 
 #### IMappingObject
 
-`IMappingObject` is used in tandem with `IMapper`. 
+`IMappingObject` is used in tandem with [`IMapper`](#IMapper). 
 
 `IMappingObject` has two components:
 
@@ -169,7 +169,7 @@ Internally, `Map<T>()` calls `Map<T>()` on a newly created `IMappingObject` and 
 
 #### MappingObject
 
-`MappingObject` provides a super-simple implementation of `IMappingObject` that is used by [`ValueMapper`](#ValueMapper). 
+`MappingObject` provides a super-simple implementation of [`IMappingObject`](#IMappingObject) that is used by [`ValueMapper`](#ValueMapper). 
 
 ### IInjector
 
