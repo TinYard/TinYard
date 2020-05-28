@@ -169,11 +169,32 @@ Internally, `Map<T>()` calls `Map<T>()` on a newly created `IMappingObject` and 
 
 #### MappingObject
 
+`MappingObject` provides a super-simple implementation of `IMappingObject` that is used by [`ValueMapper`](#ValueMapper). 
+
 ### IInjector
+
+An `IInjector` should provide an easy-to-use `Inject` method.
+
+This `Inject` method should provide the object, that has been provided as a parameter, values to any Field that has the [`Inject` attribute](#Inject-Attribute).
+
+How it does so and how it gets the correct value is up to the implementation.
 
 #### TinYardInjector
 
+`TinYardInjector` is the standard implementation of [`IInjector`](#IInjector) used by the [standard `IContext` implementation](#Context).
+
+`TinYardInjector` requires an [`IContext`](#IContext) object to be passed to it when constructed.
+
+`TinYardInjector` provides the 'injected' value of a Field by finding a [`Mapping`](#IMappingObject) of the Field via the [`IContext`](#IContext) provided in construction and the [`IMapper`](#IMapper) that it has.
+
 #### Inject Attribute
+
+The `Inject` attribute can be added to any Field.
+
+The `Inject` attribute acts as a flag to the [`IMapper`](#IMapper) in your [`IContext`](#IContext).
+
+In the standard implementation of [`IContext`](#IContext), [`Context`](#Context) -
+When a value is added to an [`IMappingObject`](#IMappingObject), the [`IMapper`](#IMapper) lets the [`IContext`](#IContext) know that the value needs injecting into, which in turn tells its [`IInjector`](#IInjector) to Inject into it.
 
 ### IExtension
 
