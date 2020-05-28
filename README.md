@@ -198,9 +198,19 @@ When a value is added to an [`IMappingObject`](#IMappingObject), the [`IMapper`]
 
 ### IExtension
 
+The `IExtension` interface is used to demonstrate that the class is an Extension that is capable of being installed into an [`IContext`](#IContext), providing extended capabilities.
+
+Typically, this is mostly where [mappings](#IMapper) should occur.
+
 ### IConfig
 
+A class implementing `IConfig` should provide configuration to an [`IExtension`](#IExtension), as well as configuration options to further customise an [`IExtension`](#IExtension).
+
 ### IBundle
+
+An `IBundle` should be a small class that is used to 'bundle up' specific [`IConfig`](#IConfig) and [`IExtension`](#IExtension)'s together, typically as they are useful together or dependant on each other. 
+
+An `IBundle` is simply to help ensure your [`IContext`](#IContext) installations are kept tidier and easier to maintain.
 
 ---
 
