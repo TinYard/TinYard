@@ -25,7 +25,7 @@ At its basics, the framework is to help you create any application with an Event
 The framework provides a few tools to help you do this, such as;
 
 * [Dependency Injection](#IInjector)
-* Event System
+* [Event System](#Event-System-Extension)
 * [Value Mapping](#ValueMapper)
 
 ## Using TinYard
@@ -215,7 +215,16 @@ An `IBundle` is simply to help ensure your [`IContext`](#IContext) installations
 
 ## TinYard Extensions
 
+TinYard comes with some [Extensions](#IExtension) available to use, packaged within the framework.
 
+The [extensions](#IExtension) bundled with TinYard include:
+
+* [Event System](#Event-System-Extension)
+* [Logging](#Logging-Extension)
+
+### Event System Extension
+
+### Logging Extension
 
 ---
 
