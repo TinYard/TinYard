@@ -9,6 +9,7 @@
 * [What is TinYard?](#What-Is-TinYard)
 * [Using TinYard](#Using-TinYard)
 * [TinYard Internals](#TinYard-Internals)
+* [TinYard Extensions](#TinYard-Extensions)
 * [How to contribute](#Contribution)
     * [Monetary Contribution](#Funding.)
     * [Coffee Contribution](#Buy-me-a-coffee)
@@ -211,6 +212,10 @@ A class implementing `IConfig` should provide configuration to an [`IExtension`]
 An `IBundle` should be a small class that is used to 'bundle up' specific [`IConfig`](#IConfig) and [`IExtension`](#IExtension)'s together, typically as they are useful together or dependant on each other. 
 
 An `IBundle` is simply to help ensure your [`IContext`](#IContext) installations are kept tidier and easier to maintain.
+
+## TinYard Extensions
+
+
 
 ---
 
