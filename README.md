@@ -232,7 +232,7 @@ To find the [Extension](#IExtension) and [Configs](#IConfig) available, look at 
 
 #### Extension and Configurations
 
-To install the [Event System Extension)(#Event-System-Extension), install the `EventSystemExtension` class into your [Context](#IContext).
+To install the [Event System Extension](#Event-System-Extension), install the `EventSystemExtension` class into your [Context](#IContext).
 
 No [Configurations](#IConfig) are available for this [Extension](#IExtension).
 
