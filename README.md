@@ -23,9 +23,9 @@ At its basics, the framework is to help you create any application with an Event
 
 The framework provides a few tools to help you do this, such as;
 
-* Dependency Injection
+* [Dependency Injection](#IInjector)
 * Event System
-* Value Mapping
+* [Value Mapping](#ValueMapper)
 
 ## Using TinYard
 
@@ -47,29 +47,29 @@ The framework provides a few tools to help you do this, such as;
 
 ### IContext
 
-An object that inherits `IContext` should be the hub in which you access TinYard. This should be where you install [Extensions](#IExtension) ([configure](#IConfig) them too), as well as where you [Map](#IMapper) anything of use.
+An object that inherits [`IContext`](#IContext) should be the hub in which you access TinYard. This should be where you install [Extensions](#IExtension) ([configure](#IConfig) them too), as well as where you [Map](#IMapper) anything of use.
 
-The `IContext` should also have an [IInjector](#IInjector) that it uses, but you likely won't need this very often. 
+The [`IContext`](#IContext) should also have an [IInjector](#IInjector) that it uses, but you likely won't need this very often unless doing some more complex extensions or debugging. 
 
-[Context](#Context) below, is the de-facto implementation of `IContext` for TinYard.
+[Context](#Context) below, is the de-facto implementation of [`IContext`](#IContext) for TinYard.
 
-Every `IContext` should provide `event` callbacks to certain parts of its `Initialize` method. This will allow you to have more control over your `Context`.
+Every [`IContext`](#IContext) should provide `event` callbacks to certain parts of its [`Initialize`](#Initalize) method. This will allow you to have more control over your [`Context`](#IContext).
 
 #### Context
 
-The standard TinYard implementation of `IContext`.
+The standard TinYard implementation of [`IContext`](#IContext).
 
-`Context` provides basic implementations of the `IContext` interface, and does nothing too fancy.
+[`Context`](#Context) provides basic implementations of the [`IContext`](#IContext) interface, and does nothing too fancy.
 
 ##### Construction
 
-In `Context`'s constructor a new [ValueMapper](#ValueMapper) and [TinYard Injector](#TinYardInjector) are created, which are then accessable as `Mapper` and `Injector` respectively.
+In [`Context`](#Context)'s constructor a new [ValueMapper](#ValueMapper) and [TinYard Injector](#TinYardInjector) are created, which are then accessable as [`Mapper`](#IMapper) and [`Injector`](#IInjector) respectively.
 
-The `Context`, `Mapper`, and `Injector` are then all mapped on the `Mapper` to their interface equivalents (`IContext`, `IMapper`, `IInjector`) - Allowing them to be injected into any object needing them.
+The [`Context`](#Context), [`Mapper`](#IMapper), and [`Injector`](#IInjector) are then all mapped on the [`Mapper`](#IMapper) to their interface equivalents ([`IContext`](#IContext), [`IMapper`](#IMapper), [`IInjector`](#IInjector)) - Allowing them to be injected into any object needing them.
 
 ##### Initialize
 
-The [`Context`](#Context) can only be 'Initalized' once - This means you can only call the `Initalize` method once, any more calls to it will raise a [Context Exception](#ContextException).
+The [`Context`](#Context) can only be 'Initalized' once - This means you can only call the [`Initalize`](#Initialize) method once, any more calls to it will raise a [Context Exception](#ContextException).
 
 The `Initalize` method has four steps:
 * [Install Bundles](#Install-Bundles)
