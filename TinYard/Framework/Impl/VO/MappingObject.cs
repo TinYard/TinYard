@@ -10,6 +10,8 @@ namespace TinYard.Impl.VO
         public object MappedValue { get { return _mappedValue; } }
         private object _mappedValue;
 
+        public event Action<IMappingObject> OnValueMapped;
+
         public IMappingObject Map<T>()
         {
             _mappedType = typeof(T);
@@ -20,13 +22,19 @@ namespace TinYard.Impl.VO
         public IMappingObject ToValue<T>()
         {
             _mappedValue = typeof(T);
-            
+
+            if (OnValueMapped != null)
+                OnValueMapped.Invoke(this);
+
             return this;
         }
 
         public IMappingObject ToValue(object value)
         {
             _mappedValue = value;
+
+            if (OnValueMapped != null)
+                OnValueMapped.Invoke(this);
 
             return this;
         }
