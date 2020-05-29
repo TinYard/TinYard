@@ -217,14 +217,54 @@ An `IBundle` is simply to help ensure your [`IContext`](#IContext) installations
 
 TinYard comes with some [Extensions](#IExtension) available to use, packaged within the framework.
 
-The [extensions](#IExtension) bundled with TinYard include:
+The [Extensions](#IExtension) bundled with TinYard include:
 
 * [Event System](#Event-System-Extension)
 * [Logging](#Logging-Extension)
 
+These [Extensions](#IExtension) can be installed by installing their respective [Extension](#IExtension) class into the [Context](#IContext).
+
+To find the [Extension](#IExtension) and [Configs](#IConfig) available, look at the appropriate [Extension](#IExtension) section as linked above.
+
 ### Event System Extension
 
+### About the Extension
+
+#### Extension and Configurations
+
+To install the [Event System Extension)(#Event-System-Extension), install the `EventSystemExtension` class into your [Context](#IContext).
+
+No [Configurations](#IConfig) are available for this [Extension](#IExtension).
+
+
 ### Logging Extension
+
+### About the Extension
+
+The [Logging Extension](#Logging-Extension) provides a simple solution to 'logging' whilst using TinYard - Whether that is errors, warnings, or any form of output.
+
+The [Extension](#Logging-Extension) aims to provide you with an [`ILogger`](#ILogger) via the [`Context`](#IContext)'s [`IMapper`](#IMapper). You can access this [`ILogger`](#ILogger) by [`injecting`](#Inject-Attribute) it into your class, or by requesting it from the [`IMapper`](#IMapper) as an [`ILogger`](#ILogger).
+
+#### Extension and Configurations
+
+To install the [Logging Extension](#Logging-Extension), install the `LoggingExtension` class into your [Context](#IContext).
+
+The [Configurations](#IConfig) available for this [Extension](#IExtension) are:
+
+* [`FileLoggingConfig`](#FileLoggingConfig)
+
+##### FileLoggingConfig
+
+The [`FileLoggingConfig`](#FileLoggingConfig) creates and maps a [`FileLogger`](#FileLogger) object to [`ILogger`](#ILogger). 
+
+The [`Config`](#FileLoggingConfig) also provides a few customisation options to the created [`FileLogger`](#FileLogger) such as:
+
+`WithFileDestination(string destination)`
+
+##### FileLogger
+
+### ILogger
+
 
 ---
 
