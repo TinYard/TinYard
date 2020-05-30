@@ -242,6 +242,12 @@ An `IEvent` has a `type`, similar to the `type` keyword of C# - But defined via 
 
 This `type` should be used to help determine what the `IEvent` represents.
 
+#### Event
+
+[`Event`](#Event) is an implementation of [`IEvent`](#IEvent).
+
+This implementation simply offers a constructor and the `type` variable - These both can be overloaded.
+
 ### IDispatcher
 
 An [`IDispatcher`][(#IDispatcher) should provide the ability to `Dispatch` an [`IEvent`](#IEvent)
@@ -251,6 +257,16 @@ An [`IDispatcher`][(#IDispatcher) should provide the ability to `Dispatch` an [`
 [`IEventDispatcher`](#IEventDispatcher) is an extension of the [`IDispatcher`](#IDispatcher) interface.
 
 It provides the ability to add and remove listeners (and callbacks for these) for [`IEvent`](#IEvent)s, as well as the capability provided by [`IDispatcher`](#IDispatcher). 
+
+#### EventDispatcher
+
+[`EventDispatcher`](#EventDispatcher) is an implementation of the [`IEventDispatcher`](#IEventDispatcher) interface.
+
+#### Listener
+
+[`Listener`](#Listener) is a VO used in the [`IEventDispatcher`](#IEventDispatcher). 
+
+[`Listener`](#Listener) provides an easy way to keep track of callbacks that want invoking for certain [`IEvent`](#IEvent) `type`s, which are added in the [`IEventDispatcher`](#IEventDispatcher).
 
 ### Logging Extension
 
