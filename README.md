@@ -260,6 +260,15 @@ The [`FileLoggingConfig`](#FileLoggingConfig) creates and maps a [`FileLogger`](
 The [`Config`](#FileLoggingConfig) also provides a few customisation options to the created [`FileLogger`](#FileLogger) such as:
 
 `WithFileDestination(string destination)`
+This sets the directory that the log files will be saved into.
+
+If this directory does not currently exist, it will be created.
+
+`WithFileNamePrefix(string prefix)`
+This sets a prefix that will be added to log file names.
+
+`WithMaxLogPerFile(int maxLogs)`
+This limits how many lines are logged to the file before a new log file is created.
 
 ##### FileLogger
 
