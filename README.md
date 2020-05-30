@@ -270,10 +270,22 @@ This sets a prefix that will be added to log file names.
 `WithMaxLogPerFile(int maxLogs)`
 This limits how many lines are logged to the file before a new log file is created.
 
-##### FileLogger
-
 ### ILogger
 
+[`ILogger`](#ILogger) is an interface that any logger wanting to be used by the [`LoggingExtension`](#Logging-Extension) has to implement.
+
+It provides access to simple Logging functions.
+
+##### FileLogger
+
+[`FileLogger`](#FileLogger) is an implementation of [`ILogger`](#ILogger).
+
+When used, it adds the logs to files.
+
+On construction, you can set:
+* The directory path that is used for log files 
+* The maximum number of lines logged per file
+* A prefix for the log files name
 
 ---
 
