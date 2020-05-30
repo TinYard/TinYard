@@ -123,7 +123,7 @@ Currently, all that happens here is that the Post Initalize Hook is invoked.
 
 #### ContextException
 
-`ContextException` is an `exception` that should only be thrown from within the [`IContext`](#IContext). It should primarily be thrown only when the User has used an in-proper or unwanted action with the [`IContext`](#IContext).
+[`ContextException`](#ContextException) is an `exception` that should only be thrown from within the [`IContext`](#IContext). It should primarily be thrown only when the User has used an in-proper or unwanted action with the [`IContext`](#IContext).
 
 ### IMapper
 
