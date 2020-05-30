@@ -244,7 +244,7 @@ This `type` should be used to help determine what the `IEvent` represents.
 
 ### IDispatcher
 
-An [`IDispatcher`[(#IDispatcher) should provide the ability to `Dispatch` an [`IEvent`](#IEvent)
+An [`IDispatcher`][(#IDispatcher) should provide the ability to `Dispatch` an [`IEvent`](#IEvent)
 
 ### IEventDispatcher
 
