@@ -236,6 +236,21 @@ To install the [Event System Extension](#Event-System-Extension), install the `E
 
 No [Configurations](#IConfig) are available for this [Extension](#IExtension).
 
+### IEvent
+
+An `IEvent` has a `type`, similar to the `type` keyword of C# - But defined via an `Enum`.
+
+This `type` should be used to help determine what the `IEvent` represents.
+
+### IDispatcher
+
+An [`IDispatcher`[(#IDispatcher) should provide the ability to `Dispatch` an [`IEvent`](#IEvent)
+
+### IEventDispatcher
+
+[`IEventDispatcher`](#IEventDispatcher) is an extension of the [`IDispatcher`](#IDispatcher) interface.
+
+It provides the ability to add and remove listeners (and callbacks for these) for [`IEvent`](#IEvent)s, as well as the capability provided by [`IDispatcher`](#IDispatcher). 
 
 ### Logging Extension
 
