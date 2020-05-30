@@ -262,11 +262,17 @@ It provides the ability to add and remove listeners (and callbacks for these) fo
 
 [`EventDispatcher`](#EventDispatcher) is an implementation of the [`IEventDispatcher`](#IEventDispatcher) interface.
 
+The [`EventDispatcher`](#EventDispatcher) keeps track of any [`Listener`](#Listener)'s that have been added by having a `dictionary<Enum, Listener` of them. It tracks [`Listener`](#Listener)'s by the `type` of an [`IEvent`](#IEvent), and so when a [`Listener`](#Listener) is wanted for that [`IEvent`](#IEvent) `type` either a new [`Listener`](#Listener) is created or we add to the exisiting [`Listener`](#Listener) the given callback.
+
+The `Dispatch` method that is required from inheritance of the [`IDispatcher`](#IDispatcher) interface is implemented by checking for any [`Listener`](#Listener)'s of the [`IEvent`](#IEvent) `type` (the [`IEvent`](#IEvent) being dispatched) and then invoking the delegates that have been added to the respective [`Listener`](#Listener). 
+
 #### Listener
 
 [`Listener`](#Listener) is a VO used in the [`IEventDispatcher`](#IEventDispatcher). 
 
 [`Listener`](#Listener) provides an easy way to keep track of callbacks that want invoking for certain [`IEvent`](#IEvent) `type`s, which are added in the [`IEventDispatcher`](#IEventDispatcher).
+
+A [`Listener`](#Listener) has a `type` that it tracks, and when a new callback wants to be added it adds it to a list of `delegate`s.
 
 ### Logging Extension
 
