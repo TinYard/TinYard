@@ -250,7 +250,7 @@ This implementation simply offers a constructor and the `type` variable - These 
 
 ### IDispatcher
 
-An [`IDispatcher`][(#IDispatcher) should provide the ability to `Dispatch` an [`IEvent`](#IEvent)
+An [`IDispatcher`](#IDispatcher) should provide the ability to `Dispatch` an [`IEvent`](#IEvent)
 
 ### IEventDispatcher
 
