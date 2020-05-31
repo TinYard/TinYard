@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using TinYard.Extensions.Logging.API.Interfaces;
 
 namespace TinYard.Extensions.Logging.Impl.Loggers
@@ -10,6 +10,7 @@ namespace TinYard.Extensions.Logging.Impl.Loggers
         private string _fileDestination;
         private string _fileNamePrefix;
         private int _maxLogPerFile;
+        private bool _hasMaxLogCount = true;
 
         private string _lastLogFilePath;
 
@@ -22,6 +23,7 @@ namespace TinYard.Extensions.Logging.Impl.Loggers
             _fileDestination = fileDestination;
             _fileNamePrefix = fileNamePrefix;
             _maxLogPerFile = maxLogPerFile;
+            _hasMaxLogCount = _maxLogPerFile > 0;
 
             InitialiseLastLogFilePath();
         }
@@ -50,7 +52,8 @@ namespace TinYard.Extensions.Logging.Impl.Loggers
         private string GetLogFilePath()
         {
             //If it doesn't exist, this path is valid
-            if(File.Exists(_lastLogFilePath))
+            //And if we've got a max log per file count
+            if(File.Exists(_lastLogFilePath) && _hasMaxLogCount)
             {
                 //Check if we've reached max logs for this file, if so - create a new one
                 if(File.ReadAllLines(_lastLogFilePath).Length >= _maxLogPerFile)
