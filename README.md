@@ -305,7 +305,7 @@ If this directory does not currently exist, it will be created.
 This sets a prefix that will be added to log file names.
 
 `WithMaxLogPerFile(int maxLogs)`
-This limits how many lines are logged to the file before a new log file is created.
+This limits how many lines are logged to the file before a new log file is created. If you pass this method a value of 0 or lower, it will not cap the number of logs in a file.
 
 ### ILogger
 
@@ -323,6 +323,8 @@ On construction, you can set:
 * The directory path that is used for log files 
 * The maximum number of lines logged per file
 * A prefix for the log files name
+
+NB: Setting the maximum number of lines logged per file at 0 or less will indicate that there is no limit to the [`FileLogger`](#FileLogger) and thus will only ever use one file.
 
 ---
 
