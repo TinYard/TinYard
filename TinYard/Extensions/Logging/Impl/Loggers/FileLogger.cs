@@ -3,7 +3,7 @@ using TinYard.Extensions.Logging.API.Interfaces;
 
 namespace TinYard.Extensions.Logging.Impl.Loggers
 {
-    public class FileLogger : ILogger
+    public class FileLogger : IFileLogger
     {
         public string LastLogFilePath => _lastLogFilePath;
 
