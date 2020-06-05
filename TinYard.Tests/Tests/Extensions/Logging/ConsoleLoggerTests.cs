@@ -45,7 +45,7 @@ namespace TinYard.Extensions.Logging.Tests
 
             string actual = consoleOut.ToString();
 
-            Assert.IsTrue(expected == actual);        
+            Assert.AreEqual(expected, actual);        
         }
     }
 }
