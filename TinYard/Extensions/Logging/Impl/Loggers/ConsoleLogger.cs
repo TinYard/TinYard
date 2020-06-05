@@ -5,21 +5,27 @@ namespace TinYard.Extensions.Logging.Impl.Loggers
 {
     public class ConsoleLogger : ILogger
     {
-        public string LastLogFilePath => throw new NotImplementedException();
+        private const string WARNING_PREFIX = "Warning:";
+        private const string ERROR_PREFIX = "ERROR:";
 
         public void Log(string message)
         {
-            throw new NotImplementedException();
-        }
-
-        public void LogError(string message)
-        {
-            throw new NotImplementedException();
+            Log(string.Empty, message);
         }
 
         public void LogWarning(string message)
         {
-            throw new NotImplementedException();
+            Log(WARNING_PREFIX, message);
+        }
+
+        public void LogError(string message)
+        {
+            Log(ERROR_PREFIX, message);
+        }
+
+        private void Log(string prefix, string message)
+        {
+            Console.WriteLine(string.Format("{0}{1}", prefix, message));
         }
     }
 }
