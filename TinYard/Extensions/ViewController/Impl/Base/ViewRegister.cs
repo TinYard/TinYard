@@ -4,15 +4,15 @@ using TinYard.Extensions.ViewController.API.Interfaces;
 
 namespace TinYard.Extensions.ViewController.Impl.Base
 {
-    public class ViewController : IViewController
+    public class ViewRegister : IViewRegister
     {
         #region Singleton Impl
 
-        public static ViewController Instance { get; private set; }
+        public static ViewRegister Instance { get; private set; }
 
         private static readonly object _creationLock = new object();
 
-        public ViewController(IContext context)
+        public ViewRegister(IContext context)
         {
             _context = context;
 
