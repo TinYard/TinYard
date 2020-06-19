@@ -34,7 +34,8 @@ namespace TinYard.Extensions.ViewController.Impl.Base
 
         public static bool Register(IView view)
         {
-            bool registered = Instance._registeredViews.Add(view);
+            bool registered = false;
+            registered = Instance?._registeredViews.Add(view) ?? false;
 
             if(registered)
             {
