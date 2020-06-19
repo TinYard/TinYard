@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using TinYard.API.Interfaces;
 using TinYard.Extensions.ViewController.API.Interfaces;
@@ -10,6 +11,8 @@ namespace TinYard.Extensions.ViewController.Impl.Base
         #region Singleton Impl
 
         public static ViewRegister Instance { get; private set; }
+
+        public static event Action<IView> OnViewRegistered;
 
         private static readonly object _creationLock = new object();
 
@@ -39,6 +42,8 @@ namespace TinYard.Extensions.ViewController.Impl.Base
 
             if(registered)
             {
+                OnViewRegistered(view);
+                // DISCUSS: Do we want to inject into Views?
                 Instance._context.Injector.Inject(view);
             }
 
