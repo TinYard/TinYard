@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using TinYard.API.Interfaces;
 using TinYard.Extensions.ViewController.API.Interfaces;
 
@@ -29,6 +30,7 @@ namespace TinYard.Extensions.ViewController.Impl.Base
 
         private IContext _context;
         private HashSet<IView> _registeredViews = new HashSet<IView>();
+        public IReadOnlyList<IView> RegisteredViews { get { return _registeredViews.ToList().AsReadOnly(); } }
 
         public static bool Register(IView view)
         {
