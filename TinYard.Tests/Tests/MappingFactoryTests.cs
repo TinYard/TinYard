@@ -4,6 +4,7 @@ using TinYard.API.Interfaces;
 using TinYard.Framework.API.Interfaces;
 using TinYard.Framework.Impl.Factories;
 using TinYard.Impl.Mappers;
+using TinYard.Impl.VO;
 using TinYard.Tests.TestClasses;
 using TinYard_Tests.TestClasses;
 
@@ -14,26 +15,34 @@ namespace TinYard.Tests
     {
         private IContext _context;
         private IMapper _mapper;
-        private IMappingFactory<TestCreatable> _mappingFactory;
+        private IMappingFactory _mappingFactory;
+
+        private IMappingObject _testingMappingObject;
 
         [TestInitialize]
         public void Setup()
         {
             _context = new Context();
             _mapper = _context.Mapper;
-            _mappingFactory = new MappingValueFactory<TestCreatable>(_mapper);
+            _mappingFactory = new MappingValueFactory(_mapper);
+
+            _testingMappingObject = _mapper.Map<TestCreatable>().ToValue<TestCreatable>();
         }
 
         [TestCleanup]
         public void Teardown()
         {
+            _context = null;
+            _mapper = null;
+            _mappingFactory = null;
 
+            _testingMappingObject = null;
         }
 
         [TestMethod]
         public void MappingValueFactory_Is_IMappingFactory()
         {
-            Type expected = typeof(IMappingFactory<TestCreatable>);
+            Type expected = typeof(IMappingFactory);
             Assert.IsInstanceOfType(_mappingFactory, expected);
         }
 
@@ -42,7 +51,7 @@ namespace TinYard.Tests
         {
             Type expected = typeof(TestCreatable);
 
-            object value = _mappingFactory.Build();
+            object value = _mappingFactory.Build(_testingMappingObject).MappedValue;
             Assert.IsInstanceOfType(value, expected);
         }
 
@@ -53,7 +62,8 @@ namespace TinYard.Tests
 
             //Context will be mapped to IContext in Mapper that the Factory is using. 
             //TestCreatable has an IContext dependency in constructor
-            object actual = _mappingFactory.Build().Context;
+            TestCreatable mappedValue = (TestCreatable)_mappingFactory.Build(_testingMappingObject).MappedValue;
+            object actual = mappedValue.Context;
 
             Assert.AreSame(expected, actual);
         }
