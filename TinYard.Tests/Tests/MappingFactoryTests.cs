@@ -50,6 +50,9 @@ namespace TinYard.Tests
         public void Created_Object_Has_Constructor_Dependencies()
         {
             object expected = _context;
+
+            //Context will be mapped to IContext in Mapper that the Factory is using. 
+            //TestCreatable has an IContext dependency in constructor
             object actual = _mappingFactory.Build().Context;
 
             Assert.AreSame(expected, actual);
