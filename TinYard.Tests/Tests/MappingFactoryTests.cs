@@ -45,5 +45,14 @@ namespace TinYard.Tests
             object value = _mappingFactory.Build();
             Assert.IsInstanceOfType(value, expected);
         }
+
+        [TestMethod]
+        public void Created_Object_Has_Constructor_Dependencies()
+        {
+            object expected = _context;
+            object actual = _mappingFactory.Build().Context;
+
+            Assert.AreSame(expected, actual);
+        }
     }
 }
