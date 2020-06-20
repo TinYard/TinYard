@@ -19,14 +19,23 @@ namespace TinYard.Extensions.ViewController.Impl.Base
         public ViewRegister(IContext context)
         {
             _context = context;
-
+            
             if(Instance == null)
             {
                 lock (_creationLock)
                 {
                     Instance = this;
                 }
+
+                // DISCUSS: Do we want to inject into Views?
+                OnViewRegistered += InjectView;
             }
+        }
+
+        private void InjectView(IView view)
+        {
+            // DISCUSS: Do we want to inject into Views?
+            _context.Injector.Inject(view);
         }
 
         #endregion
@@ -43,8 +52,6 @@ namespace TinYard.Extensions.ViewController.Impl.Base
             if(registered)
             {
                 OnViewRegistered?.Invoke(view);
-                // DISCUSS: Do we want to inject into Views?
-                Instance._context.Injector.Inject(view);
             }
 
             return registered;
