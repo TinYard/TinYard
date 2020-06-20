@@ -1,7 +1,9 @@
-﻿namespace TinYard.Framework.API.Interfaces
+﻿using TinYard.Impl.VO;
+
+namespace TinYard.Framework.API.Interfaces
 {
-    public interface IMappingFactory<T>
+    public interface IMappingFactory
     {
-        T Build();
+        IMappingObject Build(IMappingObject mappingObject);
     }
 }
