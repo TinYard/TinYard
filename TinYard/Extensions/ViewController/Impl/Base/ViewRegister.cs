@@ -42,7 +42,7 @@ namespace TinYard.Extensions.ViewController.Impl.Base
 
             if(registered)
             {
-                OnViewRegistered(view);
+                OnViewRegistered?.Invoke(view);
                 // DISCUSS: Do we want to inject into Views?
                 Instance._context.Injector.Inject(view);
             }
