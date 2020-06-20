@@ -8,7 +8,7 @@ namespace TinYard.API.Interfaces
     {
         event Action<IMappingObject> OnValueMapped;
 
-        IMappingObject Map<T>();
+        IMappingObject Map<T>(bool autoCreateValue = false);
 
         IMappingObject GetMapping<T>();
         IMappingObject GetMapping(Type type);

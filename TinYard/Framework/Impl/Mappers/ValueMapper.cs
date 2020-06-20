@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using TinYard.API.Interfaces;
+using TinYard.Framework.API.Interfaces;
+using TinYard.Framework.Impl.Factories;
 using TinYard.Impl.VO;
 
 namespace TinYard.Impl.Mappers
@@ -13,15 +15,29 @@ namespace TinYard.Impl.Mappers
 
         private List<IMappingObject> _mappingObjects = new List<IMappingObject>();
 
-        public IMappingObject Map<T>()
+        private IMappingFactory _mappingFactory;
+
+        public ValueMapper()
         {
-            var mappingObj = new MappingObject();
+            _mappingFactory = new MappingValueFactory(this);
+        }
+
+        public IMappingObject Map<T>(bool autoCreateValue = false)
+        {
+            var mappingObj = new MappingObject().Map<T>();
+
+            if(autoCreateValue)
+            {
+                mappingObj = mappingObj.ToValue<T>();
+                mappingObj = _mappingFactory.Build(mappingObj);
+            }
+
 
             if (OnValueMapped != null)
                 mappingObj.OnValueMapped += ( mapping ) => OnValueMapped.Invoke(mapping);
 
             _mappingObjects.Add(mappingObj);
-            return mappingObj.Map<T>();
+            return mappingObj;
         }
 
         public IMappingObject GetMapping<T>()
