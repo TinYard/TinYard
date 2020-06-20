@@ -22,14 +22,14 @@ namespace TinYard.Impl.Mappers
             _mappingFactory = new MappingValueFactory(this);
         }
 
-        public IMappingObject Map<T>(bool autoCreateValue = false)
+        public IMappingObject Map<T>(bool autoInitializeValue = false)
         {
-            var mappingObj = new MappingObject().Map<T>();
+            var mappingObj = new MappingObject(this).Map<T>();
 
-            if(autoCreateValue)
+            if(autoInitializeValue)
             {
                 mappingObj = mappingObj.ToValue<T>();
-                mappingObj = _mappingFactory.Build(mappingObj);
+                mappingObj = BuildValue(mappingObj);
             }
 
 
@@ -67,6 +67,13 @@ namespace TinYard.Impl.Mappers
         public object GetMappingValue(Type type)
         {
             return GetMapping(type)?.MappedValue;
+        }
+
+        public IMappingObject BuildValue(IMappingObject mappingObject)
+        {
+            mappingObject = _mappingFactory.Build(mappingObject);
+
+            return mappingObject;
         }
     }
 }

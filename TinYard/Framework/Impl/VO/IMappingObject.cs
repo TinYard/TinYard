@@ -11,7 +11,7 @@ namespace TinYard.Impl.VO
 
         IMappingObject Map<T>();
 
-        IMappingObject ToValue<T>();
+        IMappingObject ToValue<T>(bool autoInitialize = false);
         IMappingObject ToValue(object value);
     }
 }
