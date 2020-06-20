@@ -49,7 +49,7 @@ namespace TinYard.Impl.Mappers
 
         public IMappingObject GetMapping(Type type)
         {
-            var value = _mappingObjects.First(mapping => mapping.MappedType.IsAssignableFrom(type));
+            var value = _mappingObjects.FirstOrDefault(mapping => mapping.MappedType.IsAssignableFrom(type));
 
             return value;
         }
@@ -66,7 +66,7 @@ namespace TinYard.Impl.Mappers
 
         public object GetMappingValue(Type type)
         {
-            return GetMapping(type).MappedValue;
+            return GetMapping(type)?.MappedValue;
         }
     }
 }
