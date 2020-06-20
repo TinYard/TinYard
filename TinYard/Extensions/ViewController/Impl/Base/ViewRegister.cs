@@ -12,8 +12,6 @@ namespace TinYard.Extensions.ViewController.Impl.Base
 
         public static ViewRegister Instance { get; private set; }
 
-        public static event Action<IView> OnViewRegistered;
-
         private static readonly object _creationLock = new object();
 
         public ViewRegister(IContext context)
@@ -27,18 +25,13 @@ namespace TinYard.Extensions.ViewController.Impl.Base
                     Instance = this;
                 }
 
-                // DISCUSS: Do we want to inject into Views?
                 OnViewRegistered += InjectView;
             }
         }
 
-        private void InjectView(IView view)
-        {
-            // DISCUSS: Do we want to inject into Views?
-            _context.Injector.Inject(view);
-        }
-
         #endregion
+        
+        public static event Action<IView> OnViewRegistered;
 
         private IContext _context;
         private HashSet<IView> _registeredViews = new HashSet<IView>();
@@ -55,6 +48,12 @@ namespace TinYard.Extensions.ViewController.Impl.Base
             }
 
             return registered;
+        }
+
+        private void InjectView(IView view)
+        {
+            // DISCUSS: Do we want to inject into Views?
+            _context.Injector.Inject(view);
         }
     }
 }
