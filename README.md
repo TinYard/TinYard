@@ -42,6 +42,8 @@ The framework provides a few tools to help you do this, such as;
 * [IInjector](#IInjector)
     * [TinYard Injector](#TinYardInjector)
     * [Inject Attribute](#Inject-Attribute)
+* [Factories](#Factories)
+    * [MappingValueFactory](#MappingValueFactory)
 * [IExtension](#IExtension)
 * [IConfig](#IConfig)
 * [IBundle](#IBundle)
@@ -133,6 +135,8 @@ Mapping is where we can 'map' an object, to another - They're linked.
 
 `IMapper` should also make use of [`IMappingObject`](#IMappingObject)'s to be consistent across implementations.
 
+An `IMapper` should also have a Factory so that it can provide an implementation for the `BuildValue` method for `IMappingObject`'s - A factory is optional, but is recommended for this.
+
 An example of this is the [`ValueMapper`](#ValueMapper).
 
 #### ValueMapper
@@ -148,6 +152,8 @@ valueMapper.Map<IContext>().ToValue(context);
 This example, means that when we request the Value of [`IContext`](#IContext) from the `valueMapper` object, we receive the `context` object - Whatever that is.
 
 `ValueMapper` is used as the primary `IMapper` for [`Context`](#Context).
+
+`ValueMapper` has a [`MappingValueFactory`](#MappingValueFactory) to aid it in providing an implementation of the `BuildValue` method.
 
 #### IMappingObject
 
@@ -166,11 +172,15 @@ When `Map<T>()` is called on the `ValueMapper`, it returns the `IMappingObject`.
 
 Internally, `Map<T>()` calls `Map<T>()` on a newly created `IMappingObject` and then returns this newly created object. This `Map<T>()` method on IMappingObject should set the `MappedType` to the type of `T`.
 
-`MappedValue` is then the value that is set with the `ToValue<T>()` or `ToValue(object value)` methods.
+`MappedValue` is then the value that is set with the `ToValue<T>(bool autoInitialize = false)` or `ToValue(object value)` methods.
+
+The `ToValue<T>(bool autoInitialize = false)` function can instantiate a value of type `T` for you if you pass true to the method. It should be doing this via a Factory.
 
 #### MappingObject
 
 `MappingObject` provides a super-simple implementation of [`IMappingObject`](#IMappingObject) that is used by [`ValueMapper`](#ValueMapper). 
+
+`MappingObject` has a reference to the `IMapper` that creates it. This is so that it can use the Factory that the `IMapper` has to build an object when `ToValue<T>(bool)` is called on the `MappingObject`.
 
 ### IInjector
 
@@ -196,6 +206,18 @@ The `Inject` attribute acts as a flag to the [`IMapper`](#IMapper) in your [`ICo
 
 In the standard implementation of [`IContext`](#IContext), [`Context`](#Context) -
 When a value is added to an [`IMappingObject`](#IMappingObject), the [`IMapper`](#IMapper) lets the [`IContext`](#IContext) know that the value needs injecting into, which in turn tells its [`IInjector`](#IInjector) to Inject into it.
+
+### Factories
+
+Below is the Factories available or in-use in TinYard.
+
+Factories should be providing creation of specific objects, usually including injecting into them upon creation.
+
+#### MappingValueFactory
+
+The [`MappingValueFactory`](#MappingValueFactory) is used by the [`ValueMapper`](#ValueMapper), and aids in creation of [`IMappingObject`](#IMappingObject)'s values.
+
+As all [`IMappingObject`](#IMappingObject)'s have a method that might need a value object to be created, the [`ValueMapper`](#ValueMapper) provides the [`MappingObject`](#MappingObject) impl uses a factory to create that value from when the `BuildValue` method is called on [`ValueMapper`](#ValueMapper).
 
 ### IExtension
 
