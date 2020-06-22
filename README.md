@@ -135,7 +135,7 @@ Mapping is where we can 'map' an object, to another - They're linked.
 
 `IMapper` should also make use of [`IMappingObject`](#IMappingObject)'s to be consistent across implementations.
 
-An `IMapper` should also have a Factory so that it can provide an implementation for the `BuildValue` method for `IMappingObject`'s - A factory is optional, but is recommended for this.
+An `IMapper` should also have a Factory so that it can aid `IMappingObject`'s in creating values they may need - A factory is optional, but is recommended for this.
 
 An example of this is the [`ValueMapper`](#ValueMapper).
 
@@ -153,7 +153,7 @@ This example, means that when we request the Value of [`IContext`](#IContext) fr
 
 `ValueMapper` is used as the primary `IMapper` for [`Context`](#Context).
 
-`ValueMapper` has a [`MappingValueFactory`](#MappingValueFactory) to aid it in providing an implementation of the `BuildValue` method.
+`ValueMapper` has a [`MappingValueFactory`](#MappingValueFactory). `ValueMapper` upon creating [`MappingObject`](#MappingObject)'s, provides a reference to itself to the object so that it can access this factory if needed to help it build a value.
 
 #### IMappingObject
 
@@ -174,7 +174,7 @@ Internally, `Map<T>()` calls `Map<T>()` on a newly created `IMappingObject` and 
 
 `MappedValue` is then the value that is set with the `ToValue<T>(bool autoInitialize = false)` or `ToValue(object value)` methods.
 
-The `ToValue<T>(bool autoInitialize = false)` function can instantiate a value of type `T` for you if you pass true to the method. It should be doing this via a Factory.
+The `ToValue<T>(bool autoInitialize = false)` function can instantiate a value of type `T` for you if you pass true to the method. It should be doing this via a Factory it has access to.
 
 #### MappingObject
 
@@ -217,7 +217,7 @@ Factories should be providing creation of specific objects, usually including in
 
 The [`MappingValueFactory`](#MappingValueFactory) is used by the [`ValueMapper`](#ValueMapper), and aids in creation of [`IMappingObject`](#IMappingObject)'s values.
 
-As all [`IMappingObject`](#IMappingObject)'s have a method that might need a value object to be created, the [`ValueMapper`](#ValueMapper) provides the [`MappingObject`](#MappingObject) impl uses a factory to create that value from when the `BuildValue` method is called on [`ValueMapper`](#ValueMapper).
+As all [`IMappingObject`](#IMappingObject)'s have a method that might need a value object to be created, the [`ValueMapper`](#ValueMapper) provides the [`MappingObject`](#MappingObject) with its factory to create that value from.
 
 ### IExtension
 

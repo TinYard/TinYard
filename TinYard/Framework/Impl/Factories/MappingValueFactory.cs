@@ -17,7 +17,7 @@ namespace TinYard.Framework.Impl.Factories
             _mapper = mapper;
         }
 
-        public IMappingObject Build(IMappingObject mappingObject)
+        public IMappingObject BuildValue(IMappingObject mappingObject)
         {
             Type type = mappingObject.MappedValue as Type;
 

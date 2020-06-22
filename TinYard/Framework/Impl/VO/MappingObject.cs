@@ -32,7 +32,7 @@ namespace TinYard.Impl.VO
             _mappedValue = typeof(T);
 
             if(autoInitialize)
-                _mappedValue = _parentMapper.BuildValue(this).MappedValue;
+                _mappedValue = _parentMapper.MappingFactory.BuildValue(this).MappedValue;
 
             if (OnValueMapped != null)
                 OnValueMapped.Invoke(this);

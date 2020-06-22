@@ -15,6 +15,7 @@ namespace TinYard.Impl.Mappers
 
         private List<IMappingObject> _mappingObjects = new List<IMappingObject>();
 
+        public IMappingFactory MappingFactory { get { return _mappingFactory; } }
         private IMappingFactory _mappingFactory;
 
         public ValueMapper()
@@ -29,7 +30,7 @@ namespace TinYard.Impl.Mappers
             if(autoInitializeValue)
             {
                 mappingObj = mappingObj.ToValue<T>();
-                mappingObj = BuildValue(mappingObj);
+                mappingObj = _mappingFactory.BuildValue(mappingObj);
             }
 
 
@@ -67,13 +68,6 @@ namespace TinYard.Impl.Mappers
         public object GetMappingValue(Type type)
         {
             return GetMapping(type)?.MappedValue;
-        }
-
-        public IMappingObject BuildValue(IMappingObject mappingObject)
-        {
-            mappingObject = _mappingFactory.Build(mappingObject);
-
-            return mappingObject;
         }
     }
 }

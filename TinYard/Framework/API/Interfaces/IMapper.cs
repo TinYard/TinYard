@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using TinYard.Framework.API.Interfaces;
 using TinYard.Impl.VO;
 
 namespace TinYard.API.Interfaces
@@ -7,6 +8,7 @@ namespace TinYard.API.Interfaces
     public interface IMapper
     {
         event Action<IMappingObject> OnValueMapped;
+        IMappingFactory MappingFactory { get; }
 
         IMappingObject Map<T>(bool autoInitializeValue = false);
 
@@ -16,7 +18,5 @@ namespace TinYard.API.Interfaces
 
         object GetMappingValue<T>();
         object GetMappingValue(Type type);
-
-        IMappingObject BuildValue(IMappingObject mappingObject);
     }
 }
