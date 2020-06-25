@@ -1,4 +1,5 @@
 ﻿using System;
+using TinYard.API.Interfaces;
 
 namespace TinYard.Impl.VO
 {
@@ -12,6 +13,13 @@ namespace TinYard.Impl.VO
 
         public event Action<IMappingObject> OnValueMapped;
 
+        private IMapper _parentMapper;
+
+        public MappingObject(IMapper parentMapper)
+        {
+            _parentMapper = parentMapper;
+        }
+
         public IMappingObject Map<T>()
         {
             _mappedType = typeof(T);
@@ -19,9 +27,12 @@ namespace TinYard.Impl.VO
             return this;
         }
 
-        public IMappingObject ToValue<T>()
+        public IMappingObject ToValue<T>(bool autoInitialize = false)
         {
             _mappedValue = typeof(T);
+
+            if(autoInitialize)
+                _mappedValue = _parentMapper.MappingFactory.BuildValue(this).MappedValue;
 
             if (OnValueMapped != null)
                 OnValueMapped.Invoke(this);

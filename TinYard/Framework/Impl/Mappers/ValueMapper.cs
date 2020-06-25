@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using TinYard.API.Interfaces;
+using TinYard.Framework.API.Interfaces;
+using TinYard.Framework.Impl.Factories;
 using TinYard.Impl.VO;
 
 namespace TinYard.Impl.Mappers
@@ -13,15 +15,30 @@ namespace TinYard.Impl.Mappers
 
         private List<IMappingObject> _mappingObjects = new List<IMappingObject>();
 
-        public IMappingObject Map<T>()
+        public IMappingFactory MappingFactory { get { return _mappingFactory; } }
+        private IMappingFactory _mappingFactory;
+
+        public ValueMapper()
         {
-            var mappingObj = new MappingObject();
+            _mappingFactory = new MappingValueFactory(this);
+        }
+
+        public IMappingObject Map<T>(bool autoInitializeValue = false)
+        {
+            var mappingObj = new MappingObject(this).Map<T>();
+
+            if(autoInitializeValue)
+            {
+                mappingObj = mappingObj.ToValue<T>();
+                mappingObj = _mappingFactory.BuildValue(mappingObj);
+            }
+
 
             if (OnValueMapped != null)
                 mappingObj.OnValueMapped += ( mapping ) => OnValueMapped.Invoke(mapping);
 
             _mappingObjects.Add(mappingObj);
-            return mappingObj.Map<T>();
+            return mappingObj;
         }
 
         public IMappingObject GetMapping<T>()
@@ -33,7 +50,7 @@ namespace TinYard.Impl.Mappers
 
         public IMappingObject GetMapping(Type type)
         {
-            var value = _mappingObjects.First(mapping => mapping.MappedType.IsAssignableFrom(type));
+            var value = _mappingObjects.FirstOrDefault(mapping => mapping.MappedType.IsAssignableFrom(type));
 
             return value;
         }
@@ -50,7 +67,7 @@ namespace TinYard.Impl.Mappers
 
         public object GetMappingValue(Type type)
         {
-            return GetMapping(type).MappedValue;
+            return GetMapping(type)?.MappedValue;
         }
     }
 }
