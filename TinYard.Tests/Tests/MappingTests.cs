@@ -1,6 +1,8 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using TinYard.API.Interfaces;
 using TinYard.Impl.Mappers;
+using TinYard.Tests.TestClasses;
 
 namespace TinYard.Tests
 {
@@ -30,12 +32,23 @@ namespace TinYard.Tests
         [TestMethod]
         public void Mapper_Has_Value_Mapped()
         {
-            string value = "testval";
+            string expected = "testval";
 
-            _mapper.Map<string>().ToValue(value);
+            _mapper.Map<string>().ToValue(expected);
 
-            string val2 = (string)_mapper.GetMappingValue<string>();
-            Assert.AreEqual(value, val2);
+            string actual = (string)_mapper.GetMappingValue<string>();
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void Mapper_Auto_Creates_Value_Correctly()
+        {
+            Type expected = typeof(TestCreatable);
+
+            TestCreatable actual = (TestCreatable)_mapper.Map<TestCreatable>(true).MappedValue;
+
+            Assert.IsNotNull(actual);
+            Assert.IsInstanceOfType(actual, expected);
         }
     }
 }
