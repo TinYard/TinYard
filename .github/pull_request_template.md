@@ -10,8 +10,7 @@ Any Resolves / Closing words?
 **Checklist**    
 [ ] I ran this code locally    
 [ ] I wrote the necessary tests    
-[ ] I covered my code with type-hints    
-[ ] I updated CHANGELOG    
+[ ] I documented the changes
 
 **Should know about**    
 Is there anything else that should be known?      
