@@ -243,6 +243,7 @@ The [Extensions](#IExtension) bundled with TinYard include:
 
 * [Event System](#Event-System-Extension)
 * [Logging](#Logging-Extension)
+* [ViewControllerExtension](#View-Controller-Extension)
 
 These [Extensions](#IExtension) can be installed by installing their respective [Extension](#IExtension) class into the [Context](#IContext).
 
@@ -347,6 +348,39 @@ On construction, you can set:
 * A prefix for the log files name
 
 NB: Setting the maximum number of lines logged per file at 0 or less will indicate that there is no limit to the [`FileLogger`](#FileLogger) and thus will only ever use one file.
+
+### View Controller Extension
+
+### About the Extension
+
+The [View Controller Extension](#View-Controller-Extension) provides two things:
+
+* The base impl of [`IView`](#IView), [`View`](#View)
+* The [`ViewRegister`](#ViewRegister)
+
+#### Extension and Configurations
+
+To install the [View Controller Extension](#View-Controller-Extension), install the [`ViewControllerExtension`](#View-Controller-Extension) class into your [Context](#IContext).
+
+Currently, there are no configurations for the Extension.
+
+### IView
+
+[`IView`](#IView) is the interface that all implementations of a `View` should inherit.
+
+### View
+
+[`View`](#View) is the base implementation of [`IView`]. 
+
+[`View`](#View) does no more than register itself to the [`ViewRegister`](#ViewRegister) upon creation.
+
+This is to ensure that it can send [`event`](#IEvent)'s to other parts of the framework.
+
+### ViewRegister
+
+[`ViewRegister`](#ViewRegister) is a Singleton class that provides static access through the `Instance` property.
+
+The job of [`ViewRegister`](#ViewRegister) is to provide a place where all [`View`](#View)'s are accessible - So that they can be injected into, listened to, or anything else.
 
 ---
 
