@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TinYard.API.Interfaces;
+using TinYard.Extensions.MediatorMap.API.Interfaces;
 
 namespace TinYard.Extensions.MediatorMap.Tests
 {
@@ -31,6 +32,20 @@ namespace TinYard.Extensions.MediatorMap.Tests
 
         [TestMethod]
         public void Context_Installs_Extension()
+        {
+            _context.Install(_extension);
+            _context.Initialize();
+        }
+
+        [TestMethod]
+        public void Extension_Maps_MediatorMapper()
+        {
+            SetupExtension();
+
+            Assert.IsNotNull(_context.Mapper.GetMappingValue<IMediatorMapper>());
+        }
+
+        private void SetupExtension()
         {
             _context.Install(_extension);
             _context.Initialize();
