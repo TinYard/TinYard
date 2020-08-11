@@ -244,6 +244,7 @@ The [Extensions](#IExtension) bundled with TinYard include:
 * [Event System](#Event-System-Extension)
 * [Logging](#Logging-Extension)
 * [ViewControllerExtension](#View-Controller-Extension)
+* [Mediator Map Extension](#Mediator-Map-Extension)
 
 These [Extensions](#IExtension) can be installed by installing their respective [Extension](#IExtension) class into the [Context](#IContext).
 
@@ -381,6 +382,27 @@ This is to ensure that it can send [`event`](#IEvent)'s to other parts of the fr
 [`ViewRegister`](#ViewRegister) is a Singleton class that provides static access through the `Instance` property.
 
 The job of [`ViewRegister`](#ViewRegister) is to provide a place where all [`View`](#View)'s are accessible - So that they can be injected into, listened to, or anything else.
+
+## Mediator Map Extension
+
+### About the Extension
+
+The [Mediator Map Extension](#Mediator-Map-Extension) provides:
+
+* The base impl of [`IMediator`](#IMediator), [`Mediator`](#Mediator)
+* The [`MediatorMapper`](#MediatorMapper)
+
+#### Extension and Configurations
+
+To install the [Mediator Map Extension](#Mediator-Map-Extension), install the [`MediatorMapExtension`](#Mediator-Map-Extension) class into your [Context](#IContext).
+
+Currently, there are no configurations for the Extension.
+
+### IMediator
+
+### Mediator
+
+### MediatorMapper
 
 ---
 
