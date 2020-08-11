@@ -1,4 +1,6 @@
 ﻿using TinYard.API.Interfaces;
+using TinYard.Extensions.MediatorMap.API.Interfaces;
+using TinYard.Extensions.MediatorMap.Impl.Mappers;
 
 namespace TinYard.Extensions.MediatorMap
 {
@@ -6,7 +8,7 @@ namespace TinYard.Extensions.MediatorMap
     {
         public void Install(IContext context)
         {
-            throw new System.NotImplementedException();
+            context.Mapper.Map<IMediatorMapper>().ToValue(new MediatorMapper());
         }
     }
 }
