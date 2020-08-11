@@ -400,9 +400,17 @@ Currently, there are no configurations for the Extension.
 
 ### IMediator
 
+A [`Mediator`](#IMediator) provides the ability for each [`View`](#View) to have a [`dispatcher`](#IDispatcher) and ensure the [`View`](#View) can send event's out, and receive them too.
+
 ### Mediator
 
+This is the base implementation of [`IMediator`](#IMediator). 
+
 ### MediatorMapper
+
+Every View that gets registered needs to have an [`IMediator`](#IMediator). The [`MediatorMapper`](#MediatorMapper) helps ensure that each [`View`](#View) has a [`Mediator`](#Mediator) attached and being its [`dispatcher`](#IDispatcher).
+
+By 'mapping' a [`View`](#View) to a [`Mediator`](#Mediator), it guarantees that the [`Mediator`](#Mediator) will be created when the [`View`](#View) is registered - The [`MediatorMapper`](#MediatorMapper) uses a Factory to create the associated [`Mediator`](#Mediator) (but this can only happen if you 'map' one!).
 
 ---
 
