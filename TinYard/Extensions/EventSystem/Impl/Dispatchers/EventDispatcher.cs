@@ -8,9 +8,9 @@ namespace TinYard.Extensions.EventSystem.Impl
 {
     public class EventDispatcher : IEventDispatcher
     {
-        private Dictionary<Enum, Listener> _listeners = new Dictionary<Enum, Listener>();
+        protected Dictionary<Enum, Listener> _listeners = new Dictionary<Enum, Listener>();
 
-        private IContext _context;
+        protected IContext _context;
 
         public EventDispatcher(IContext context = null)
         {
