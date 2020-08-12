@@ -9,7 +9,7 @@ using TinYard.Impl.VO;
 
 namespace TinYard.Impl.Mappers
 {
-    public class ValueMapper : IMapper
+    public class ValueMapper : IMapper<IMappingObject>
     {
         public event Action<IMappingObject> OnValueMapped;
 

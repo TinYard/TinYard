@@ -10,9 +10,9 @@ namespace TinYard.Framework.Impl.Factories
 {
     public class MappingValueFactory : IMappingFactory
     {
-        private IMapper _mapper;
+        private IMapper<IMappingObject> _mapper;
 
-        public MappingValueFactory(IMapper mapper)
+        public MappingValueFactory(IMapper<IMappingObject> mapper)
         {
             _mapper = mapper;
         }
