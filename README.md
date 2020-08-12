@@ -385,6 +385,12 @@ The job of [`ViewRegister`](#ViewRegister) is to provide a place where all [`Vie
 
 ## Mediator Map Extension
 
+### Dependencies
+
+This Extension is dependant on:
+
+* [Event System Extension](#Event-System-Extension)
+
 ### About the Extension
 
 The [Mediator Map Extension](#Mediator-Map-Extension) provides:
