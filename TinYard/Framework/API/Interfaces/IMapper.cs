@@ -1,21 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using TinYard.Framework.API.Interfaces;
+using TinYard.Impl.VO;
 
 namespace TinYard.API.Interfaces
 {
-    public interface IMapper<T1>
+    public interface IMapper
     {
-        event Action<T1> OnValueMapped;
+        event Action<IMappingObject> OnValueMapped;
         IMappingFactory MappingFactory { get; }
 
-        T1 Map<T2>(bool autoInitializeValue = false);
+        IMappingObject Map<T>(bool autoInitializeValue = false);
 
-        T1 GetMapping<T2>();
-        T1 GetMapping(Type type);
-        IReadOnlyList<T1> GetAllMappings();
+        IMappingObject GetMapping<T>();
+        IMappingObject GetMapping(Type type);
+        IReadOnlyList<IMappingObject> GetAllMappings();
 
-        object GetMappingValue<T2>();
+        object GetMappingValue<T>();
         object GetMappingValue(Type type);
     }
 }
