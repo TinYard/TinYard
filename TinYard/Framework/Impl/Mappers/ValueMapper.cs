@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using TinYard.API.Interfaces;
 using TinYard.Framework.API.Interfaces;
@@ -9,7 +8,7 @@ using TinYard.Impl.VO;
 
 namespace TinYard.Impl.Mappers
 {
-    public class ValueMapper : IMapper<IMappingObject>
+    public class ValueMapper : IMapper
     {
         public event Action<IMappingObject> OnValueMapped;
 

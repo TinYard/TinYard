@@ -13,9 +13,9 @@ namespace TinYard.Impl.VO
 
         public event Action<IMappingObject> OnValueMapped;
 
-        private IMapper<IMappingObject> _parentMapper;
+        private IMapper _parentMapper;
 
-        public MappingObject(IMapper<IMappingObject> parentMapper)
+        public MappingObject(IMapper parentMapper)
         {
             _parentMapper = parentMapper;
         }
