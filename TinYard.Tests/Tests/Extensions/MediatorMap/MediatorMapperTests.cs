@@ -27,12 +27,6 @@ namespace TinYard.Extensions.MediatorMap.Tests
         }
 
         [TestMethod]
-        public void MediatorMapper_Is_IMapper()
-        {
-            Assert.IsInstanceOfType(_mapper, typeof(IMapper));
-        }
-
-        [TestMethod]
         public void MediatorMapper_Is_IMediatorMapper()
         {
             Assert.IsInstanceOfType(_mapper, typeof(IMediatorMapper));
@@ -41,20 +35,25 @@ namespace TinYard.Extensions.MediatorMap.Tests
         [TestMethod]
         public void MediatorMapper_Maps_Mediator_To_View()
         {
-            var expected = MapTestMediator();
+            var view = new TestView();
+            var expected = new TestMediator();
+            _mapper.Map(view).ToMediator(expected);
+
             var actual = _mapper.GetMapping<TestView>().Mediator;
 
             Assert.AreEqual(expected, actual);
         }
 
-        private TestMediator MapTestMediator()
+        [TestMethod]
+        public void MediatorMapper_Fetches_View_On_Generic_Map()
         {
-            var view = new TestView();
             var mediator = new TestMediator();
 
-            _mapper.Map<TestView>().ToMediator(mediator);
+            var expected = _mapper.Map<TestView>().ToMediator(mediator);
 
-            return mediator;
+            var actual = _mapper.GetMapping<TestView>();
+
+            Assert.AreEqual(expected, actual);
         }
     }
 }

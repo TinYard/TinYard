@@ -1,51 +1,64 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using TinYard.API.Interfaces;
 using TinYard.Extensions.MediatorMap.API.Interfaces;
+using TinYard.Extensions.MediatorMap.Impl.Factories;
 using TinYard.Extensions.MediatorMap.Impl.VO;
 using TinYard.Extensions.ViewController.API.Interfaces;
-using TinYard.Framework.API.Interfaces;
-using TinYard.Impl.Mappers;
 
 namespace TinYard.Extensions.MediatorMap.Impl.Mappers
 {
     public class MediatorMapper : IMediatorMapper
     {
-        public event Action<IMediatorMappingObject> OnValueMapped;
+        public event Action<IMediatorMappingObject> OnMediatorMapping;
 
-        public IMappingFactory MappingFactory => throw new NotImplementedException();
+        public IMediatorFactory MappingFactory { get { return _mappingFactory; } }
+        protected IMediatorFactory _mappingFactory;
 
         private List<IMediatorMappingObject> _mappingObjects = new List<IMediatorMappingObject>();
 
         public MediatorMapper()
         {
-            //_mappingFactory = new MediatorFactory(this);
+            _mappingFactory = new MediatorFactory();
         }
 
-        public IMediatorMappingObject Map<T2>(bool autoInitializeValue = false)
+        public IMediatorMappingObject Map<T>() where T : IView
         {
-            var mappingObj = new MediatorMappingObject().Map<T2>();
+            var mappingObj = new MediatorMappingObject().Map<T>();
 
-            //TODO 
-            // Add Factory use
-
-            if (OnValueMapped != null)
-                mappingObj.OnViewMapped += (mapping) => OnValueMapped.Invoke(mapping);
+            if (OnMediatorMapping != null)
+                mappingObj.OnMediatorMapped += (mapping) => OnMediatorMapping.Invoke(mapping);
 
             _mappingObjects.Add(mappingObj);
 
             return mappingObj;
         }
 
-        public IMediatorMappingObject GetMapping<T2>()
+        public IMediatorMappingObject Map(IView view)
         {
-            return GetMapping(typeof(T2));
+            var mappingObj = new MediatorMappingObject().Map(view);
+
+            if (OnMediatorMapping != null)
+                mappingObj.OnMediatorMapped += (mapping) => OnMediatorMapping.Invoke(mapping);
+
+            _mappingObjects.Add(mappingObj);
+
+            return mappingObj;
         }
 
-        public IMediatorMappingObject GetMapping(Type type)
+        public IMediatorMappingObject GetMapping<T>() where T : IView
         {
-            return _mappingObjects.FirstOrDefault(mapping => mapping.View.IsAssignableFrom(type));
+            return GetMapping(typeof(T));
+        }
+
+        public IMediatorMappingObject GetMapping(IView view)
+        {
+            return _mappingObjects.FirstOrDefault(mapping => mapping.View == view || mapping.ViewType == view.GetType());
+        }
+
+        private IMediatorMappingObject GetMapping(Type viewType)
+        {
+            return _mappingObjects.FirstOrDefault(mapping => mapping.View?.GetType() == viewType || mapping.ViewType == viewType);
         }
 
         public IReadOnlyList<IMediatorMappingObject> GetAllMappings()
@@ -53,14 +66,14 @@ namespace TinYard.Extensions.MediatorMap.Impl.Mappers
             return _mappingObjects.AsReadOnly();
         }
 
-        public object GetMappingValue<T2>()
+        public object GetMappingMediator<T>() where T : IView
         {
-            return GetMappingValue(typeof(T2));
+            return GetMapping<T>()?.Mediator;
         }
 
-        public object GetMappingValue(Type type)
+        public object GetMappingMediator(IView view)
         {
-            return GetMapping(type)?.Mediator;
+            return GetMapping(view)?.Mediator;
         }
     }
 }
