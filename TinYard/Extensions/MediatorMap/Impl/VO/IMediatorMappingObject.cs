@@ -6,12 +6,14 @@ namespace TinYard.Extensions.MediatorMap.Impl.VO
 {
     public interface IMediatorMappingObject
     {
-        Type View { get; }
-        Type Mediator { get; }
+        IView View { get; }
+        Type ViewType { get; }
+        IMediator Mediator { get; }
 
-        event Action<IMediatorMappingObject> OnViewMapped;
+        event Action<IMediatorMappingObject> OnMediatorMapped;
 
-        IMediatorMappingObject Map<T>();
+        IMediatorMappingObject Map<T>() where T : IView;
+        IMediatorMappingObject Map(IView view);
 
         IMediatorMappingObject ToMediator<T>() where T : IMediator;
         IMediatorMappingObject ToMediator(IMediator mediator);
