@@ -29,7 +29,7 @@ namespace TinYard.Impl.Mappers
             if(autoInitializeValue)
             {
                 mappingObj = mappingObj.ToValue<T>();
-                mappingObj = _mappingFactory.BuildValue(mappingObj);
+                mappingObj = _mappingFactory.Build(mappingObj);
             }
 
 
