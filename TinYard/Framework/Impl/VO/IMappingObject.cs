@@ -10,6 +10,7 @@ namespace TinYard.Impl.VO
         event Action<IMappingObject> OnValueMapped;
 
         IMappingObject Map<T>();
+        IMappingObject Map(Type type);
 
         IMappingObject ToValue<T>(bool autoInitialize = false);
         IMappingObject ToValue(object value);
