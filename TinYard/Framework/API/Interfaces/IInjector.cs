@@ -7,5 +7,6 @@ namespace TinYard.Framework.API.Interfaces
         void AddInjectable(Type injectableType, object injectableObject);
 
         void Inject(object classToInjectInto);
+        void Inject(object target, object value);
     }
 }

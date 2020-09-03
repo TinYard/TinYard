@@ -47,5 +47,22 @@ namespace TinYard.Framework.Impl.Injectors
                 }
             }
         }
+
+        public void Inject(object target, object value)
+        {
+            List<FieldInfo> injectables = InjectAttribute.GetInjectables(target.GetType());
+
+            Type valueType = value.GetType();
+
+            foreach(FieldInfo field in injectables)
+            {
+                Type fieldType = field.FieldType;
+
+                if(valueType == fieldType || fieldType.IsAssignableFrom(valueType))
+                {
+                    field.SetValue(target, value);
+                }
+            }
+        }
     }
 }
