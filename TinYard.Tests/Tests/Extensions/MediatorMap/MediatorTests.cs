@@ -1,20 +1,23 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TinYard.API.Interfaces;
 using TinYard.Extensions.EventSystem.API.Interfaces;
+using TinYard.Extensions.EventSystem.Impl;
 using TinYard.Extensions.EventSystem.Tests.MockClasses;
 using TinYard.Extensions.MediatorMap.API.Base;
 using TinYard.Extensions.MediatorMap.API.Interfaces;
+using TinYard.Tests.TestClasses;
 
 namespace TinYard.Extensions.MediatorMap.Tests
 {
     [TestClass]
     public class MediatorTests
     {
-        private Mediator _mediator;
+        private TestMediator _mediator;
 
         [TestInitialize]
         public void Setup()
         {
-            _mediator = new Mediator();
+            _mediator = new TestMediator();
         }
 
         [TestCleanup]
@@ -30,22 +33,22 @@ namespace TinYard.Extensions.MediatorMap.Tests
         }     
 
         [TestMethod]
-        public void Mediator_Is_IEventDispatcher()
-        {
-            Assert.IsInstanceOfType(_mediator, typeof(IEventDispatcher));
-        }
-
-        [TestMethod]
         public void Mediator_Dispatches_Successfully()
         {
+            //Inject a dispatcher into the Test Mediator
+            Context context = new Context();
+            IEventDispatcher dispatcher = new EventDispatcher();
+            context.Mapper.Map<IEventDispatcher>().ToValue(dispatcher);
+            context.Injector.Inject(_mediator, dispatcher);
+
             bool listenerInvoked = false;
 
-            _mediator.AddListener(TestEvent.Type.Test1, () =>
+            _mediator.Dispatcher.AddListener(TestEvent.Type.Test1, () =>
             {
                 listenerInvoked = true;
             });
 
-            _mediator.Dispatch(new TestEvent(TestEvent.Type.Test1));
+            _mediator.Dispatcher.Dispatch(new TestEvent(TestEvent.Type.Test1));
 
             Assert.IsTrue(listenerInvoked);
         }
