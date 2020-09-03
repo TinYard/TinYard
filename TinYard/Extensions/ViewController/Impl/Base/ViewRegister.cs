@@ -26,7 +26,6 @@ namespace TinYard.Extensions.ViewController.Impl.Base
                 }
 
                 OnViewRegister += InjectView;
-                OnViewRegister += AddViewToInjector;
             }
         }
 
@@ -54,12 +53,6 @@ namespace TinYard.Extensions.ViewController.Impl.Base
             }
 
             return registered;
-        }
-
-        private void AddViewToInjector(IView view)
-        {
-            //So that the injector has a reference of all Views
-            _context.Injector.AddInjectable(view.GetType(), view);
         }
 
         private void InjectView(IView view)
