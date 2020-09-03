@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using TinYard.API.Interfaces;
 using TinYard.Extensions.MediatorMap.API.Base;
 using TinYard.Extensions.MediatorMap.API.Interfaces;
 using TinYard.Extensions.MediatorMap.Impl.Factories;
@@ -20,19 +21,21 @@ namespace TinYard.Extensions.MediatorMap.Impl.Mappers
 
         private List<IMediatorMappingObject> _mappingObjects = new List<IMediatorMappingObject>();
 
-        private IViewRegister _viewRegister;
+        private IContext _context;
         private IInjector _injector;
+        private IViewRegister _viewRegister;
 
-        public MediatorMapper(IInjector injector, IViewRegister viewRegister) : this()
+        public MediatorMapper(IContext context, IViewRegister viewRegister) : this(context)
         {
-            _injector = injector;
-
             _viewRegister = viewRegister;
             _viewRegister.OnViewRegistered += OnViewRegistered;
         }
 
-        public MediatorMapper()
+        public MediatorMapper(IContext context)
         {
+            _context = context;
+            _injector = _context.Injector;
+
             _mediatorFactory = new MediatorFactory();
         }
 
@@ -105,7 +108,7 @@ namespace TinYard.Extensions.MediatorMap.Impl.Mappers
                 mediator = _mediatorFactory.Build(mapping.Mediator.GetType());
             }
 
-            _injector.Inject(mediator);
+            _injector.Inject(mediator, view);
 
             mediator.Configure();
         }

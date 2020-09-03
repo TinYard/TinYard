@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Runtime.InteropServices;
 using TinYard.API.Interfaces;
 using TinYard.Extensions.MediatorMap.API.Interfaces;
 using TinYard.Extensions.MediatorMap.Impl.Mappers;
@@ -20,7 +21,7 @@ namespace TinYard.Extensions.MediatorMap.Tests
         [TestInitialize]
         public void Setup()
         {
-            _mapper = new MediatorMapper();
+            _mapper = new MediatorMapper(new Context());
         }
 
         [TestCleanup]
@@ -68,8 +69,7 @@ namespace TinYard.Extensions.MediatorMap.Tests
             context.Initialize();
 
             //Needs to be setup correctly for injection
-            _mapper = new MediatorMapper(context.Injector, context.Mapper.GetMappingValue<IViewRegister>() as IViewRegister);
-
+            _mapper = new MediatorMapper(context, context.Mapper.GetMappingValue<IViewRegister>() as IViewRegister);
 
             TestMediator testMediator = new TestMediator();
 

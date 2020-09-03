@@ -23,11 +23,11 @@ namespace TinYard.Extensions.MediatorMap
             IViewRegister viewRegister = _context.Mapper.GetMapping<IViewRegister>()?.MappedValue as IViewRegister;
             IInjector injector = _context.Mapper.GetMappingValue<IInjector>() as IInjector;
 
-            MediatorMapper mediatorMapper = new MediatorMapper();
+            MediatorMapper mediatorMapper = new MediatorMapper(_context);
             
             if (viewRegister != null && injector != null)
             {
-                mediatorMapper = new MediatorMapper(injector, viewRegister);
+                mediatorMapper = new MediatorMapper(_context, viewRegister);
             }
 
             _context.Mapper.Map<IMediatorMapper>().ToValue(mediatorMapper);
