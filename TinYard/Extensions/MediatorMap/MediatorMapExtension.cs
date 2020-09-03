@@ -20,13 +20,13 @@ namespace TinYard.Extensions.MediatorMap
 
         private void OnContextInitialized()
         {
-            //var viewRegister = _context.Mapper.GetMappingValue<IViewRegister>() as IViewRegister;
-            //var injector = _context.Mapper.GetMappingValue<IInjector>() as IInjector;
+            var viewRegister = _context.Mapper.GetMappingValue<IViewRegister>() as IViewRegister;
+            var injector = _context.Mapper.GetMappingValue<IInjector>() as IInjector;
 
-            //if (viewRegister == null || injector == null)
-            //    return;
+            if (viewRegister == null || injector == null)
+                return;
 
-            var mediatorMapper = new MediatorMapper();
+            var mediatorMapper = new MediatorMapper(injector, viewRegister);
             _context.Mapper.Map<IMediatorMapper>().ToValue(mediatorMapper);
         }
     }
