@@ -55,5 +55,13 @@ namespace TinYard.Extensions.MediatorMap.Tests
 
             Assert.AreEqual(expected, actual);
         }
+
+        [TestMethod]
+        public void Mapper_Injects_Mediator_With_View()
+        {
+            TestMediator testMediator = new TestMediator();
+
+            Assert.IsNotNull(testMediator.View);
+        }
     }
 }
