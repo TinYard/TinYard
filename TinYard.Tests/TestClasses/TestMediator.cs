@@ -9,10 +9,6 @@ namespace TinYard.Tests.TestClasses
         [Inject]
         public TestView View;
 
-        public TestMediator()
-        {
-        }
-
         public override void Configure()
         {
         }
