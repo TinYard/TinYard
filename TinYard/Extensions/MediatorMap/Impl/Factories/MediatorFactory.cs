@@ -14,9 +14,9 @@ namespace TinYard.Extensions.MediatorMap.Impl.Factories
             return Activator.CreateInstance(mediatorType) as IMediator;
         }
 
-        public IMediator Build<T>() where T : IMediator
+        public T Build<T>() where T : IMediator
         {
-            return Build(typeof(T));
+            return (T)Build(typeof(T));
         }
 
         public object Build(params object[] args)

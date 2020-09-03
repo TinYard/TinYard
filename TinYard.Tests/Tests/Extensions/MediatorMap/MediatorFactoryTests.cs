@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using TinYard.API.Interfaces;
 using TinYard.Extensions.MediatorMap.API.Interfaces;
 using TinYard.Extensions.MediatorMap.Impl.Factories;
@@ -34,6 +35,16 @@ namespace TinYard.Extensions.MediatorMap.Tests
         public void MediatorFactory_Builds_Mediator()
         {
             Assert.IsNotNull(_factory.Build<TestMediator>());
+        }
+
+        [TestMethod]
+        public void MediatorFactory_Builds_Correct_Type()
+        {
+            Type expected = typeof(TestMediator);
+
+            Type actual = _factory.Build<TestMediator>().GetType();
+
+            Assert.AreEqual(expected, actual);
         }
     }
 }
