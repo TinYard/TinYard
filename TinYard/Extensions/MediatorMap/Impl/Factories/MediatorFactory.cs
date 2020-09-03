@@ -8,7 +8,7 @@ namespace TinYard.Extensions.MediatorMap.Impl.Factories
     {
         public IMediator Build(Type mediatorType)
         {
-            if (mediatorType != typeof(IMediator) || mediatorType == null)
+            if (!typeof(IMediator).IsAssignableFrom(mediatorType) || mediatorType == null)
                 return null;
 
             return Activator.CreateInstance(mediatorType) as IMediator;
