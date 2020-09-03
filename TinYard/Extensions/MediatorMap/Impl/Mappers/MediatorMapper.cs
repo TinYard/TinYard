@@ -94,11 +94,20 @@ namespace TinYard.Extensions.MediatorMap.Impl.Mappers
         {
             IMediatorMappingObject mapping = GetMapping(view);
 
-            IMediator builtMediator = _mediatorFactory.Build(mapping.Mediator.GetType());
+            Type mediatorType = mapping.Mediator.GetType();
+            IMediator mediator;
+            if(mediatorType.IsInstanceOfType(mapping.Mediator))
+            {
+                mediator = mapping.Mediator;
+            }
+            else
+            {
+                mediator = _mediatorFactory.Build(mapping.Mediator.GetType());
+            }
 
-            _injector.Inject(builtMediator);
+            _injector.Inject(mediator);
 
-            builtMediator.Configure();
+            mediator.Configure();
         }
     }
 }

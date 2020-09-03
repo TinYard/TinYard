@@ -4,6 +4,9 @@ using TinYard.API.Interfaces;
 using TinYard.Extensions.MediatorMap.API.Interfaces;
 using TinYard.Extensions.MediatorMap.Impl.Mappers;
 using TinYard.Extensions.MediatorMap.Impl.VO;
+using TinYard.Extensions.ViewController;
+using TinYard.Extensions.ViewController.API.Interfaces;
+using TinYard.Extensions.ViewController.Impl.Base;
 using TinYard.Extensions.ViewController.Tests.MockClasses;
 using TinYard.Tests.TestClasses;
 
@@ -59,7 +62,21 @@ namespace TinYard.Extensions.MediatorMap.Tests
         [TestMethod]
         public void Mapper_Injects_Mediator_With_View()
         {
+            //Setup ViewRegister and Injector for our mapper
+            Context context = new Context();
+            context.Install(new ViewControllerExtension());
+            context.Initialize();
+
+            //Needs to be setup correctly for injection
+            _mapper = new MediatorMapper(context.Injector, context.Mapper.GetMappingValue<IViewRegister>() as IViewRegister);
+
+
             TestMediator testMediator = new TestMediator();
+
+            _mapper.Map<TestView>().ToMediator(testMediator);
+
+            //Calling this so that it internally gets registered, triggering the injection into the Mediator
+            TestView view = new TestView();
 
             Assert.IsNotNull(testMediator.View);
         }
