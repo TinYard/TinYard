@@ -9,7 +9,7 @@ namespace TinYard.Extensions.MediatorMap.API.Interfaces
     public interface IMediatorMapper
     {
         event Action<IMediatorMappingObject> OnMediatorMapping;
-        IMediatorFactory MappingFactory { get; }
+        IMediatorFactory MediatorFactory { get; }
 
         IMediatorMappingObject Map<T>() where T : IView;
         IMediatorMappingObject Map(IView view);
