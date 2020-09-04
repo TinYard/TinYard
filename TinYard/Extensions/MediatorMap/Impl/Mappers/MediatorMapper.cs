@@ -108,7 +108,9 @@ namespace TinYard.Extensions.MediatorMap.Impl.Mappers
                 mediator = _mediatorFactory.Build(mapping.Mediator.GetType());
             }
 
+            mediator.ViewComponent = view;
             _injector.Inject(mediator, view);
+            _injector.Inject(mediator);//Ensure any other injections are provided too
 
             mediator.Configure();
         }
