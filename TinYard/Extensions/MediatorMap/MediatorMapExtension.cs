@@ -1,5 +1,7 @@
 ﻿using System;
 using TinYard.API.Interfaces;
+using TinYard.Extensions.EventSystem.API.Interfaces;
+using TinYard.Extensions.EventSystem.Impl;
 using TinYard.Extensions.MediatorMap.API.Interfaces;
 using TinYard.Extensions.MediatorMap.Impl.Mappers;
 using TinYard.Extensions.ViewController.API.Interfaces;
@@ -14,6 +16,8 @@ namespace TinYard.Extensions.MediatorMap
         public void Install(IContext context)
         {
             _context = context;
+
+            _context.Mapper.Map<IEventDispatcher>().ToValue(new EventDispatcher(_context));
 
             _context.PostConfigsInstalled += OnContextInitialized;
         }
