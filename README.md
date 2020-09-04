@@ -390,13 +390,16 @@ The job of [`ViewRegister`](#ViewRegister) is to provide a place where all [`Vie
 This Extension is dependant on:
 
 * [Event System Extension](#Event-System-Extension)
+* [View Controller Extension](#View-Controller-Extension)
 
 ### About the Extension
 
 The [Mediator Map Extension](#Mediator-Map-Extension) provides:
 
-* The base impl of [`IMediator`](#IMediator), [`Mediator`](#Mediator)
-* The [`MediatorMapper`](#MediatorMapper)
+* The [`IMediator`](#IMediator) interface and base impl, [`Mediator`](#Mediator).
+* The [`IMediatorMapper`](#IMediatorMapper) interface and base impl, [`MediatorMapper`](#MediatorMapper).
+* The [`IMediatorFactory`](#IMediatorFactory) interface and its base impl, [`MediatorFactory`](#MediatorFactory).
+* [`IMediatorMappingObject`](#IMediatorMappingObject) interface and impl, [`MediatorMappingObject`](#MediatorMappingObject).
 
 #### Extension and Configurations
 
@@ -406,17 +409,68 @@ Currently, there are no configurations for the Extension.
 
 ### IMediator
 
-A [`Mediator`](#IMediator) provides the ability for each [`View`](#View) to have a [`dispatcher`](#IDispatcher) and ensure the [`View`](#View) can send event's out, and receive them too.
+A [`Mediator`](#IMediator) provides the ability for each [`View`](#View) to send and receive events from every [`IEventDispatcher`](#IEventDispatcher) linked to the [`IContext`](#IContext).
+
+All implementations of this interface should provide a default constructor, to ensure they can be built by a [`IMediatorFactory`](#IMediatorFactory).
 
 ### Mediator
 
-This is the base implementation of [`IMediator`](#IMediator). 
+This is the base, abstract implementation of [`IMediator`](#IMediator). 
+
+The [`Mediator`](#Mediator) has the main mapped [`IEventDispatcher`](#IEventDispatcher) injected, and also has reference to the [`IView`](#IView) that it is listening to. 
+
+When the related [`IView`](#IView) property, known as ViewComponent, is set the [`Mediator`](#Mediator) will use reflection to fetch the [View's](#IView) [`IEventDispatcher`](#IEventDispatcher) so that it can hook into it and add listeners when required.
+
+The base [`Mediator`](#Mediator) class provides methods to add listeners to the [`IView`](#IView), as well as to the [`IContext`](#IContext)'s mapped [`IEventDispatcher`](#IEventDispatcher).
+
+##### Configure
+When creating your own [`Mediator`](#Mediator), you will have to provide a `Configure` method implementation. This is where you should add any listeners, as you will not have a reference to your [`IView`](#IView) in the constructor but this method should be called when a [`IView`](#IView) is provided.
+
+##### Attached View
+
+When creating your own [`Mediator`](#Mediator), you'll want to have a specific [`IView`](#IView) referenced as a field. To get this [`IView`](#IView), simply attach the [`Inject`](#Inject) attribute.
+
+### IMediatorMapper
+
+An [`IMediatorMapper`](#IMediatorMapper) provides a place to `Map` a [`IMediator`](#IMediator) to a respective object. The base implementation of this is the [`MediatorMapper`](#MediatorMapper).
+
+An [`IMediatorMapper`](#IMediatorMapper) should also have an [`IMediatorFactory`](#IMediatorFactory) associated with it that can create a [`IMediator`](#IMediator) for you.
 
 ### MediatorMapper
 
-Every View that gets registered needs to have an [`IMediator`](#IMediator). The [`MediatorMapper`](#MediatorMapper) helps ensure that each [`View`](#View) has a [`Mediator`](#Mediator) attached and being its [`dispatcher`](#IDispatcher).
+Every View that gets registered needs to have an [`IMediator`](#IMediator) to be heard outside of itself. The [`MediatorMapper`](#MediatorMapper) helps ensure that each [`View`](#View) has a [`Mediator`](#Mediator) attached and being its [`dispatcher`](#IDispatcher).
 
 By 'mapping' a [`View`](#View) to a [`Mediator`](#Mediator), it guarantees that the [`Mediator`](#Mediator) will be created when the [`View`](#View) is registered - The [`MediatorMapper`](#MediatorMapper) uses a Factory to create the associated [`Mediator`](#Mediator) (but this can only happen if you 'map' one!).
+
+Once the [`Mediator`](#Mediator) is created, it will be injected into by the [`Context`](#Context)'s [`IInjector`](#IInjector), as well as the [`View`](#View) value set.
+
+### IMediatorMappingObject
+
+An [`IMediatorMappingObject`](#IMediatorMappingObject) is similar to a [`IMappingObject`](#IMappingObject), but not the same.
+
+[`IMediatorMappingObject`](#IMediatorMappingObject) is built purposefully for [`IView`](#IView)'s and [`IMediator`](#IMediator)'s.
+
+The base implementation of [`IMediatorMappingObject`](#IMediatorMappingObject) is an [`MediatorMappingObject`](#MediatorMappingObject).
+
+### MediatorMappingObject
+
+The [`MediatorMappingObject`](#MediatorMappingObject) is the base implementation of [`IMediatorMappingObject`](#IMediatorMappingObject).
+
+As there is similarity to the [`IMappingObject`](#IMappingObject) class, one is used internally to do most of the work.
+
+[`MediatorMappingObject`](#MediatorMappingObject) simply provides different names to the [`IMappingObject`](#IMappingObject) methods, fields, and properties - As well as `Type` restrictions.
+
+### IMediatorFactory
+
+The [`IMediatorFactory`](#IMediatorFactory) interface extends upon the [`IFactory`](#IFactory) interface. 
+
+[`IMediatorFactory`](#IMediatorFactory) provides building of specifically [`IMediator`](#IMediator)'s.
+
+### MediatorFactory
+
+[`MediatorFactory`](#MediatorFactory) is the base implementation of [`IMediatorFactory`](#IMediatorFactory) and is used by the [`MediatorMapper`](#MediatorMapper). 
+
+This `Factory` is simple in that it calls a default constructor expected on all [`IMediator`](#IMediator) implementations.
 
 ---
 
