@@ -56,10 +56,9 @@ namespace TinYard.Extensions.ViewController.Tests
         {
             TestView testView = new TestView();
 
-            bool actual1 = ViewRegister.Register(testView);
             bool actual2 = ViewRegister.Register(testView);
 
-            Assert.IsTrue(actual1);
+            Assert.IsTrue(ViewRegister.Instance.RegisteredViews.Contains(testView));
             Assert.IsFalse(actual2);
         }
     }

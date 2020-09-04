@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using TinYard.API.Interfaces;
 using TinYard.Framework.API.Interfaces;
@@ -13,10 +12,10 @@ namespace TinYard.Impl.Mappers
     {
         public event Action<IMappingObject> OnValueMapped;
 
-        private List<IMappingObject> _mappingObjects = new List<IMappingObject>();
+        protected List<IMappingObject> _mappingObjects = new List<IMappingObject>();
 
         public IMappingFactory MappingFactory { get { return _mappingFactory; } }
-        private IMappingFactory _mappingFactory;
+        protected IMappingFactory _mappingFactory;
 
         public ValueMapper()
         {
@@ -30,7 +29,7 @@ namespace TinYard.Impl.Mappers
             if(autoInitializeValue)
             {
                 mappingObj = mappingObj.ToValue<T>();
-                mappingObj = _mappingFactory.BuildValue(mappingObj);
+                mappingObj = _mappingFactory.Build(mappingObj);
             }
 
 

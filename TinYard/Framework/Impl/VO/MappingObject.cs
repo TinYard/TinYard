@@ -15,6 +15,11 @@ namespace TinYard.Impl.VO
 
         private IMapper _parentMapper;
 
+        public MappingObject()
+        {
+
+        }
+
         public MappingObject(IMapper parentMapper)
         {
             _parentMapper = parentMapper;
@@ -22,7 +27,12 @@ namespace TinYard.Impl.VO
 
         public IMappingObject Map<T>()
         {
-            _mappedType = typeof(T);
+            return Map(typeof(T));
+        }
+
+        public IMappingObject Map(Type type)
+        {
+            _mappedType = type;
 
             return this;
         }
@@ -32,7 +42,7 @@ namespace TinYard.Impl.VO
             _mappedValue = typeof(T);
 
             if(autoInitialize)
-                _mappedValue = _parentMapper.MappingFactory.BuildValue(this).MappedValue;
+                _mappedValue = _parentMapper?.MappingFactory.Build(this).MappedValue;
 
             if (OnValueMapped != null)
                 OnValueMapped.Invoke(this);

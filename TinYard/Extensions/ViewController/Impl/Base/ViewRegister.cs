@@ -25,13 +25,18 @@ namespace TinYard.Extensions.ViewController.Impl.Base
                     Instance = this;
                 }
 
-                OnViewRegistered += InjectView;
+                OnViewRegister += InjectView;
             }
         }
 
         #endregion
-        
-        public static event Action<IView> OnViewRegistered;
+
+        public static event Action<IView> OnViewRegister;
+        public event Action<IView> OnViewRegistered
+        {
+            add { OnViewRegister += value; }
+            remove { OnViewRegister -= value; }
+        }
 
         private IContext _context;
         private HashSet<IView> _registeredViews = new HashSet<IView>();
@@ -44,7 +49,7 @@ namespace TinYard.Extensions.ViewController.Impl.Base
 
             if(registered)
             {
-                OnViewRegistered?.Invoke(view);
+                OnViewRegister?.Invoke(view);
             }
 
             return registered;

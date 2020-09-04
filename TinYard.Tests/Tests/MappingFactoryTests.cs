@@ -51,7 +51,7 @@ namespace TinYard.Tests
         {
             Type expected = typeof(TestCreatable);
 
-            object value = _mappingFactory.BuildValue(_testingMappingObject).MappedValue;
+            object value = _mappingFactory.Build(_testingMappingObject).MappedValue;
             Assert.IsInstanceOfType(value, expected);
         }
 
@@ -62,7 +62,7 @@ namespace TinYard.Tests
 
             //Context will be mapped to IContext in Mapper that the Factory is using. 
             //TestCreatable has an IContext dependency in constructor
-            TestCreatable mappedValue = (TestCreatable)_mappingFactory.BuildValue(_testingMappingObject).MappedValue;
+            TestCreatable mappedValue = (TestCreatable)_mappingFactory.Build(_testingMappingObject).MappedValue;
             object actual = mappedValue.Context;
 
             Assert.AreSame(expected, actual);

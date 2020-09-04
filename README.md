@@ -180,15 +180,17 @@ The `ToValue<T>(bool autoInitialize = false)` function can instantiate a value o
 
 `MappingObject` provides a super-simple implementation of [`IMappingObject`](#IMappingObject) that is used by [`ValueMapper`](#ValueMapper). 
 
-`MappingObject` has a reference to the `IMapper` that creates it. This is so that it can use the Factory that the `IMapper` has to build an object when `ToValue<T>(bool)` is called on the `MappingObject`.
+`MappingObject` optionally has a reference to the `IMapper` that creates it, passed to it via the constructor. This is so that it can use the Factory that the `IMapper` has to build an object when `ToValue<T>(bool)` is called on the `MappingObject`. If no `IMapper` is provided, it will simply not be able to build the value.
 
 ### IInjector
 
-An `IInjector` should provide an easy-to-use `Inject` method.
+An `IInjector` should provide two easy-to-use `Inject` methods.
 
-This `Inject` method should provide the object, that has been provided as a parameter, values to any Field that has the [`Inject` attribute](#Inject-Attribute).
+One `Inject` method should provide an object, that has been provided as a parameter, values to any Field that has the [`Inject` attribute](#Inject-Attribute).
 
-How it does so and how it gets the correct value is up to the implementation.
+The other `Inject` method should have `target` and `value` objects passed as arguments. The `target` object should be injected into, specifically looking to provide it with the `value` object if possible.
+ 
+All [`IInjector`](#IInjector)'s should also have an internal collection of values that can be injected into any class when the first `Inject` method is called upon it. This collection should be added to / provided to the [`IInjector`](#IInjector) via the `AddInjectable` method. 
 
 #### TinYardInjector
 
@@ -196,7 +198,7 @@ How it does so and how it gets the correct value is up to the implementation.
 
 `TinYardInjector` requires an [`IContext`](#IContext) object to be passed to it when constructed.
 
-`TinYardInjector` provides the 'injected' value of a Field by finding a [`Mapping`](#IMappingObject) of the Field via the [`IContext`](#IContext) provided in construction and the [`IMapper`](#IMapper) that it has.
+`TinYardInjector` provides the 'injected' value of a Field by finding a [`Mapping`](#IMappingObject) of the Field via the [`IContext`](#IContext) provided in construction and the [`IMapper`](#IMapper) that it has, alongside its internal collection that can be added to via the `AddInjectable` method.
 
 #### Inject Attribute
 
@@ -212,6 +214,14 @@ When a value is added to an [`IMappingObject`](#IMappingObject), the [`IMapper`]
 Below is the Factories available or in-use in TinYard.
 
 Factories should be providing creation of specific objects, usually including injecting into them upon creation.
+
+#### IFactory
+
+All [`Factories`](#Factories) should be extending this interface.
+
+This is to ensure that every `Factory` is simple and usable.
+
+It is expected that most, if not all, [`Factories`](#Factories) will override the `Build` method with a more clear definition.
 
 #### MappingValueFactory
 
@@ -244,6 +254,7 @@ The [Extensions](#IExtension) bundled with TinYard include:
 * [Event System](#Event-System-Extension)
 * [Logging](#Logging-Extension)
 * [ViewControllerExtension](#View-Controller-Extension)
+* [Mediator Map Extension](#Mediator-Map-Extension)
 
 These [Extensions](#IExtension) can be installed by installing their respective [Extension](#IExtension) class into the [Context](#IContext).
 
@@ -376,11 +387,106 @@ Currently, there are no configurations for the Extension.
 
 This is to ensure that it can send [`event`](#IEvent)'s to other parts of the framework.
 
+[`View`](#View) also has a public [`IEventDispatcher`](#IEventDispatcher) property. This is so that it can `Dispatch` events to anything listening.
+
 ### ViewRegister
 
 [`ViewRegister`](#ViewRegister) is a Singleton class that provides static access through the `Instance` property.
 
 The job of [`ViewRegister`](#ViewRegister) is to provide a place where all [`View`](#View)'s are accessible - So that they can be injected into, listened to, or anything else.
+
+## Mediator Map Extension
+
+### Dependencies
+
+This Extension is dependant on:
+
+* [Event System Extension](#Event-System-Extension)
+* [View Controller Extension](#View-Controller-Extension)
+
+### About the Extension
+
+This extension aims to provide a place to `Map` [`Mediator`](#IMediator)'s and [`IView`](#IView)'s together via the [`MediatorMapper`](#MediatorMapper).
+
+This `Mapper` will build the correct [`IMediator`](#IMediator) when the associated [`IView`](#IView) type has been registered to the [`ViewRegister`](#ViewRegister), and attach them together so that a [`IView`](#IView) can dispatch to everything else connected to the [`IContext`](#IContext).
+
+The [Mediator Map Extension](#Mediator-Map-Extension) provides:
+
+* The [`IMediator`](#IMediator) interface and base impl, [`Mediator`](#Mediator).
+* The [`IMediatorMapper`](#IMediatorMapper) interface and base impl, [`MediatorMapper`](#MediatorMapper).
+* The [`IMediatorFactory`](#IMediatorFactory) interface and its base impl, [`MediatorFactory`](#MediatorFactory).
+* [`IMediatorMappingObject`](#IMediatorMappingObject) interface and impl, [`MediatorMappingObject`](#MediatorMappingObject).
+
+#### Extension and Configurations
+
+To install the [Mediator Map Extension](#Mediator-Map-Extension), install the [`MediatorMapExtension`](#Mediator-Map-Extension) class into your [Context](#IContext).
+
+Currently, there are no configurations for the Extension.
+
+### IMediator
+
+A [`Mediator`](#IMediator) provides the ability for each [`View`](#View) to send and receive events from every [`IEventDispatcher`](#IEventDispatcher) linked to the [`IContext`](#IContext).
+
+All implementations of this interface should provide a default constructor, to ensure they can be built by a [`IMediatorFactory`](#IMediatorFactory).
+
+### Mediator
+
+This is the base, abstract implementation of [`IMediator`](#IMediator). 
+
+The [`Mediator`](#Mediator) has the main mapped [`IEventDispatcher`](#IEventDispatcher) injected, and also has reference to the [`IView`](#IView) that it is listening to. 
+
+When the related [`IView`](#IView) property, known as ViewComponent, is set the [`Mediator`](#Mediator) will use reflection to fetch the [View's](#IView) [`IEventDispatcher`](#IEventDispatcher) so that it can hook into it and add listeners when required.
+
+The base [`Mediator`](#Mediator) class provides methods to add listeners to the [`IView`](#IView), as well as to the [`IContext`](#IContext)'s mapped [`IEventDispatcher`](#IEventDispatcher).
+
+##### Configure
+When creating your own [`Mediator`](#Mediator), you will have to provide a `Configure` method implementation. This is where you should add any listeners, as you will not have a reference to your [`IView`](#IView) in the constructor but this method should be called when a [`IView`](#IView) is provided.
+
+##### Attached View
+
+When creating your own [`Mediator`](#Mediator), you'll want to have a specific [`IView`](#IView) referenced as a field. To get this [`IView`](#IView), simply attach the [`Inject`](#Inject) attribute.
+
+### IMediatorMapper
+
+An [`IMediatorMapper`](#IMediatorMapper) provides a place to `Map` a [`IMediator`](#IMediator) to a respective object. The base implementation of this is the [`MediatorMapper`](#MediatorMapper).
+
+An [`IMediatorMapper`](#IMediatorMapper) should also have an [`IMediatorFactory`](#IMediatorFactory) associated with it that can create a [`IMediator`](#IMediator) for you.
+
+### MediatorMapper
+
+Every View that gets registered needs to have an [`IMediator`](#IMediator) to be heard outside of itself. The [`MediatorMapper`](#MediatorMapper) helps ensure that each [`View`](#View) has a [`Mediator`](#Mediator) attached and being its [`dispatcher`](#IDispatcher).
+
+By 'mapping' a [`View`](#View) to a [`Mediator`](#Mediator), it guarantees that the [`Mediator`](#Mediator) will be created when the [`View`](#View) is registered - The [`MediatorMapper`](#MediatorMapper) uses a Factory to create the associated [`Mediator`](#Mediator) (but this can only happen if you 'map' one!).
+
+Once the [`Mediator`](#Mediator) is created, it will be injected into by the [`Context`](#Context)'s [`IInjector`](#IInjector), as well as the [`View`](#View) value set.
+
+### IMediatorMappingObject
+
+An [`IMediatorMappingObject`](#IMediatorMappingObject) is similar to a [`IMappingObject`](#IMappingObject), but not the same.
+
+[`IMediatorMappingObject`](#IMediatorMappingObject) is built purposefully for [`IView`](#IView)'s and [`IMediator`](#IMediator)'s.
+
+The base implementation of [`IMediatorMappingObject`](#IMediatorMappingObject) is an [`MediatorMappingObject`](#MediatorMappingObject).
+
+### MediatorMappingObject
+
+The [`MediatorMappingObject`](#MediatorMappingObject) is the base implementation of [`IMediatorMappingObject`](#IMediatorMappingObject).
+
+As there is similarity to the [`IMappingObject`](#IMappingObject) class, one is used internally to do most of the work.
+
+[`MediatorMappingObject`](#MediatorMappingObject) simply provides different names to the [`IMappingObject`](#IMappingObject) methods, fields, and properties - As well as `Type` restrictions.
+
+### IMediatorFactory
+
+The [`IMediatorFactory`](#IMediatorFactory) interface extends upon the [`IFactory`](#IFactory) interface. 
+
+[`IMediatorFactory`](#IMediatorFactory) provides building of specifically [`IMediator`](#IMediator)'s.
+
+### MediatorFactory
+
+[`MediatorFactory`](#MediatorFactory) is the base implementation of [`IMediatorFactory`](#IMediatorFactory) and is used by the [`MediatorMapper`](#MediatorMapper). 
+
+This `Factory` is simple in that it calls a default constructor expected on all [`IMediator`](#IMediator) implementations.
 
 ---
 
