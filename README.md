@@ -406,6 +406,10 @@ This Extension is dependant on:
 
 ### About the Extension
 
+This extension aims to provide a place to `Map` [`Mediator`](#IMediator)'s and [`IView`](#IView)'s together via the [`MediatorMapper`](#MediatorMapper).
+
+This `Mapper` will build the correct [`IMediator`](#IMediator) when the associated [`IView`](#IView) type has been registered to the [`ViewRegister`](#ViewRegister), and attach them together so that a [`IView`](#IView) can dispatch to everything else connected to the [`IContext`](#IContext).
+
 The [Mediator Map Extension](#Mediator-Map-Extension) provides:
 
 * The [`IMediator`](#IMediator) interface and base impl, [`Mediator`](#Mediator).
