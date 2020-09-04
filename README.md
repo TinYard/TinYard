@@ -213,6 +213,14 @@ Below is the Factories available or in-use in TinYard.
 
 Factories should be providing creation of specific objects, usually including injecting into them upon creation.
 
+#### IFactory
+
+All [`Factories`](#Factories) should be extending this interface.
+
+This is to ensure that every `Factory` is simple and usable.
+
+It is expected that most, if not all, [`Factories`](#Factories) will override the `Build` method with a more clear definition.
+
 #### MappingValueFactory
 
 The [`MappingValueFactory`](#MappingValueFactory) is used by the [`ValueMapper`](#ValueMapper), and aids in creation of [`IMappingObject`](#IMappingObject)'s values.
@@ -376,6 +384,8 @@ Currently, there are no configurations for the Extension.
 [`View`](#View) does no more than register itself to the [`ViewRegister`](#ViewRegister) upon creation.
 
 This is to ensure that it can send [`event`](#IEvent)'s to other parts of the framework.
+
+[`View`](#View) also has a public [`IEventDispatcher`](#IEventDispatcher) property. This is so that it can `Dispatch` events to anything listening.
 
 ### ViewRegister
 
