@@ -23,4 +23,4 @@ jobs:
       run: dotnet test -t
       
     - name: Test
-      run: dotnet test --no-restore
+      run: dotnet test --no-restore --verbosity normal
