@@ -17,8 +17,6 @@ namespace TinYard.Extensions.MediatorMap
         {
             _context = context;
 
-            _context.Mapper.Map<IEventDispatcher>().ToValue(new EventDispatcher(_context));
-
             _context.PostConfigsInstalled += OnContextInitialized;
         }
 
