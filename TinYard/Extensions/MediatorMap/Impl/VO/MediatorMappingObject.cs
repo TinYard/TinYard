@@ -1,5 +1,6 @@
 ﻿using System;
 using TinYard.Extensions.MediatorMap.API.Interfaces;
+using TinYard.Extensions.MediatorMap.API.VO;
 using TinYard.Extensions.ViewController.API.Interfaces;
 using TinYard.Impl.VO;
 

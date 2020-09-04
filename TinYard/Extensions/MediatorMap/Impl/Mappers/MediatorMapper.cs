@@ -2,13 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using TinYard.API.Interfaces;
-using TinYard.Extensions.MediatorMap.API.Base;
 using TinYard.Extensions.MediatorMap.API.Interfaces;
+using TinYard.Extensions.MediatorMap.API.VO;
 using TinYard.Extensions.MediatorMap.Impl.Factories;
 using TinYard.Extensions.MediatorMap.Impl.VO;
 using TinYard.Extensions.ViewController.API.Interfaces;
 using TinYard.Framework.API.Interfaces;
-using TinYard.Framework.Impl.Attributes;
 
 namespace TinYard.Extensions.MediatorMap.Impl.Mappers
 {

@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using TinYard.Extensions.MediatorMap.Impl.VO;
+using TinYard.Extensions.MediatorMap.API.VO;
 using TinYard.Extensions.ViewController.API.Interfaces;
-using TinYard.Framework.API.Interfaces;
 
 namespace TinYard.Extensions.MediatorMap.API.Interfaces
 {

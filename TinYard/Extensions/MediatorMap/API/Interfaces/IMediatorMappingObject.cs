@@ -2,7 +2,7 @@
 using TinYard.Extensions.MediatorMap.API.Interfaces;
 using TinYard.Extensions.ViewController.API.Interfaces;
 
-namespace TinYard.Extensions.MediatorMap.Impl.VO
+namespace TinYard.Extensions.MediatorMap.API.VO
 {
     public interface IMediatorMappingObject
     {
