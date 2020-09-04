@@ -7,9 +7,12 @@ namespace TinYard.Impl.VO
         Type MappedType { get; }
         object MappedValue { get; }
 
-        IMappingObject Map<T>();
+        event Action<IMappingObject> OnValueMapped;
 
-        IMappingObject ToValue<T>();
+        IMappingObject Map<T>();
+        IMappingObject Map(Type type);
+
+        IMappingObject ToValue<T>(bool autoInitialize = false);
         IMappingObject ToValue(object value);
     }
 }

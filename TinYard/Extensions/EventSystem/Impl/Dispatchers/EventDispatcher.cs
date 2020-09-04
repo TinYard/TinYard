@@ -8,31 +8,31 @@ namespace TinYard.Extensions.EventSystem.Impl
 {
     public class EventDispatcher : IEventDispatcher
     {
-        private Dictionary<Enum, Listener> _listeners = new Dictionary<Enum, Listener>();
+        protected Dictionary<Enum, Listener> _listeners = new Dictionary<Enum, Listener>();
 
-        private IContext _context;
+        protected IContext _context;
 
         public EventDispatcher(IContext context = null)
         {
             _context = context;
         }
 
-        public bool HasListener(Enum type)
+        public virtual bool HasListener(Enum type)
         {
             return _listeners.ContainsKey(type);
         }
 
-        public void AddListener<T>(Enum type, Action<T> listenerCallback)
+        public virtual void AddListener<T>(Enum type, Action<T> listenerCallback)
         {
             AddListener(type, listenerCallback as Delegate);
         }
 
-        public void AddListener(Enum type, Action listenerCallback)
+        public virtual void AddListener(Enum type, Action listenerCallback)
         {
             AddListener(type, listenerCallback as Delegate);
         }
 
-        public void AddListener(Enum type, Delegate listenerCallback)
+        public virtual void AddListener(Enum type, Delegate listenerCallback)
         {
             if (HasListener(type))
             {
@@ -44,17 +44,17 @@ namespace TinYard.Extensions.EventSystem.Impl
             }
         }
 
-        public void RemoveListener(Enum type, Action listenerCallback)
+        public virtual void RemoveListener(Enum type, Action listenerCallback)
         {
             RemoveListener(type, listenerCallback as Delegate);
         }
 
-        public void RemoveListener<T>(Enum type, Action<T> listenerCallback)
+        public virtual void RemoveListener<T>(Enum type, Action<T> listenerCallback)
         {
             RemoveListener(type, listenerCallback as Delegate);
         }
 
-        public void RemoveListener(Enum type, Delegate listenerCallback)
+        public virtual void RemoveListener(Enum type, Delegate listenerCallback)
         {
             if(HasListener(type))
             {
@@ -66,17 +66,17 @@ namespace TinYard.Extensions.EventSystem.Impl
             }
         }
 
-        public void RemoveAllListeners(Enum type)
+        public virtual void RemoveAllListeners(Enum type)
         {
             _listeners.Remove(type);
         }
 
-        public void RemoveAllListeners()
+        public virtual void RemoveAllListeners()
         {
             _listeners.Clear();
         }
 
-        public void Dispatch(IEvent evt)
+        public virtual void Dispatch(IEvent evt)
         {
             if(HasListener(evt.type))
             {

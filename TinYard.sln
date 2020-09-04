@@ -5,7 +5,10 @@ VisualStudioVersion = 16.0.29326.143
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TinYard", "TinYard\TinYard.csproj", "{A948207C-A662-4131-AB32-64357AB15454}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TinYard Tests", "TinYard Tests\TinYard Tests.csproj", "{6CB77B96-0923-4CE8-B99C-72A18FE07F58}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TinYard.Tests", "TinYard.Tests\TinYard.Tests.csproj", "{B7AE89B5-9A41-4FEB-BDB4-6F6A160490C3}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A948207C-A662-4131-AB32-64357AB15454} = {A948207C-A662-4131-AB32-64357AB15454}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,8 +20,9 @@ Global
 		{A948207C-A662-4131-AB32-64357AB15454}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A948207C-A662-4131-AB32-64357AB15454}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A948207C-A662-4131-AB32-64357AB15454}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6CB77B96-0923-4CE8-B99C-72A18FE07F58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6CB77B96-0923-4CE8-B99C-72A18FE07F58}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B7AE89B5-9A41-4FEB-BDB4-6F6A160490C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B7AE89B5-9A41-4FEB-BDB4-6F6A160490C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B7AE89B5-9A41-4FEB-BDB4-6F6A160490C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -49,5 +49,37 @@ namespace TinYard.Tests
             //Should be the value we mapped (5)
             Assert.AreEqual(injectable.Value, valueToInject);
         }
+
+        [TestMethod]
+        public void Injector_Injects_From_Extra_Injectables()
+        {
+            int valueToInject = 5;
+
+            _injector.AddInjectable(valueToInject.GetType(), valueToInject);
+
+            TestInjectable injectable = new TestInjectable();
+            int preInjectValue = injectable.Value;
+
+            Assert.AreNotEqual(preInjectValue, valueToInject);
+
+            _injector.Inject(injectable);
+
+            Assert.AreEqual(valueToInject, injectable.Value);
+        }
+
+        [TestMethod]
+        public void Injector_Directly_Injects_Value()
+        {
+            int expected = 5;
+
+            TestInjectable injectable = new TestInjectable();
+            int preInjectValue = injectable.Value;
+
+            Assert.AreNotEqual(preInjectValue, expected);
+
+            _injector.Inject(injectable, expected);
+
+            Assert.AreEqual(expected, injectable.Value);
+        }
     }
 }

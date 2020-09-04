@@ -5,6 +5,7 @@ using TinYard.Framework.API.Interfaces;
 using TinYard.Framework.Impl.Injectors;
 using TinYard.Impl.Exceptions;
 using TinYard.Impl.Mappers;
+using TinYard.Impl.VO;
 
 namespace TinYard
 {
@@ -47,8 +48,16 @@ namespace TinYard
             _extensionsToInstall = new List<IExtension>();
             _configsToInstall = new List<IConfig>();
 
+            //Create our mapper, then add a hook so that we can inject into anything that gets mapped
             _mapper = new ValueMapper();
+            _mapper.OnValueMapped += InjectValueMapper;
+
             _injector = new TinYardInjector(this);
+
+            //Ensure the context, mapper and injector are mapped for injection needs
+            _mapper.Map<IContext>().ToValue(this);
+            _mapper.Map<IMapper>().ToValue(_mapper);
+            _mapper.Map<IInjector>().ToValue(_injector);
         }
 
         public IContext Install(IExtension extension)
@@ -124,6 +133,8 @@ namespace TinYard
             _bundlesInstalled = new HashSet<IBundle>();
             foreach(IBundle bundle in _bundlesToInstall)
             {
+                //This simply passes the Context into the Bundle so that it can call
+                //context.install(extension).Configure(config);
                 bundle.Install(this);
                 bool added = _bundlesInstalled.Add(bundle);
 
@@ -160,6 +171,9 @@ namespace TinYard
 
             foreach(IConfig currentConfig in _configsToInstall)
             {
+                //Inject into the config before we call configure, ensuring it has anything needed
+                _injector.Inject(currentConfig);
+
                 currentConfig.Configure();
 
                 bool added = _configsInstalled.Add(currentConfig);
@@ -172,6 +186,11 @@ namespace TinYard
             }
 
             _configsToInstall.Clear();
+        }
+
+        private void InjectValueMapper(IMappingObject mappingObject)
+        {
+            _injector.Inject(mappingObject.MappedValue);
         }
     }
 }

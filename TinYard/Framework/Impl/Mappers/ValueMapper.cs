@@ -2,19 +2,42 @@
 using System.Collections.Generic;
 using System.Linq;
 using TinYard.API.Interfaces;
+using TinYard.Framework.API.Interfaces;
+using TinYard.Framework.Impl.Factories;
 using TinYard.Impl.VO;
 
 namespace TinYard.Impl.Mappers
 {
     public class ValueMapper : IMapper
     {
-        private List<IMappingObject> _mappingObjects = new List<IMappingObject>();
+        public event Action<IMappingObject> OnValueMapped;
 
-        public IMappingObject Map<T>()
+        protected List<IMappingObject> _mappingObjects = new List<IMappingObject>();
+
+        public IMappingFactory MappingFactory { get { return _mappingFactory; } }
+        protected IMappingFactory _mappingFactory;
+
+        public ValueMapper()
         {
-            var mappingObj = new MappingObject();
+            _mappingFactory = new MappingValueFactory(this);
+        }
+
+        public IMappingObject Map<T>(bool autoInitializeValue = false)
+        {
+            var mappingObj = new MappingObject(this).Map<T>();
+
+            if(autoInitializeValue)
+            {
+                mappingObj = mappingObj.ToValue<T>();
+                mappingObj = _mappingFactory.Build(mappingObj);
+            }
+
+
+            if (OnValueMapped != null)
+                mappingObj.OnValueMapped += ( mapping ) => OnValueMapped.Invoke(mapping);
+
             _mappingObjects.Add(mappingObj);
-            return mappingObj.Map<T>();
+            return mappingObj;
         }
 
         public IMappingObject GetMapping<T>()
@@ -26,9 +49,14 @@ namespace TinYard.Impl.Mappers
 
         public IMappingObject GetMapping(Type type)
         {
-            var value = _mappingObjects.First(mapping => mapping.MappedType.IsAssignableFrom(type));
+            var value = _mappingObjects.FirstOrDefault(mapping => mapping.MappedType.IsAssignableFrom(type));
 
             return value;
+        }
+
+        public IReadOnlyList<IMappingObject> GetAllMappings()
+        {
+            return _mappingObjects.AsReadOnly();
         }
 
         public object GetMappingValue<T>()
@@ -38,7 +66,7 @@ namespace TinYard.Impl.Mappers
 
         public object GetMappingValue(Type type)
         {
-            return GetMapping(type).MappedValue;
+            return GetMapping(type)?.MappedValue;
         }
     }
 }
