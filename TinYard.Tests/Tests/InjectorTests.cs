@@ -66,5 +66,20 @@ namespace TinYard.Tests
 
             Assert.AreEqual(valueToInject, injectable.Value);
         }
+
+        [TestMethod]
+        public void Injector_Directly_Injects_Value()
+        {
+            int expected = 5;
+
+            TestInjectable injectable = new TestInjectable();
+            int preInjectValue = injectable.Value;
+
+            Assert.AreNotEqual(preInjectValue, expected);
+
+            _injector.Inject(injectable, expected);
+
+            Assert.AreEqual(expected, injectable.Value);
+        }
     }
 }
