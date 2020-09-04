@@ -180,15 +180,17 @@ The `ToValue<T>(bool autoInitialize = false)` function can instantiate a value o
 
 `MappingObject` provides a super-simple implementation of [`IMappingObject`](#IMappingObject) that is used by [`ValueMapper`](#ValueMapper). 
 
-`MappingObject` has a reference to the `IMapper` that creates it. This is so that it can use the Factory that the `IMapper` has to build an object when `ToValue<T>(bool)` is called on the `MappingObject`.
+`MappingObject` optionally has a reference to the `IMapper` that creates it, passed to it via the constructor. This is so that it can use the Factory that the `IMapper` has to build an object when `ToValue<T>(bool)` is called on the `MappingObject`. If no `IMapper` is provided, it will simply not be able to build the value.
 
 ### IInjector
 
-An `IInjector` should provide an easy-to-use `Inject` method.
+An `IInjector` should provide two easy-to-use `Inject` methods.
 
-This `Inject` method should provide the object, that has been provided as a parameter, values to any Field that has the [`Inject` attribute](#Inject-Attribute).
+One `Inject` method should provide an object, that has been provided as a parameter, values to any Field that has the [`Inject` attribute](#Inject-Attribute).
 
-How it does so and how it gets the correct value is up to the implementation.
+The other `Inject` method should have `target` and `value` objects passed as arguments. The `target` object should be injected into, specifically looking to provide it with the `value` object if possible.
+ 
+All [`IInjector`](#IInjector)'s should also have an internal collection of values that can be injected into any class when the first `Inject` method is called upon it. This collection should be added to / provided to the [`IInjector`](#IInjector) via the `AddInjectable` method. 
 
 #### TinYardInjector
 
@@ -196,7 +198,7 @@ How it does so and how it gets the correct value is up to the implementation.
 
 `TinYardInjector` requires an [`IContext`](#IContext) object to be passed to it when constructed.
 
-`TinYardInjector` provides the 'injected' value of a Field by finding a [`Mapping`](#IMappingObject) of the Field via the [`IContext`](#IContext) provided in construction and the [`IMapper`](#IMapper) that it has.
+`TinYardInjector` provides the 'injected' value of a Field by finding a [`Mapping`](#IMappingObject) of the Field via the [`IContext`](#IContext) provided in construction and the [`IMapper`](#IMapper) that it has, alongside its internal collection that can be added to via the `AddInjectable` method.
 
 #### Inject Attribute
 
