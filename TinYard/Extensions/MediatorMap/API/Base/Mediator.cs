@@ -33,6 +33,51 @@ namespace TinYard.Extensions.MediatorMap.API.Base
         /// </summary>
         public abstract void Configure();
 
+        protected virtual void Dispatch(IEvent evt)
+        {
+            Dispatcher.Dispatch(evt);
+        }
+
+        protected virtual void AddContextListener(Enum type, Action listener)
+        {
+            Dispatcher.AddListener(type, listener);
+        }
+
+        protected virtual void AddContextListener<T>(Enum type, Action<T> listener)
+        {
+            Dispatcher.AddListener<T>(type, listener);
+        }
+
+        protected virtual void AddViewListener(Enum type, Action listener)
+        {
+            _viewDispatcher.AddListener(type, listener);
+        }
+
+        protected virtual void AddViewListener<T>(Enum type, Action<T> listener)
+        {
+            _viewDispatcher.AddListener<T>(type, listener);
+        }
+
+        protected virtual void RemoveContextListener(Enum type, Action listener)
+        {
+            Dispatcher.RemoveListener(type, listener);
+        }
+
+        protected virtual void RemoveContextListener<T>(Enum type, Action<T> listener)
+        {
+            Dispatcher.RemoveListener<T>(type, listener);
+        }
+
+        protected virtual void RemoveViewListener(Enum type, Action listener)
+        {
+            Dispatcher.RemoveListener(type, listener);
+        }
+
+        protected virtual void RemoveViewListener<T>(Enum type, Action<T> listener)
+        {
+            Dispatcher.RemoveListener<T>(type, listener);
+        }
+
         private IEventDispatcher GetDispatcher(object dispatcherContainer)
         {
             if (dispatcherContainer == null)
