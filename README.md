@@ -255,6 +255,7 @@ The [Extensions](#IExtension) bundled with TinYard include:
 * [Logging](#Logging-Extension)
 * [ViewControllerExtension](#View-Controller-Extension)
 * [Mediator Map Extension](#Mediator-Map-Extension)
+* [Command System Extension](#Command-System-Extension)
 
 These [Extensions](#IExtension) can be installed by installing their respective [Extension](#IExtension) class into the [Context](#IContext).
 
