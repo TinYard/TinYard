@@ -22,7 +22,7 @@ namespace TinYard.Extensions.CommandSystem.Impl.CommandMaps
             _eventDispatcher = eventDispatcher;
             _injector = injector;
 
-            _commandFactory = new CommandFactory();
+            _commandFactory = new CommandFactory(injector);
         }
 
         public ICommandMapping Map<T>() where T : IEvent
@@ -58,9 +58,8 @@ namespace TinYard.Extensions.CommandSystem.Impl.CommandMaps
             if (mapping.Command == null)
                 return;
 
-            ICommand builtCommand = _commandFactory.Build(mapping.Command);
-            _injector.Inject(builtCommand, evt);//Inject the specific invoking event
-            _injector.Inject(builtCommand);//Inject anything else requested
+            //Should be injected into in the Factory
+            ICommand builtCommand = _commandFactory.Build(mapping.Command, evt);
             builtCommand.Execute();//Let the command do its thing
         }
     }
