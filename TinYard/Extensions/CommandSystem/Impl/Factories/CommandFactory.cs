@@ -1,23 +1,41 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using TinYard.Extensions.CommandSystem.API.Interfaces;
+using TinYard.Extensions.EventSystem.API.Interfaces;
+using TinYard.Framework.API.Interfaces;
 
 namespace TinYard.Extensions.CommandSystem.Impl.Factories
 {
     public class CommandFactory : ICommandFactory
     {
-        public ICommand Build<T>() where T : ICommand
+        private IInjector _injector;
+
+        public CommandFactory(IInjector injector)
         {
-            return Build(typeof(T));
+            _injector = injector;
         }
 
-        public ICommand Build(Type commandType)
+        public T Build<T>(IEvent evtToInject = null) where T : ICommand
+        {
+            return (T)Build(typeof(T), evtToInject);
+        }
+
+        public ICommand Build(Type commandType, IEvent evtToInject = null)
         {
             if (!typeof(ICommand).IsAssignableFrom(commandType))
                 return null;
 
-            return Activator.CreateInstance(commandType) as ICommand;
+            var command = Activator.CreateInstance(commandType) as ICommand;
+
+            if (command == null)
+                return null;
+
+            //Perform injections
+            _injector.Inject(command);
+            if (evtToInject != null)
+                _injector.Inject(command, evtToInject);
+
+            return command;
         }
 
         public object Build(params object[] args)
