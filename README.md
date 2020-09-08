@@ -488,6 +488,60 @@ The [`IMediatorFactory`](#IMediatorFactory) interface extends upon the [`IFactor
 
 This `Factory` is simple in that it calls a default constructor expected on all [`IMediator`](#IMediator) implementations.
 
+## Command System Extension
+
+### Dependencies
+
+The [Command System Extension](#Command-System-Extension) is depdendant on:
+
+* [Event System Extension](#Event-System-Extension)
+
+### About the Extension
+
+The [Command System Extension](#Command-System-Extension) brings [Commands](#ICommand) to TinYard. 
+
+The idea of this is that you can execute one-of code when specific [`event`](#IEvent)'s are dispatched. The most common use-case for this is to fetch data from a `model` and then dispatch that data to somewhere else - Often the same place that the original [`event`](#IEvent) was dispatched from.
+
+A [`Command`](#ICommand) is created when needed by the [`EventCommandMap`](#EventCommandMap), and then left to be garbage collected after it has been 'executed' - They are intended for singular uses, and if you require something that is not then perhaps look at using a `service` or `model`.
+
+#### Extension and Configurations
+
+To install the [Command System Extension](#Command-System-Extension), install the [`CommandSystemExtension`](#Command-System-Extension) class into your [Context](#IContext).
+
+No configurations are available for the [Command System Extension](#Command-System-Extension).
+
+### ICommand
+
+The [`ICommand`](#ICommand) interface is the base of any `Command`. All this interface requires is a method called `Execute()` in your `Command`. 
+
+The `Execute` method is invoked once the `Command` has been created and all injections completed.
+
+### ICommandMap
+
+An [`ICommandMap`](#ICommandMap) simply has to have two `Map` functions that return an [`ICommandMapping`](#ICommandMapping). 
+
+### Event Command Map
+
+The [`Event Command Map`](#Event-Command-Map) is the base impl of [`ICommandMap`](#ICommandMap) that is used link [`event`](#IEvent)'s to [`command`](#ICommand)'s. It ensures that when that specific [`event`](#IEvent) and `type` are dispatched on the mapped [`IEventDispatcher`](#IEventDispatcher), the appropriate [`command`](#ICommand) is created, injected into, and invoked (via the `Execute` method).
+
+Internally it does this by having reference to the mapped [`IEventDispatcher`](#IEventDispatcher) and adding a listener to that, with a callback function that builds and invokes the correct [`command`](#ICommand).
+
+### ICommandFactory
+
+[`ICommandFactory`](#ICommandFactory) is an [`IFactory`](#IFactory) that is made for specifically creating [`ICommand`](#ICommand)'s.
+
+### Command Factory
+
+[`CommandFactory`](#Command-Factory) is the base impl of [`ICommandFactory`](#ICommandFactory) that creates [`ICommand`](#ICommand)'s and injects into them. It also injects the [`event`](#IEvent) that is causing its creation, if it can.
+
+### ICommandMapping
+
+[`ICommandMapping`](#ICommandMapping) is a spin on [`IMappingObject`](#IMappingObject), but changed for keeping a correlation between [`event`](#IEvent)'s and [`command`](#ICommand)'s.
+
+### CommandMapping
+
+[`CommandMapping`](#CommandMapping) is the base impl of [`ICommandMapping`](#ICommandMapping) and is also a spin on [`MappingObject`](#MappingObject).
+
 ---
 
 ## [Contribution](CONTRIBUTING.md)
