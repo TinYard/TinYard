@@ -27,9 +27,17 @@ The framework provides a few tools to help you do this, such as;
 
 * [Dependency Injection](#IInjector)
 * [Event System](#Event-System-Extension)
+* [Command System](#Command-System-Extension)
 * [Value Mapping](#ValueMapper)
 
+It's also super easy to add your own [extensions](#TinYard-Extensions), you just have to `install` them when you want to use them!
+
+
 ## Using TinYard
+
+Take a look at the internals below, or have a look at the example projects!
+
+* [Example To Do List](https://github.com/TinYard/TinYard-Basic-Example)
 
 ## TinYard Internals
 
@@ -247,6 +255,8 @@ An `IBundle` should be a small class that is used to 'bundle up' specific [`ICon
 An `IBundle` is simply to help ensure your [`IContext`](#IContext) installations are kept tidier and easier to maintain.
 
 ## TinYard Extensions
+
+Extensions in TinYard are as easy as plug-and-play. You can use the ones that come with the framework, as well as build your own.
 
 TinYard comes with some [Extensions](#IExtension) available to use, packaged within the framework.
 
