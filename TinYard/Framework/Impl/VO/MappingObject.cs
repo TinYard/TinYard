@@ -6,10 +6,10 @@ namespace TinYard.Impl.VO
     public class MappingObject : IMappingObject
     {
         public Type MappedType { get { return _mappedType; } }
-        private Type _mappedType;
+        private Type _mappedType = null;
      
         public object MappedValue { get { return _mappedValue; } }
-        private object _mappedValue;
+        private object _mappedValue = null;
 
         public event Action<IMappingObject> OnValueMapped;
 

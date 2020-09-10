@@ -18,11 +18,20 @@ namespace TinYard.Extensions.MediatorMap.Tests
     public class MediatorMapperTests
     {
         private MediatorMapper _mapper;
+        private IContext _context;
+        private IViewRegister _viewRegister;
 
         [TestInitialize]
         public void Setup()
         {
-            _mapper = new MediatorMapper(new Context());
+            _context = new Context();
+            _context.Install(new ViewControllerExtension());
+            _context.Mapper.Map<IEventDispatcher>().ToValue(new EventSystem.Impl.EventDispatcher(_context));
+            _context.Initialize();
+            
+            _viewRegister = _context.Mapper.GetMappingValue<IViewRegister>() as IViewRegister;
+            
+            _mapper = new MediatorMapper(_context, _viewRegister);
         }
 
         [TestCleanup]
@@ -62,27 +71,11 @@ namespace TinYard.Extensions.MediatorMap.Tests
         }
 
         [TestMethod]
-        public void Mapper_Injects_Mediator_Correctly()
+        public void MediatorMapper_Maps_Two_Generics_Without_Throwing()
         {
-            //Setup ViewRegister and Injector for our mapper
-            Context context = new Context();
-            context.Install(new ViewControllerExtension());
-            context.Mapper.Map<IEventDispatcher>().ToValue(new EventSystem.Impl.EventDispatcher(context));
-            context.Initialize();
+            _mapper.Map<TestView>().ToMediator<TestMediator>();
 
-            //Needs to be setup correctly for injection
-            _mapper = new MediatorMapper(context, context.Mapper.GetMappingValue<IViewRegister>() as IViewRegister);
-
-            TestMediator testMediator = new TestMediator();
-
-            _mapper.Map<TestView>().ToMediator(testMediator);
-
-            //Calling this so that it internally gets registered, triggering the injection into the Mediator
             TestView view = new TestView();
-
-            Assert.IsNotNull(testMediator.View);
-            Assert.IsNotNull(testMediator.Dispatcher);
-            Assert.IsNotNull(testMediator.ViewComponent);
         }
     }
 }
