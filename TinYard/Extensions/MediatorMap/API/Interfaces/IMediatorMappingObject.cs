@@ -9,6 +9,7 @@ namespace TinYard.Extensions.MediatorMap.API.VO
         IView View { get; }
         Type ViewType { get; }
         IMediator Mediator { get; }
+        Type MediatorType { get; }
 
         event Action<IMediatorMappingObject> OnMediatorMapped;
 

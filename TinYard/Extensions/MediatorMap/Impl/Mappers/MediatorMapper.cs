@@ -95,17 +95,19 @@ namespace TinYard.Extensions.MediatorMap.Impl.Mappers
         private void OnViewRegistered(IView view)
         {
             IMediatorMappingObject mapping = GetMapping(view);
+            if (mapping == null)
+                return;
 
-            Type mediatorType = mapping.Mediator.GetType();
-            IMediator mediator;
-            if(mediatorType.IsInstanceOfType(mapping.Mediator))
-            {
-                mediator = mapping.Mediator;
-            }
+            Type mediatorType;
+
+            if (mapping.Mediator != null)
+                mediatorType = mapping.Mediator.GetType();
+            else if (mapping.MediatorType != null)
+                mediatorType = mapping.MediatorType;
             else
-            {
-                mediator = _mediatorFactory.Build(mapping.Mediator.GetType());
-            }
+                return;
+
+            IMediator mediator = _mediatorFactory.Build(mediatorType);
 
             mediator.ViewComponent = view;
             _injector.Inject(mediator, view);

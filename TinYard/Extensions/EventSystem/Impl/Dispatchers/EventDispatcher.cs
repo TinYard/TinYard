@@ -24,6 +24,7 @@ namespace TinYard.Extensions.EventSystem.Impl
 
         public virtual void AddListener<T>(Enum type, Action<T> listenerCallback)
         {
+            //TODO : Make use of T
             AddListener(type, listenerCallback as Delegate);
         }
 
