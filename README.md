@@ -10,6 +10,7 @@
 * [Using TinYard](#Using-TinYard)
 * [TinYard Internals](#TinYard-Internals)
 * [TinYard Extensions](#TinYard-Extensions)
+* [TinYard Bundles](#TinYard-Bundles)
 * [How to contribute](#Contribution)
     * [Monetary Contribution](#Funding.)
     * [Coffee Contribution](#Buy-me-a-coffee)
@@ -544,6 +545,20 @@ Internally it does this by having reference to the mapped [`IEventDispatcher`](#
 [`CommandMapping`](#CommandMapping) is the base impl of [`ICommandMapping`](#ICommandMapping) and is also a spin on [`MappingObject`](#MappingObject).
 
 ---
+
+## TinYard Bundles
+
+The currently included bundles in TinYard are:
+
+* [`MVCBundle`](#MVCBundle)
+
+### MVC Bundle
+
+The MVC Bundle contains:
+ * Event System Extension
+ * View Controller Extension
+ * Mediator Map Extension
+ * Command System Extension
 
 ## [Contribution](CONTRIBUTING.md)
 
