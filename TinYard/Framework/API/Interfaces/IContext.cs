@@ -10,6 +10,7 @@ namespace TinYard.API.Interfaces
         event Action PostExtensionsInstalled;
         event Action PreConfigsInstalled;
         event Action PostConfigsInstalled;
+        event Action PostInitialize;
 
         //Properties
         IMapper Mapper { get; }
