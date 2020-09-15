@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TinYard.Extensions.EventSystem.API.Interfaces;
 using TinYard.Extensions.EventSystem.Impl;
+using TinYard.Extensions.EventSystem.Impl.Exceptions;
 using TinYard.Extensions.EventSystem.Tests.MockClasses;
 
 namespace TinYard.Extensions.EventSystem.Tests
@@ -97,6 +98,15 @@ namespace TinYard.Extensions.EventSystem.Tests
 
             Assert.IsTrue(callbackInvoked);
             Assert.IsFalse(incorrectCallbackInvoked);
+        }
+
+        [TestMethod]
+        public void EventDispatcher_Throws_On_Invalid_Event_Type()
+        {
+            Assert.ThrowsException<EventTypeException>(() =>
+           {
+               _eventDispatcher.AddListener(null, () => { });
+           });
         }
     }
 }
