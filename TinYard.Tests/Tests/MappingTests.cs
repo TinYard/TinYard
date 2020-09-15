@@ -41,11 +41,11 @@ namespace TinYard.Tests
         }
 
         [TestMethod]
-        public void Mapper_Auto_Creates_Value_Correctly()
+        public void Mapper_Builds_Value_Correctly()
         {
             Type expected = typeof(TestCreatable);
 
-            TestCreatable actual = (TestCreatable)_mapper.Map<TestCreatable>(true).MappedValue;
+            TestCreatable actual = (TestCreatable)_mapper.Map<TestCreatable>().BuildValue<TestCreatable>().MappedValue;
 
             Assert.IsNotNull(actual);
             Assert.IsInstanceOfType(actual, expected);
