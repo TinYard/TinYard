@@ -37,12 +37,9 @@ namespace TinYard.Impl.VO
             return this;
         }
 
-        public IMappingObject ToValue<T>(bool autoInitialize = false)
+        public IMappingObject ToValue(object value)
         {
-            _mappedValue = typeof(T);
-
-            if(autoInitialize)
-                _mappedValue = _parentMapper?.MappingFactory.Build(this).MappedValue;
+            _mappedValue = value;
 
             if (OnValueMapped != null)
                 OnValueMapped.Invoke(this);
@@ -50,9 +47,11 @@ namespace TinYard.Impl.VO
             return this;
         }
 
-        public IMappingObject ToValue(object value)
+        public IMappingObject BuildValue<T>()
         {
-            _mappedValue = value;
+            _mappedValue = typeof(T);
+            
+            _mappedValue = _parentMapper?.MappingFactory.Build(this).MappedValue;
 
             if (OnValueMapped != null)
                 OnValueMapped.Invoke(this);
