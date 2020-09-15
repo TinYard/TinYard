@@ -22,16 +22,9 @@ namespace TinYard.Impl.Mappers
             _mappingFactory = new MappingValueFactory(this);
         }
 
-        public IMappingObject Map<T>(bool autoInitializeValue = false)
+        public IMappingObject Map<T>()
         {
             var mappingObj = new MappingObject(this).Map<T>();
-
-            if(autoInitializeValue)
-            {
-                mappingObj = mappingObj.ToValue<T>();
-                mappingObj = _mappingFactory.Build(mappingObj);
-            }
-
 
             if (OnValueMapped != null)
                 mappingObj.OnValueMapped += ( mapping ) => OnValueMapped.Invoke(mapping);

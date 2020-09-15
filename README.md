@@ -180,17 +180,17 @@ So, looking at the example used in [Value Mapper](#ValueMapper):
 
 When `Map<T>()` is called on the `ValueMapper`, it returns the `IMappingObject`.
 
-Internally, `Map<T>()` calls `Map<T>()` on a newly created `IMappingObject` and then returns this newly created object. This `Map<T>()` method on IMappingObject should set the `MappedType` to the type of `T`.
+Internally, `Map<T>()` on the `ValueMapper` calls `Map<T>()` on a newly created `IMappingObject` and then returns this newly created object. This `Map<T>()` method on IMappingObject should set the `MappedType` to the type of `T`.
 
-`MappedValue` is then the value that is set with the `ToValue<T>(bool autoInitialize = false)` or `ToValue(object value)` methods.
+`MappedValue` is then the value that is set with the `ToValue(object value)` method.
 
-The `ToValue<T>(bool autoInitialize = false)` function can instantiate a value of type `T` for you if you pass true to the method. It should be doing this via a Factory it has access to.
+The `BuildValue<T>()` function can create the `MappedValue` object of type `T` for you. It should be doing this via a Factory it has access to.
 
 #### MappingObject
 
 `MappingObject` provides a super-simple implementation of [`IMappingObject`](#IMappingObject) that is used by [`ValueMapper`](#ValueMapper). 
 
-`MappingObject` optionally has a reference to the `IMapper` that creates it, passed to it via the constructor. This is so that it can use the Factory that the `IMapper` has to build an object when `ToValue<T>(bool)` is called on the `MappingObject`. If no `IMapper` is provided, it will simply not be able to build the value.
+`MappingObject` optionally has a reference to the `IMapper` that creates it, passed to it via the constructor. This is so that it can use the Factory that the `IMapper` has to build an object when `BuildValue<T>` is called on the `MappingObject`. If no `IMapper` is provided, it will simply not be able to build the value.
 
 ### IInjector
 
