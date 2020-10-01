@@ -68,11 +68,15 @@ The [`IContext`](#IContext) should also have an [IInjector](#IInjector) that it 
 
 Every [`IContext`](#IContext) should provide `event` callbacks to certain parts of its [`Initialize`](#Initalize) method. This will allow you to have more control over your [`Context`](#IContext).
 
+Every [`IContext`](#IContext) should also provide `Detain` and `Release` methods that should primarily be used to avoid an object being Garbage Collected pre-maturely when its scope has been left. This has a super niche use case so make sure it's required when using, otherwise you may cause unneccessary memory buildup.
+
 #### Context
 
 The standard TinYard implementation of [`IContext`](#IContext).
 
 [`Context`](#Context) provides basic implementations of the [`IContext`](#IContext) interface, and does nothing too fancy.
+
+The [`Context`](#Context) class implements `Detain` and `Release` methods by simply tracking them in a `HashSet<object>` that keeps them in memory.
 
 ##### Construction
 
