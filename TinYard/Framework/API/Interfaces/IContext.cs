@@ -24,5 +24,8 @@ namespace TinYard.API.Interfaces
 
         bool ContainsExtension(IExtension extension);
         bool ContainsExtension<T>() where T : IExtension;
+
+        void Detain(object objToDetain);
+        void Release(object objToRelease);
     }
 }

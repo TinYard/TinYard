@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using TinYard.API.Interfaces;
 using TinYard.Framework.API.Interfaces;
 using TinYard.Impl.Exceptions;
@@ -161,6 +162,58 @@ namespace TinYard.Tests
 
             Assert.IsTrue(preInjectValue != postInjectValue);
             Assert.AreEqual(testValue, postInjectValue);
+        }
+
+        [TestMethod]
+        public void Context_Detains_Successfully()
+        {
+            _context.Initialize();
+
+            WeakReference reference = new WeakReference(null);
+
+            //Run action to create reference
+            new Action(() =>
+           {
+               object detainableObj = new object();
+
+               reference = new WeakReference(detainableObj, true);
+
+               _context.Detain(detainableObj);
+           })();
+
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+
+            Assert.IsNotNull(reference.Target);
+        }
+
+        [TestMethod]
+        public void Context_Releases_Successfully()
+        {
+            _context.Initialize();
+
+            WeakReference reference = new WeakReference(null);
+
+            new Action(() =>
+            {
+                object detainableObj = new object();
+
+                reference = new WeakReference(detainableObj, true);
+
+                _context.Detain(detainableObj);
+
+            })();
+
+            new Action(() =>
+           {
+                Assert.IsNotNull(reference.Target);
+               _context.Release(reference.Target);
+           })();
+
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+
+            Assert.IsNull(reference.Target);
         }
     }
 }
