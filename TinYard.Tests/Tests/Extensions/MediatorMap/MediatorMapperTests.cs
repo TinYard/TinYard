@@ -105,5 +105,29 @@ namespace TinYard.Extensions.MediatorMap.Tests
 
             Assert.IsTrue(listenerInvoked);
         }
+
+        [TestMethod]
+        public void Mapper_Creates_Unique_Mediator_Per_View()
+        {
+            var dispatcher = _context.Mapper.GetMappingValue<IEventDispatcher>() as IEventDispatcher;
+
+            _mapper.Map<TestView>().ToMediator<TestMediator>();
+
+            int numberOfEventInvokes = 0;
+            dispatcher.AddListener<TestEvent>(TestEvent.Type.Test2, (evt) =>
+            {
+                numberOfEventInvokes++;
+            });
+
+
+            int numberOfViews = 2;
+            for(int i = 0; i < numberOfViews; i++)
+            {
+                //Mediator has a listener on view for test 1 event, and dispatches test 2 event when heard
+                new TestView().Dispatcher.Dispatch(new TestEvent(TestEvent.Type.Test1));
+            }
+
+            Assert.IsTrue(numberOfEventInvokes == numberOfViews);
+        }
     }
 }
