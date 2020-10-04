@@ -1,14 +1,14 @@
-﻿using TinYard.Framework.API.Interfaces;
+﻿using TinYard.Framework.API.Base;
 using TinYard.Framework.Impl.Attributes;
 
 namespace TinYard.Tests.TestClasses
 {
-    public class TestGuard : IGuard
+    public class TestGuard : Guard
     {
         [Inject]
         public object Injectable;
 
-        public bool Satisfies()
+        public override bool Satisfies()
         {
             return Injectable != null;
         }
