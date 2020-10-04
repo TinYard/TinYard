@@ -13,8 +13,9 @@ namespace TinYard.Extensions.MediatorMap.API.VO
 
         event Action<IMediatorMappingObject> OnMediatorMapped;
 
-        IMediatorMappingObject Map<T>() where T : IView;
+        IMediatorMappingObject Map<T>();
         IMediatorMappingObject Map(IView view);
+        IMediatorMappingObject Map(object view);
 
         IMediatorMappingObject ToMediator<T>() where T : IMediator;
         IMediatorMappingObject ToMediator(IMediator mediator);

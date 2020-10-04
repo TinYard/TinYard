@@ -16,7 +16,7 @@ namespace TinYard.Extensions.MediatorMap.Impl.VO
 
         public event Action<IMediatorMappingObject> OnMediatorMapped;
 
-        public IMediatorMappingObject Map<T>() where T : IView
+        public IMediatorMappingObject Map<T>()
         {
             ViewType = typeof(T);
 
@@ -26,6 +26,24 @@ namespace TinYard.Extensions.MediatorMap.Impl.VO
         public IMediatorMappingObject Map(IView view)
         {
             View = view;
+            ViewType = view.GetType();
+
+            return this;
+        }
+
+        public IMediatorMappingObject Map(object view)
+        {
+            Type viewType = view.GetType();
+
+            if(viewType.IsInterface)
+            {
+                if (!typeof(IView).IsAssignableFrom(viewType))
+                    return this;
+            }
+            else if (!typeof(IView).IsAssignableFrom(viewType))
+                return this;
+
+            View = view as IView;
             ViewType = view.GetType();
 
             return this;

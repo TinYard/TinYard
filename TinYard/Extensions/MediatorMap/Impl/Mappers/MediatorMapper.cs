@@ -38,7 +38,7 @@ namespace TinYard.Extensions.MediatorMap.Impl.Mappers
             _mediatorFactory = new MediatorFactory();
         }
 
-        public IMediatorMappingObject Map<T>() where T : IView
+        public IMediatorMappingObject Map<T>()
         {
             var mappingObj = new MediatorMappingObject().Map<T>();
 
@@ -62,19 +62,43 @@ namespace TinYard.Extensions.MediatorMap.Impl.Mappers
             return mappingObj;
         }
 
-        public IMediatorMappingObject GetMapping<T>() where T : IView
+        public IMediatorMappingObject Map(object view)
+        {
+            var mappingObj = new MediatorMappingObject().Map(view);
+
+            if (OnMediatorMapping != null)
+                mappingObj.OnMediatorMapped += (mapping) => OnMediatorMapping.Invoke(mapping);
+
+            _mappingObjects.Add(mappingObj);
+
+            return mappingObj;
+        }
+
+        public IMediatorMappingObject GetMapping<T>()
         {
             return GetMapping(typeof(T));
         }
 
         public IMediatorMappingObject GetMapping(IView view)
         {
-            return _mappingObjects.FirstOrDefault(mapping => mapping.View == view || mapping.ViewType == view.GetType());
+            Type viewType = view.GetType();
+
+            return _mappingObjects.FirstOrDefault(
+                mapping => 
+                mapping.View == view || 
+                mapping.ViewType == viewType ||
+                mapping.ViewType.IsAssignableFrom(viewType)
+            );
         }
 
         private IMediatorMappingObject GetMapping(Type viewType)
         {
-            return _mappingObjects.FirstOrDefault(mapping => mapping.View?.GetType() == viewType || mapping.ViewType == viewType);
+            return _mappingObjects.FirstOrDefault(
+                mapping => 
+                mapping.View?.GetType() == viewType ||
+                mapping.ViewType == viewType ||
+                mapping.ViewType.IsAssignableFrom(viewType)
+                );
         }
 
         public IReadOnlyList<IMediatorMappingObject> GetAllMappings()
@@ -82,7 +106,7 @@ namespace TinYard.Extensions.MediatorMap.Impl.Mappers
             return _mappingObjects.AsReadOnly();
         }
 
-        public object GetMappingMediator<T>() where T : IView
+        public object GetMappingMediator<T>()
         {
             return GetMapping<T>()?.Mediator;
         }
