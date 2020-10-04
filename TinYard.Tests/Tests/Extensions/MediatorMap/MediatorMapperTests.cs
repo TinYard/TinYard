@@ -1,14 +1,11 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Runtime.InteropServices;
 using TinYard.API.Interfaces;
 using TinYard.Extensions.EventSystem.API.Interfaces;
+using TinYard.Extensions.EventSystem.Tests.MockClasses;
 using TinYard.Extensions.MediatorMap.API.Interfaces;
 using TinYard.Extensions.MediatorMap.Impl.Mappers;
-using TinYard.Extensions.MediatorMap.Impl.VO;
 using TinYard.Extensions.ViewController;
 using TinYard.Extensions.ViewController.API.Interfaces;
-using TinYard.Extensions.ViewController.Impl.Base;
 using TinYard.Extensions.ViewController.Tests.MockClasses;
 using TinYard.Tests.TestClasses;
 
@@ -76,6 +73,37 @@ namespace TinYard.Extensions.MediatorMap.Tests
             _mapper.Map<TestView>().ToMediator<TestMediator>();
 
             TestView view = new TestView();
+        }
+
+        [TestMethod]
+        public void Mediator_Can_Map_To_Interface()
+        {
+            _mapper.Map<ITestView>().ToMediator<InterfaceTestMediator>();
+
+            //ViewRegister would potentially cause this next line to throw if the mapping wasn't correct
+            var testView = new TestView();
+        }
+
+        [TestMethod]
+        public void Mediator_Works_On_Interface_Mapping()
+        {
+            _mapper.Map<ITestView>().ToMediator<InterfaceTestMediator>();
+
+            var testView = new TestView();
+
+            var dispatcher = _context.Mapper.GetMappingValue<IEventDispatcher>() as IEventDispatcher;
+
+            bool listenerInvoked = false;
+            dispatcher.AddListener<TestEvent>(TestEvent.Type.Test2, (evt) =>
+            {
+                listenerInvoked = true;
+            });
+
+
+            //Mediator has a listener on view for test 1, and dispatches test 2 when heard
+            testView.Dispatcher.Dispatch(new TestEvent(TestEvent.Type.Test1));
+
+            Assert.IsTrue(listenerInvoked);
         }
     }
 }
