@@ -45,8 +45,6 @@ namespace TinYard.Tests
 
             _commandMap.Map<TestEvent>(TestEvent.Type.Test1).ToCommand<TestCommand>().WithGuard<TestGuard>();
 
-            Assert.IsFalse(TestCommand.ExecuteCalled);
-
             _eventDispatcher.Dispatch(new TestEvent(TestEvent.Type.Test1));
 
             Assert.IsFalse(TestCommand.ExecuteCalled);
