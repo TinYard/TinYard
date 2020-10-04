@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using TinYard.Extensions.CommandSystem.API.Interfaces;
 using TinYard.Extensions.EventSystem.API.Interfaces;
+using TinYard.Framework.API.Base;
 using TinYard.Framework.API.Interfaces;
 
 namespace TinYard.Extensions.CommandSystem.Impl.VO
@@ -14,9 +15,9 @@ namespace TinYard.Extensions.CommandSystem.Impl.VO
 
         public Type Command { get; private set; }
 
-        public IReadOnlyList<IGuard> Guards { get { return _guards.AsReadOnly(); } }
+        public IReadOnlyList<Type> GuardTypes { get { return _guardTypes.AsReadOnly(); } }
 
-        private List<IGuard> _guards = new List<IGuard>();
+        private List<Type> _guardTypes = new List<Type>();
 
         public ICommandMapping Map<T>(Enum type = null) where T : IEvent
         {
@@ -33,9 +34,11 @@ namespace TinYard.Extensions.CommandSystem.Impl.VO
             return this;
         }
 
-        public ICommandMapping WithGuard<T>() where T : IGuard
+        public ICommandMapping WithGuard<T>() where T : Guard
         {
-            throw new NotImplementedException();
+            _guardTypes.Add(typeof(T));
+
+            return this;
         }
     }
 }
