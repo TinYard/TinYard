@@ -43,11 +43,25 @@ namespace TinYard.Tests
         {
             SetupCommandExtension();
 
-            _commandMap.Map<TestEvent>(TestEvent.Type.Test1).ToCommand<TestCommand>().WithGuard<TestGuard>();
+            _commandMap.Map<TestEvent>(TestEvent.Type.Test1).ToCommand<TestGuardedCommand>().WithGuard<TestGuard>();
 
             _eventDispatcher.Dispatch(new TestEvent(TestEvent.Type.Test1));
 
-            Assert.IsFalse(TestCommand.ExecuteCalled);
+            Assert.IsFalse(TestGuardedCommand.ExecuteCalled);
+        }
+
+        [TestMethod]
+        public void Command_Runs_When_Guard_Satisfied()
+        {
+            SetupCommandExtension();
+
+            _commandMap.Map<TestEvent>(TestEvent.Type.Test1).ToCommand<TestGuardedCommand>().WithGuard<TestGuard>();
+
+            _context.Mapper.Map<object>().ToValue(new object());
+
+            _eventDispatcher.Dispatch(new TestEvent(TestEvent.Type.Test1));
+
+            Assert.IsTrue(TestGuardedCommand.ExecuteCalled);
         }
 
         private void SetupCommandExtension()
