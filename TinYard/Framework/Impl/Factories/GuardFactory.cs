@@ -14,7 +14,7 @@ namespace TinYard.Framework.Impl.Factories
             foreach(object argument in args)
             {
                 if (argument is Guard)
-                    builtGuards.Add(Build(argument.GetType());
+                    builtGuards.Add(Build(argument.GetType()));
             }
 
             return builtGuards;
@@ -28,7 +28,7 @@ namespace TinYard.Framework.Impl.Factories
         public IGuard Build(Type guardType)
         {
             //Must be type of Guard
-            if (!guardType.IsAssignableFrom(typeof(Guard)))
+            if (!typeof(Guard).IsAssignableFrom(guardType))
                 return null;
 
             return Activator.CreateInstance(guardType) as IGuard;
