@@ -54,6 +54,10 @@ Take a look at the internals below, or have a look at the example projects!
     * [Inject Attribute](#Inject-Attribute)
 * [Factories](#Factories)
     * [MappingValueFactory](#MappingValueFactory)
+    * [GuardFactory](#GuardFactory)
+* [Guards](#Guards)
+    * [IGuard](#IGuard)
+    * [Guard](#Guard)
 * [IExtension](#IExtension)
 * [IConfig](#IConfig)
 * [IBundle](#IBundle)
@@ -242,6 +246,34 @@ It is expected that most, if not all, [`Factories`](#Factories) will override th
 The [`MappingValueFactory`](#MappingValueFactory) is used by the [`ValueMapper`](#ValueMapper), and aids in creation of [`IMappingObject`](#IMappingObject)'s values.
 
 As all [`IMappingObject`](#IMappingObject)'s have a method that might need a value object to be created, the [`ValueMapper`](#ValueMapper) provides the [`MappingObject`](#MappingObject) with its factory to create that value from.
+
+#### GuardFactory
+
+The [`GuardFactory`](#GuardFactory) is created and mapped in the [`Context`](#Context) to `IGuardFactory`. The [`GuardFactory`](#GuardFactory) is a super simple [`Factory`](#IFactory) that creates [`IGuard`](#IGuard)'s via the `Activator` class - Expecting the [`IGuard`](#IGuard) to have a parameterless constructor and be derived from the [`Guard`](#Guard) base class.
+
+The `Build` function of the [`GuardFactory`](#GuardFactory) requires being passed the `Type` of the [`Guard`](#Guard) you want to build. For example, if you wanted the `Factory` to build a `ExampleGuard` class (that inherits from [`Guard`](#Guard)), you would call `Build` like so: `Build(typeof(ExampleGuard))`.
+
+### Guards
+
+Currently, [`Guards`](#Guards) can only be applied to [`Command`](#ICommand)'s, via a related [`ICommandMapping`](#ICommandMapping).
+
+[`Guards`](#Guards) require that before the item they're 'guarding' is allowed to be used/executed, they have to be 'Satisfied'. Whilst this can't be enforced, it is expected and done anywhere that accepts [`Guards`](#Guards) in the main distribution of [`TinYard`](#TinYard).
+
+All [`Guards`](#Guards) that you want to create and use should inherit the [`Guard`](#Guard) base class - They should also have a parameterless constructor that doesn't perform anything. All checks should be done in the `Satisfy` method.
+
+[`Guards`](#Guards) can and should be injected into before calling the 'Satisfied' method.
+
+#### IGuard
+
+[`IGuard`](#IGuard) is the interface that all [`Guards`](#Guards) implement.
+
+This interface is always required as it provides the `Satisfy` method that is the most important part of [`Guards`](#Guards).
+
+#### Guard
+
+[`Guard`](#Guard) is an abstract base class to all [`Guards`](#Guards). The reason we have this base class is so that we have a guaranteed parameterless constructor for the [`GuardFactory`](#GuardFactory) class to invoke.
+
+This is the class that should be inherited for all [`Guards`](#Guards) that you want to use and create.
 
 ### IExtension
 
@@ -543,6 +575,13 @@ The [`Event Command Map`](#Event-Command-Map) is the base impl of [`ICommandMap`
 
 Internally it does this by having reference to the mapped [`IEventDispatcher`](#IEventDispatcher) and adding a listener to that, with a callback function that builds and invokes the correct [`command`](#ICommand).
 
+Before any [`Command`](#ICommand) is executed, the [`ICommandMapping`](#ICommandMapping) is checked for [`Guards`](#Guards). If any [`Guards`](#Guards) are related to the mapping:   
+   * They are built via the [`GuardFactory`](#GuardFactory).
+   * They are then injected into.
+   * The `Satisfies` method is then called.
+       * If the method returns false, the [`ICommand`](#ICommand) is not executed and we return early.
+       * If the method returns true, we move onto the next [`Guard`](#IGuard) until all have been satisifed. If all are satisfied, we execute the [`ICommand`](#ICommand).
+
 ### ICommandFactory
 
 [`ICommandFactory`](#ICommandFactory) is an [`IFactory`](#IFactory) that is made for specifically creating [`ICommand`](#ICommand)'s.
@@ -554,6 +593,8 @@ Internally it does this by having reference to the mapped [`IEventDispatcher`](#
 ### ICommandMapping
 
 [`ICommandMapping`](#ICommandMapping) is a spin on [`IMappingObject`](#IMappingObject), but changed for keeping a correlation between [`event`](#IEvent)'s and [`command`](#ICommand)'s.
+
+[`ICommandMapping`](#ICommandMapping)'s can have [`Guards`](#Guards) that should be 'satisfied' before executing the [`ICommand`](#ICommand).
 
 ### CommandMapping
 

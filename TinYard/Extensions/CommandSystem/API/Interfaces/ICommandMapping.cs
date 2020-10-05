@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using TinYard.Extensions.EventSystem.API.Interfaces;
+using TinYard.Framework.API.Base;
+using TinYard.Framework.API.Interfaces;
 
 namespace TinYard.Extensions.CommandSystem.API.Interfaces
 {
@@ -10,8 +13,12 @@ namespace TinYard.Extensions.CommandSystem.API.Interfaces
 
         Type Command { get; }
 
+        IReadOnlyList<Type> GuardTypes { get; }
+
         ICommandMapping Map<T>(Enum type = null) where T : IEvent;
 
         ICommandMapping ToCommand<T>() where T : ICommand;
+
+        ICommandMapping WithGuard<T>() where T : Guard;
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using TinYard.API.Interfaces;
 using TinYard.Framework.API.Interfaces;
+using TinYard.Framework.Impl.Factories;
 using TinYard.Framework.Impl.Injectors;
 using TinYard.Impl.Exceptions;
 using TinYard.Impl.Mappers;
@@ -62,6 +63,9 @@ namespace TinYard
             _mapper.Map<IContext>().ToValue(this);
             _mapper.Map<IMapper>().ToValue(_mapper);
             _mapper.Map<IInjector>().ToValue(_injector);
+
+
+            _mapper.Map<IGuardFactory>().ToValue(new GuardFactory());
         }
 
         public IContext Install(IExtension extension)
