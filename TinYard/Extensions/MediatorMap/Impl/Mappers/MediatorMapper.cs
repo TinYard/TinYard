@@ -74,16 +74,16 @@ namespace TinYard.Extensions.MediatorMap.Impl.Mappers
             return mappingObj;
         }
 
-        public IMediatorMappingObject GetMapping<T>()
+        public IEnumerable<IMediatorMappingObject> GetMappings<T>()
         {
-            return GetMapping(typeof(T));
+            return GetMappings(typeof(T));
         }
 
-        public IMediatorMappingObject GetMapping(IView view)
+        public IEnumerable<IMediatorMappingObject> GetMappings(IView view)
         {
             Type viewType = view.GetType();
 
-            return _mappingObjects.FirstOrDefault(
+            return _mappingObjects.FindAll(
                 mapping => 
                 mapping.View == view || 
                 mapping.ViewType == viewType ||
@@ -91,9 +91,9 @@ namespace TinYard.Extensions.MediatorMap.Impl.Mappers
             );
         }
 
-        private IMediatorMappingObject GetMapping(Type viewType)
+        private IEnumerable<IMediatorMappingObject> GetMappings(Type viewType)
         {
-            return _mappingObjects.FirstOrDefault(
+            return _mappingObjects.FindAll(
                 mapping => 
                 mapping.View?.GetType() == viewType ||
                 mapping.ViewType == viewType ||
@@ -106,38 +106,32 @@ namespace TinYard.Extensions.MediatorMap.Impl.Mappers
             return _mappingObjects.AsReadOnly();
         }
 
-        public object GetMappingMediator<T>()
-        {
-            return GetMapping<T>()?.Mediator;
-        }
-
-        public object GetMappingMediator(IView view)
-        {
-            return GetMapping(view)?.Mediator;
-        }
-
         private void OnViewRegistered(IView view)
         {
-            IMediatorMappingObject mapping = GetMapping(view);
-            if (mapping == null)
+            IEnumerable<IMediatorMappingObject> mappings = GetMappings(view);
+            if (mappings == null || mappings.Count() <= 0)
                 return;
+            
+            foreach(IMediatorMappingObject mapping in mappings)
+            {
+                Type mediatorType;
+                
+                if (mapping.Mediator != null)
+                    mediatorType = mapping.Mediator.GetType();
+                else if (mapping.MediatorType != null)
+                    mediatorType = mapping.MediatorType;
+                else
+                    return;
+                
+                IMediator mediator = _mediatorFactory.Build(mediatorType);
+                
+                mediator.ViewComponent = view;
+                _injector.Inject(mediator, view);
+                _injector.Inject(mediator);//Ensure any other injections are provided too
+                
+                mediator.Configure();
+            }
 
-            Type mediatorType;
-
-            if (mapping.Mediator != null)
-                mediatorType = mapping.Mediator.GetType();
-            else if (mapping.MediatorType != null)
-                mediatorType = mapping.MediatorType;
-            else
-                return;
-
-            IMediator mediator = _mediatorFactory.Build(mediatorType);
-
-            mediator.ViewComponent = view;
-            _injector.Inject(mediator, view);
-            _injector.Inject(mediator);//Ensure any other injections are provided too
-
-            mediator.Configure();
         }
     }
 }
