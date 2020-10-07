@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Linq;
 using TinYard.API.Interfaces;
 using TinYard.Extensions.EventSystem.API.Interfaces;
 using TinYard.Extensions.EventSystem.Tests.MockClasses;
@@ -50,7 +51,7 @@ namespace TinYard.Extensions.MediatorMap.Tests
             var expected = new TestMediator();
             _mapper.Map(view).ToMediator(expected);
 
-            var actual = _mapper.GetMapping<TestView>().Mediator;
+            var actual = _mapper.GetMappings<TestView>().ToArray()[0].Mediator;
 
             Assert.AreEqual(expected, actual);
         }
@@ -62,7 +63,7 @@ namespace TinYard.Extensions.MediatorMap.Tests
 
             var expected = _mapper.Map<TestView>().ToMediator(mediator);
 
-            var actual = _mapper.GetMapping<TestView>();
+            var actual = _mapper.GetMappings<TestView>().ToArray()[0];
 
             Assert.AreEqual(expected, actual);
         }
