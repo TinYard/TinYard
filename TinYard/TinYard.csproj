@@ -9,9 +9,9 @@
     <RepositoryUrl>https://github.com/TinYard/TinYard</RepositoryUrl>
     <RepositoryType>Github</RepositoryType>
     <PackageTags>C#, dll, framework, DI, Events, Dependency Injection, IoC, Commands</PackageTags>
-    <AssemblyVersion>1.2.0.0</AssemblyVersion>
-    <FileVersion>1.2.0.0</FileVersion>
-    <Version>1.2.0</Version>
+    <AssemblyVersion>1.1.1.0</AssemblyVersion>
+    <FileVersion>1.1.1.0</FileVersion>
+    <Version>1.1.1</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
