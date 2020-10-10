@@ -39,11 +39,16 @@ namespace TinYard.Framework.Impl.Injectors
                 Type fieldType = field.FieldType;
                 if(_mapper.GetMapping(fieldType) != null)
                 {
+                    var valueToInject = _mapper.GetMappingValue(fieldType);
+                    Inject(valueToInject);
+
                     field.SetValue(classToInjectInto, _mapper.GetMappingValue(fieldType));
                 }
                 else if(_extraInjectables.ContainsKey(fieldType))
                 {
-                    field.SetValue(classToInjectInto, _extraInjectables[fieldType]);
+                    var valueToInject = _extraInjectables[fieldType];
+                    Inject(valueToInject);
+                    field.SetValue(classToInjectInto, valueToInject);
                 }
             }
         }
