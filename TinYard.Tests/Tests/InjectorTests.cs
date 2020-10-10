@@ -81,5 +81,24 @@ namespace TinYard.Tests
 
             Assert.AreEqual(expected, injectable.Value);
         }
+
+        [TestMethod]
+        public void Injector_Injects_Into_Injectable_Values()
+        {
+            TestInjectable injectable = new TestInjectable();
+            _context.Mapper.Map<TestInjectable>().ToValue(injectable);
+
+            //Making sure it's not been set somehow by accident
+            Assert.AreEqual(default(int), injectable.Value);
+
+            //Map an int so that when we call `Inject` on a class that needs a `TestInjectable`, 
+            //it can Inject this int into the `TestInjectable` value
+            int expected = 5;
+            _context.Mapper.Map<int>().ToValue(expected);
+
+            _injector.Inject(new TestSecondaryInjectable());
+
+            Assert.AreEqual(expected, injectable.Value);
+        }
     }
 }
