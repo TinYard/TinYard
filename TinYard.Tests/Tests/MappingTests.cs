@@ -36,7 +36,7 @@ namespace TinYard.Tests
 
             _mapper.Map<string>().ToValue(expected);
 
-            string actual = (string)_mapper.GetMappingValue<string>();
+            string actual = _mapper.GetMappingValue<string>();
             Assert.AreEqual(expected, actual);
         }
 
