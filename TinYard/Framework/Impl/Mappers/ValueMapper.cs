@@ -52,9 +52,10 @@ namespace TinYard.Impl.Mappers
             return _mappingObjects.AsReadOnly();
         }
 
-        public object GetMappingValue<T>()
+        public T GetMappingValue<T>()
         {
-            return GetMapping<T>().MappedValue;
+            var mappedValue = GetMapping<T>()?.MappedValue;
+            return mappedValue is T ? (T)mappedValue : default(T);
         }
 
         public object GetMappingValue(Type type)

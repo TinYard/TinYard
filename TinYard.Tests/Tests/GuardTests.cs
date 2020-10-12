@@ -70,8 +70,8 @@ namespace TinYard.Tests
             _context.Install(new CommandSystemExtension());
             _context.Initialize();
 
-            _commandMap = _context.Mapper.GetMappingValue<ICommandMap>() as ICommandMap;
-            _eventDispatcher = _context.Mapper.GetMappingValue<IEventDispatcher>() as IEventDispatcher;
+            _commandMap = _context.Mapper.GetMappingValue<ICommandMap>();
+            _eventDispatcher = _context.Mapper.GetMappingValue<IEventDispatcher>();
         }
     }
 }
