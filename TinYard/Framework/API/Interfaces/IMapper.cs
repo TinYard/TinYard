@@ -16,7 +16,7 @@ namespace TinYard.API.Interfaces
         IMappingObject GetMapping(Type type);
         IReadOnlyList<IMappingObject> GetAllMappings();
 
-        object GetMappingValue<T>();
+        T GetMappingValue<T>();
         object GetMappingValue(Type type);
     }
 }

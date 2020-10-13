@@ -18,7 +18,7 @@ namespace TinYard.Extensions.CommandSystem
 
         private void PostConfigsInstalled()
         {
-            var eventDispatcher = _context.Mapper.GetMappingValue<IEventDispatcher>() as IEventDispatcher;
+            var eventDispatcher = _context.Mapper.GetMappingValue<IEventDispatcher>();
             var injector = _context.Injector;
 
             if(eventDispatcher == null || injector == null)
