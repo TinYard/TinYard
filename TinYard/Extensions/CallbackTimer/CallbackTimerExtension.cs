@@ -1,5 +1,6 @@
-﻿using System;
-using TinYard.API.Interfaces;
+﻿using TinYard.API.Interfaces;
+using TinYard.Extensions.CallbackTimer.API.Services;
+using TinYard.Extensions.CallbackTimer.Impl.Services;
 
 namespace TinYard.Extensions.CallbackTimer
 {
@@ -7,7 +8,7 @@ namespace TinYard.Extensions.CallbackTimer
     {
         public void Install(IContext context)
         {
-            throw new NotImplementedException();
+            context.Mapper.Map<ICallbackTimer>().ToValue(new CallbackTimerService());
         }
     }
 }
