@@ -27,7 +27,7 @@ namespace TinYard.Extensions.MediatorMap.Tests
             _context.Mapper.Map<IEventDispatcher>().ToValue(new EventSystem.Impl.EventDispatcher(_context));
             _context.Initialize();
             
-            _viewRegister = _context.Mapper.GetMappingValue<IViewRegister>() as IViewRegister;
+            _viewRegister = _context.Mapper.GetMappingValue<IViewRegister>();
             
             _mapper = new MediatorMapper(_context, _viewRegister);
         }
@@ -92,7 +92,7 @@ namespace TinYard.Extensions.MediatorMap.Tests
 
             var testView = new TestView();
 
-            var dispatcher = _context.Mapper.GetMappingValue<IEventDispatcher>() as IEventDispatcher;
+            var dispatcher = _context.Mapper.GetMappingValue<IEventDispatcher>();
 
             bool listenerInvoked = false;
             dispatcher.AddListener<TestEvent>(TestEvent.Type.Test2, (evt) =>
@@ -110,7 +110,7 @@ namespace TinYard.Extensions.MediatorMap.Tests
         [TestMethod]
         public void Mapper_Creates_Unique_Mediator_Per_View()
         {
-            var dispatcher = _context.Mapper.GetMappingValue<IEventDispatcher>() as IEventDispatcher;
+            var dispatcher = _context.Mapper.GetMappingValue<IEventDispatcher>();
 
             _mapper.Map<TestView>().ToMediator<TestMediator>();
 
@@ -134,7 +134,7 @@ namespace TinYard.Extensions.MediatorMap.Tests
         [TestMethod]
         public void Mapper_Creates_All_Mapped_Mediators_To_View()
         {
-            var dispatcher = _context.Mapper.GetMappingValue<IEventDispatcher>() as IEventDispatcher;
+            var dispatcher = _context.Mapper.GetMappingValue<IEventDispatcher>();
 
             int expectedNumberOfInvokes = 2;
             _mapper.Map<TestView>().ToMediator<TestMediator>();
