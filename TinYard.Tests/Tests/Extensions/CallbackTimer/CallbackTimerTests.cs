@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TinYard.API.Interfaces;
 using TinYard.Extensions.CallbackTimer.API.Services;
+using TinYard.Extensions.CallbackTimer.Impl.Services;
 
 namespace TinYard.Extensions.CallbackTimer.Tests
 {
@@ -8,7 +9,7 @@ namespace TinYard.Extensions.CallbackTimer.Tests
     public class CallbackTimerTests
     {
         private IContext _context;
-        private ICallbackTimer _callbackTimer;
+        private CallbackTimerService _callbackTimer;
 
         [TestInitialize]
         public void Setup()
@@ -17,13 +18,14 @@ namespace TinYard.Extensions.CallbackTimer.Tests
             _context.Install(new CallbackTimerExtension());
             _context.Initialize();
 
-            _callbackTimer = _context.Mapper.GetMappingValue<ICallbackTimer>();
+            _callbackTimer = _context.Mapper.GetMappingValue<ICallbackTimer>() as CallbackTimerService;
         }
 
         [TestCleanup]
         public void Teardown()
         {
             _context = null;
+            _callbackTimer = null;
         }
 
         [TestMethod]
@@ -33,19 +35,25 @@ namespace TinYard.Extensions.CallbackTimer.Tests
         }
 
         [TestMethod]
-        public void Context_Installs_Extension()
+        public void CallbackTimer_Allows_Callback_Adding()
         {
-            _context.Install(_extension);
-            _context.Initialize();
+            _callbackTimer.AddTimer(0, () => { });
         }
 
         [TestMethod]
-        public void CallbackTimer_Is_Mapped()
+        public void CallbackTimer_Invokes_Callback()
         {
-            _context.Install(_extension);
-            _context.Initialize();
+            bool invoked = false;
 
-            Assert.IsNotNull(_context.Mapper.GetMappingValue<ICallbackTimer>());
+            _callbackTimer.AddTimer(0, () =>
+            {
+                invoked = true;
+            });
+
+            //So that we're not relying on System time and whatnot, invoke it directly
+            _callbackTimer.UpdateTimers(0d);
+
+            Assert.IsTrue(invoked);
         }
     }
 }
