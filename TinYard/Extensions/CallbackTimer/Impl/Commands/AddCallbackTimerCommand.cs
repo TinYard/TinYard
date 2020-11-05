@@ -9,10 +9,10 @@ namespace TinYard.Extensions.CallbackTimer.Impl.Commands
     public class AddCallbackTimerCommand : ICommand
     {
         [Inject]
-        public ICallbackTimer callbackTimer;
+        public AddCallbackTimerEvent evt;
 
         [Inject]
-        public AddCallbackTimerEvent evt;
+        public ICallbackTimer callbackTimer;
 
         public void Execute()
         {
