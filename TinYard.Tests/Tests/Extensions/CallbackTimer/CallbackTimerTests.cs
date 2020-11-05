@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using TinYard.Extensions.CallbackTimer.API.Services;
 using TinYard.Extensions.CallbackTimer.Impl.Services;
 
@@ -47,6 +48,24 @@ namespace TinYard.Extensions.CallbackTimer.Tests
             _callbackTimer.UpdateTimers(0d);
 
             Assert.IsTrue(invoked);
+        }
+
+        [TestMethod]
+        public void CallbackTimer_Allows_Callback_Removing()
+        {
+            bool invoked = false;
+
+            Action callback = () =>
+            {
+                invoked = true;
+            };
+
+            _callbackTimer.AddTimer(100d, callback);
+            _callbackTimer.RemoveTimer(callback);
+
+            _callbackTimer.UpdateTimers(100d);
+
+            Assert.IsFalse(invoked);
         }
     }
 }

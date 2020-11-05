@@ -86,6 +86,17 @@ namespace TinYard.Extensions.CallbackTimer.Impl.Services
             CreateTimer(seconds, callback);
         }
 
+        public bool RemoveTimer(Action callbackToRemove)
+        {
+            int timersRemoved = 0;
+            lock(_timers)
+            {
+                timersRemoved = _timers.RemoveAll(timer => timer.TimerCallback == callbackToRemove);
+            }
+
+            return timersRemoved > 0;
+        }
+
         private void CreateTimer(double durationInSeconds, Action callback)
         {
             Timer timer = new Timer(durationInSeconds, callback);
