@@ -60,5 +60,29 @@ namespace TinYard.Extensions.CallbackTimer.Tests
 
             Assert.IsTrue(invoked);
         }
+
+        [TestMethod]
+        public void Can_Remove_Timer_Through_Events()
+        {
+            _contextEventDispatcher.Dispatch(new RemoveCallbackTimerEvent(RemoveCallbackTimerEvent.Type.Remove, () => { }));
+        }
+
+        [TestMethod]
+        public void Event_Removed_Timer_Is_Removed()
+        {
+            bool invoked = false;
+            Action callback = () =>
+            {
+                invoked = true;
+            };
+
+            _callbackTimer.AddTimer(100d, callback);
+
+            _contextEventDispatcher.Dispatch(new RemoveCallbackTimerEvent(RemoveCallbackTimerEvent.Type.Remove, callback));
+
+            _callbackTimer.UpdateTimers(100d);
+
+            Assert.IsFalse(invoked);
+        }
     }
 }
