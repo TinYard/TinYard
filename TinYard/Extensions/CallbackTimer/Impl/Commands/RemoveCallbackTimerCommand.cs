@@ -1,5 +1,4 @@
-﻿using System;
-using TinYard.Extensions.CallbackTimer.API.Events;
+﻿using TinYard.Extensions.CallbackTimer.API.Events;
 using TinYard.Extensions.CallbackTimer.API.Services;
 using TinYard.Extensions.CommandSystem.API.Interfaces;
 using TinYard.Framework.Impl.Attributes;
@@ -16,7 +15,7 @@ namespace TinYard.Extensions.CallbackTimer.Impl.Commands
 
         public void Execute()
         {
-            
+            callbackTimer.RemoveTimer(evt.CallbackToRemove);
         }
     }
 }

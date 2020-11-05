@@ -16,6 +16,7 @@ namespace TinYard.Extensions.CallbackTimer
             ICommandMap commandMap = context.Mapper.GetMappingValue<ICommandMap>();
 
             commandMap.Map<AddCallbackTimerEvent>(AddCallbackTimerEvent.Type.Add).ToCommand<AddCallbackTimerCommand>();
+            commandMap.Map<RemoveCallbackTimerEvent>(RemoveCallbackTimerEvent.Type.Remove).ToCommand<RemoveCallbackTimerCommand>();
         }
     }
 }
