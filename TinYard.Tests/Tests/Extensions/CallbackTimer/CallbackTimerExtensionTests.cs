@@ -1,6 +1,8 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TinYard.API.Interfaces;
 using TinYard.Extensions.CallbackTimer.API.Services;
+using TinYard.Extensions.CommandSystem;
+using TinYard.Extensions.EventSystem;
 
 namespace TinYard.Extensions.CallbackTimer.Tests
 {
@@ -14,7 +16,10 @@ namespace TinYard.Extensions.CallbackTimer.Tests
         public void Setup()
         {
             _extension = new CallbackTimerExtension();
+
             _context = new Context();
+            _context.Install(new EventSystemExtension());
+            _context.Install(new CommandSystemExtension());
         }
 
         [TestCleanup]

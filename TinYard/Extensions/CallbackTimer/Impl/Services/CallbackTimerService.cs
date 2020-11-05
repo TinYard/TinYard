@@ -21,7 +21,7 @@ namespace TinYard.Extensions.CallbackTimer.Impl.Services
         public CallbackTimerService()
         {
             //TODO : Add in when added to IContext
-            //context.OnDestroy += OnDestroy;
+            //context?.OnDestroy += OnDestroy;
 
             _timers = new List<Timer>();
             _updateLoopCancelToken = new System.Threading.CancellationTokenSource();

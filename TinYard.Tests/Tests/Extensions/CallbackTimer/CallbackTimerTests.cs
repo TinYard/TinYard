@@ -1,5 +1,4 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TinYard.API.Interfaces;
 using TinYard.Extensions.CallbackTimer.API.Services;
 using TinYard.Extensions.CallbackTimer.Impl.Services;
 
@@ -8,23 +7,17 @@ namespace TinYard.Extensions.CallbackTimer.Tests
     [TestClass]
     public class CallbackTimerTests
     {
-        private IContext _context;
         private CallbackTimerService _callbackTimer;
 
         [TestInitialize]
         public void Setup()
         {
-            _context = new Context();
-            _context.Install(new CallbackTimerExtension());
-            _context.Initialize();
-
-            _callbackTimer = _context.Mapper.GetMappingValue<ICallbackTimer>() as CallbackTimerService;
+            _callbackTimer = new CallbackTimerService();
         }
 
         [TestCleanup]
         public void Teardown()
         {
-            _context = null;
             _callbackTimer = null;
         }
 
