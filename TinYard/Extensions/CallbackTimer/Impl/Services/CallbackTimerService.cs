@@ -14,7 +14,7 @@ namespace TinYard.Extensions.CallbackTimer.Impl.Services
         [Inject]
         public IContext context;
 
-        private System.Threading.CancellationTokenSource _updateLoopCancelToken;
+        private Task _updateTask;
 
         private List<Timer> _timers = new List<Timer>();
 
@@ -24,22 +24,8 @@ namespace TinYard.Extensions.CallbackTimer.Impl.Services
             //context?.OnDestroy += OnDestroy;
 
             _timers = new List<Timer>();
-            _updateLoopCancelToken = new System.Threading.CancellationTokenSource();
 
-            Task.Run(Update, _updateLoopCancelToken.Token);
-        }
-
-        ~CallbackTimerService()
-        {
-            OnDestroy();
-        }
-
-        private void OnDestroy()
-        {
-            if(!_updateLoopCancelToken.IsCancellationRequested)
-            {
-                _updateLoopCancelToken.Cancel();
-            }
+            _updateTask = Task.Run(Update);
         }
 
         private void Update()
