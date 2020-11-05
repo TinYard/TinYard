@@ -53,6 +53,8 @@ namespace TinYard.Extensions.CallbackTimer.Impl.Services
                 UpdateTimers(deltaTime);
 
                 deltaTime = stopwatch.Elapsed.TotalSeconds;
+
+                //TODO : Look at if we can improve performance here by not using restart and instead tracking previous elapsed time
                 stopwatch.Restart();
             }
         }
