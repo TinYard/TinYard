@@ -4,34 +4,31 @@ namespace TinYard.Extensions.CallbackTimer.Impl.VO
 {
     public class Timer
     {
-        public Action TimerCallback { get { return _timerCallback; } }
-        private Action _timerCallback;
+        public Action TimerCallback { get; private set; }
 
-        public double TimerDuration { get { return _timerDuration; } }
-        private double _timerDuration;
+        public double TimerDuration { get; private set; }
 
-        public double CurrentLifetime { get { return _currentLifetime; } }
-        private double _currentLifetime;
+        public double CurrentLifetime { get; private set; }
 
         private bool _timerFinished = false;
 
         public Timer(double durationInSeconds, Action timerCallback)
         {
-            _timerDuration = durationInSeconds;
-            _currentLifetime = 0d;
+            TimerDuration = durationInSeconds;
+            CurrentLifetime = 0d;
 
-            _timerCallback = timerCallback;
+            TimerCallback = timerCallback;
         }
 
         public void Update(double deltaTime)
         {
-            _currentLifetime += deltaTime;
+            CurrentLifetime += deltaTime;
 
-            if (!_timerFinished && _currentLifetime >= TimerDuration)
+            if (!_timerFinished && CurrentLifetime >= TimerDuration)
             {
                 _timerFinished = true;
 
-                _timerCallback?.Invoke();
+                TimerCallback?.Invoke();
             }
         }
     }
