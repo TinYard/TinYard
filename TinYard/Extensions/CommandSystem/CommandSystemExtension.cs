@@ -13,18 +13,14 @@ namespace TinYard.Extensions.CommandSystem
         public void Install(IContext context)
         {
             _context = context;
-            _context.PostConfigsInstalled += PostConfigsInstalled;
+
+            SetupCommandMap();
         }
 
-        private void PostConfigsInstalled()
+        private void SetupCommandMap()
         {
             var eventDispatcher = _context.Mapper.GetMappingValue<IEventDispatcher>();
             var injector = _context.Injector;
-
-            if(eventDispatcher == null || injector == null)
-            {
-                throw new NullReferenceException("Event Dispatcher or Injector are null in CommandSystemExtension");
-            }
 
             EventCommandMap commandMap = new EventCommandMap(eventDispatcher, injector);
             _context.Mapper.Map<ICommandMap>().ToValue(commandMap);
