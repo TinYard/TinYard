@@ -11,18 +11,12 @@ namespace TinYard.Extensions.CallbackTimer.Impl.Services
 {
     public class CallbackTimerService : ICallbackTimer
     {
-        [Inject]
-        public IContext context;
-
         private Task _updateTask;
 
         private List<Timer> _timers = new List<Timer>();
 
         public CallbackTimerService()
         {
-            //TODO : Add in when added to IContext
-            //context?.OnDestroy += OnDestroy;
-
             _timers = new List<Timer>();
 
             _updateTask = Task.Run(Update);
