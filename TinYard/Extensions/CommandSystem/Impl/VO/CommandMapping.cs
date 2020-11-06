@@ -40,5 +40,43 @@ namespace TinYard.Extensions.CommandSystem.Impl.VO
 
             return this;
         }
+
+        public ICommandMapping WithGuard<T1, T2>() where T1 : Guard where T2 : Guard
+        {
+            _guardTypes.Add(typeof(T1));
+            _guardTypes.Add(typeof(T2));
+
+            return this;
+        }
+
+        public ICommandMapping WithGuard<T1, T2, T3>() where T1 : Guard where T2 : Guard where T3 : Guard
+        {
+            _guardTypes.Add(typeof(T1));
+            _guardTypes.Add(typeof(T2));
+            _guardTypes.Add(typeof(T3));
+
+            return this;
+        }
+
+        public ICommandMapping WithGuard<T1, T2, T3, T4>() where T1 : Guard where T2 : Guard where T3 : Guard where T4 : Guard
+        {
+            _guardTypes.Add(typeof(T1));
+            _guardTypes.Add(typeof(T2));
+            _guardTypes.Add(typeof(T3));
+            _guardTypes.Add(typeof(T4));
+
+            return this;
+        }
+
+        public ICommandMapping WithGuard<T1, T2, T3, T4, T5>() where T1 : Guard where T2 : Guard where T3 : Guard where T4 : Guard where T5 : Guard
+        {
+            _guardTypes.Add(typeof(T1));
+            _guardTypes.Add(typeof(T2));
+            _guardTypes.Add(typeof(T3));
+            _guardTypes.Add(typeof(T4));
+            _guardTypes.Add(typeof(T5));
+
+            return this;
+        }
     }
 }
