@@ -301,15 +301,16 @@ The [Extensions](#IExtension) bundled with TinYard include:
 
 * [Event System](#Event-System-Extension)
 * [Logging](#Logging-Extension)
-* [ViewControllerExtension](#View-Controller-Extension)
+* [View Controller Extension](#View-Controller-Extension)
 * [Mediator Map Extension](#Mediator-Map-Extension)
 * [Command System Extension](#Command-System-Extension)
+* [Callback Timer Extension](#Callback-Timer-Extension)
 
 These [Extensions](#IExtension) can be installed by installing their respective [Extension](#IExtension) class into the [Context](#IContext).
 
 To find the [Extension](#IExtension) and [Configs](#IConfig) available, look at the appropriate [Extension](#IExtension) section as linked above.
 
-### Event System Extension
+## Event System Extension
 
 ### About the Extension
 
@@ -357,7 +358,7 @@ The `Dispatch` method that is required from inheritance of the [`IDispatcher`](#
 
 A [`Listener`](#Listener) has a `type` that it tracks, and when a new callback wants to be added it adds it to a list of `delegate`s.
 
-### Logging Extension
+## Logging Extension
 
 ### About the Extension
 
@@ -409,7 +410,7 @@ On construction, you can set:
 
 NB: Setting the maximum number of lines logged per file at 0 or less will indicate that there is no limit to the [`FileLogger`](#FileLogger) and thus will only ever use one file.
 
-### View Controller Extension
+## View Controller Extension
 
 ### About the Extension
 
