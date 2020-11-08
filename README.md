@@ -624,7 +624,7 @@ To install the [Callback Timer Extension](#Callback-Timer-Extension), install th
 
 No configurations are available for the [Callback Timer Extension](#Callback-Timer-Extension).
 
-## ICallback Timer
+### ICallback Timer
 
 The [`ICallbackTimer`](#ICallback-Timer) interface is the bread-and-butter of this extension for the user. You should `inject` the [`ICallbackTimer`](#ICallback-Timer) when wanting to make use of the `extension`, or use the `event`s found further below.
 
@@ -637,7 +637,7 @@ void AddTimer(double seconds, Action callback)
 bool RemoveTimer(Action callback)
 ```
 
-## Events
+### Events
 
 In the [Callback Timer Extension](#Callback-Timer-Extension) there are two `event`s that can be utilised to save you from needing to inject the [`ICallbackTimer`](#ICallback-Timer).
 
@@ -645,35 +645,35 @@ These are:
 [`AddCallbackTimerEvent`](#Add-Event),    
 [`RemoveCallbackTimerEvent`](#Remove-Event)
 
-### Add Event
+#### Add Event
 
 The [`AddCallbackTimerEvent`](#Add-Event) has two constructors; one allows you to specify the [`Timer`](#Timer) duration in `tick`s and the other allows you to specify the duration in  seconds.
 
 The length of a `tick` is determined by the `System.Diagnostics.Stopwatch.Frequency` property.
 
-### Remove Event
+#### Remove Event
 
 The [`RemoveCallbackTimerEvent`](#Remove-Event) has only one constructor:
 `RemoveCallbackTimerEvent(Type type, Action callbackToRemove)`.
 
 This seems pretty self-explanatory. Pass in the same callback as what was added, and it will remove any timers with that callback.
 
-## Commands
+### Commands
 
 There are, like the events, only two commands in the [`Callback Timer Extension`](#Callback-Timer-Extension).
 
 [`AddCallbackTimerCommand`](#Add-Command)
 [`RemoveCallbackTimerCommand`](#Remove-Command)
 
-### Add Command
+#### Add Command
 
 The [`AddCallbackTimerCommand`](#Add-Command) has the [`ICallbackTimer`](#ICallback-Timer) injected, and simply calls the `AddTimer` function with the callback and duration provided from the `event`.
 
-### Remove Command
+#### Remove Command
 
 The [`RemoveCallbackTimerCommand`](#Remove-Command) has an even easier job than the [`AddCallbackTimerCommand`](#Add-Command) - It is setup the same, but just has to call `RemoveTimer` on the [`ICallbackTimer`](#ICallback-Timer) with the provided callback.
 
-## Callback Timer Service
+### Callback Timer Service
 
 The [`CallbackTimerService`](#Callback-Timer-Service) class is the meat of the `extension`. This class inherits the [`ICallbackTimer`](#ICallback Timer) interface and implements it - it is then `mapped` onto the `context` by the `extension` under the interface.
 
@@ -681,7 +681,7 @@ Upon construction, the [`CallbackTimerService`] starts a `Task` that is an Updat
 
 Each loop has a small amount of time between it, known as `delta time`. This is passed onto the [`Timer`](#Timer)'s so that they can internally update their time tracking. `delta time` is determined by using a `System.Diagnostics.Stopwatch` and recording the time between each loop.
 
-## Timer
+### Timer
 
 The [`Timer`](#Timer) VO class is a simple class that makes keeping track of callbacks easier for the [`CallbackTimerService`](#CallbackTimerService). 
 
