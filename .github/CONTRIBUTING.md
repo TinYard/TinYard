@@ -1,7 +1,7 @@
 ## Contribution
 ---
 
-## Before contributing, please read the [Code of Conduct](CODE_OF_CONDUCT.md).
+## Before contributing, please read the [Code of Conduct](.github/CODE_OF_CONDUCT.md).
 
 ---
 

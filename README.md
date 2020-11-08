@@ -703,8 +703,8 @@ The MVC Bundle contains:
  * Mediator Map Extension
  * Command System Extension
 
-## [Contribution](CONTRIBUTING.md)
+## [Contribution](.github/CONTRIBUTING.md)
 
-### [Code of Conduct](CODE_OF_CONDUCT.md)
+### [Code of Conduct](.github/CODE_OF_CONDUCT.md)
 ### [Funding](.github/FUNDING.yml)
 ### [Buy me a coffee](https://www.buymeacoffee.com/KieranB)
