@@ -72,6 +72,8 @@ Often, you'll find you end up doing option 1 without thinking about it as it can
 
 This is where option 2 can come in. The `context.Injector` handles all `injections`, so simply call `context.Inject(injectableExampleInstance)` and voila!
 
+A lot of the above is performed for you in the [`MVC Bundle`](#MVC-Bundle) extensions, making it a great tool for more complex use. To learn a bit more about this, take a look at [extensions](#TinYard-Extensions).
+
 ### Example Projects
 
 * [Example To Do List](https://github.com/TinYard/TinYard-Basic-Example)
