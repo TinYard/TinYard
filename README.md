@@ -22,14 +22,14 @@
 
 TinYard is a C# Framework.
 
-At its basics, the framework is to help you create any application with an Event System at the core of your application.
+TinYard aims to improve your code by providing an easy-to-use IoC container and more through its powerful but simple extensibility.
 
 The framework provides a few tools to help you do this, such as;
 
-* [Dependency Injection](#IInjector)
+* [Dependency Injection / IoC](#IInjector)
 * [Event System](#Event-System-Extension)
 * [Command System](#Command-System-Extension)
-* [Value Mapping](#ValueMapper)
+* [MVC Suite](#MVC-Bundle)
 
 It's also super easy to add your own [extensions](#TinYard-Extensions), you just have to `install` them when you want to use them!
 
