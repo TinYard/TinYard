@@ -5,11 +5,15 @@ using TinYard.Extensions.CommandSystem.Impl.Factories;
 using TinYard.Extensions.CommandSystem.Impl.VO;
 using TinYard.Extensions.EventSystem.API.Interfaces;
 using TinYard.Framework.API.Interfaces;
+using TinYard.Framework.Impl.Attributes;
 
 namespace TinYard.Extensions.CommandSystem.Impl.CommandMaps
 {
     public class EventCommandMap : ICommandMap
     {
+        [Inject]
+        public IGuardFactory GuardFactory;
+
         private IEventDispatcher _eventDispatcher;
         private IInjector _injector;
 
@@ -57,6 +61,17 @@ namespace TinYard.Extensions.CommandSystem.Impl.CommandMaps
         {
             if (mapping.Command == null)
                 return;
+
+            var guardTypes = mapping.GuardTypes;
+
+            foreach(Type guardType in guardTypes)
+            {
+                var guard = GuardFactory.Build(guardType);
+                _injector.Inject(guard);
+
+                if (!guard.Satisfies())
+                    return;
+            }
 
             //Should be injected into in the Factory
             ICommand builtCommand = _commandFactory.Build(mapping.Command, evt);

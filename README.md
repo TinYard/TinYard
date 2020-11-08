@@ -54,6 +54,10 @@ Take a look at the internals below, or have a look at the example projects!
     * [Inject Attribute](#Inject-Attribute)
 * [Factories](#Factories)
     * [MappingValueFactory](#MappingValueFactory)
+    * [GuardFactory](#GuardFactory)
+* [Guards](#Guards)
+    * [IGuard](#IGuard)
+    * [Guard](#Guard)
 * [IExtension](#IExtension)
 * [IConfig](#IConfig)
 * [IBundle](#IBundle)
@@ -68,11 +72,15 @@ The [`IContext`](#IContext) should also have an [IInjector](#IInjector) that it 
 
 Every [`IContext`](#IContext) should provide `event` callbacks to certain parts of its [`Initialize`](#Initalize) method. This will allow you to have more control over your [`Context`](#IContext).
 
+Every [`IContext`](#IContext) should also provide `Detain` and `Release` methods that should primarily be used to avoid an object being Garbage Collected pre-maturely when its scope has been left. This has a super niche use case so make sure it's required when using, otherwise you may cause unneccessary memory buildup.
+
 #### Context
 
 The standard TinYard implementation of [`IContext`](#IContext).
 
 [`Context`](#Context) provides basic implementations of the [`IContext`](#IContext) interface, and does nothing too fancy.
+
+The [`Context`](#Context) class implements `Detain` and `Release` methods by simply tracking them in a `HashSet<object>` that keeps them in memory.
 
 ##### Construction
 
@@ -180,17 +188,17 @@ So, looking at the example used in [Value Mapper](#ValueMapper):
 
 When `Map<T>()` is called on the `ValueMapper`, it returns the `IMappingObject`.
 
-Internally, `Map<T>()` calls `Map<T>()` on a newly created `IMappingObject` and then returns this newly created object. This `Map<T>()` method on IMappingObject should set the `MappedType` to the type of `T`.
+Internally, `Map<T>()` on the `ValueMapper` calls `Map<T>()` on a newly created `IMappingObject` and then returns this newly created object. This `Map<T>()` method on IMappingObject should set the `MappedType` to the type of `T`.
 
-`MappedValue` is then the value that is set with the `ToValue<T>(bool autoInitialize = false)` or `ToValue(object value)` methods.
+`MappedValue` is then the value that is set with the `ToValue(object value)` method.
 
-The `ToValue<T>(bool autoInitialize = false)` function can instantiate a value of type `T` for you if you pass true to the method. It should be doing this via a Factory it has access to.
+The `BuildValue<T>()` function can create the `MappedValue` object of type `T` for you. It should be doing this via a Factory it has access to.
 
 #### MappingObject
 
 `MappingObject` provides a super-simple implementation of [`IMappingObject`](#IMappingObject) that is used by [`ValueMapper`](#ValueMapper). 
 
-`MappingObject` optionally has a reference to the `IMapper` that creates it, passed to it via the constructor. This is so that it can use the Factory that the `IMapper` has to build an object when `ToValue<T>(bool)` is called on the `MappingObject`. If no `IMapper` is provided, it will simply not be able to build the value.
+`MappingObject` optionally has a reference to the `IMapper` that creates it, passed to it via the constructor. This is so that it can use the Factory that the `IMapper` has to build an object when `BuildValue<T>` is called on the `MappingObject`. If no `IMapper` is provided, it will simply not be able to build the value.
 
 ### IInjector
 
@@ -238,6 +246,34 @@ It is expected that most, if not all, [`Factories`](#Factories) will override th
 The [`MappingValueFactory`](#MappingValueFactory) is used by the [`ValueMapper`](#ValueMapper), and aids in creation of [`IMappingObject`](#IMappingObject)'s values.
 
 As all [`IMappingObject`](#IMappingObject)'s have a method that might need a value object to be created, the [`ValueMapper`](#ValueMapper) provides the [`MappingObject`](#MappingObject) with its factory to create that value from.
+
+#### GuardFactory
+
+The [`GuardFactory`](#GuardFactory) is created and mapped in the [`Context`](#Context) to `IGuardFactory`. The [`GuardFactory`](#GuardFactory) is a super simple [`Factory`](#IFactory) that creates [`IGuard`](#IGuard)'s via the `Activator` class - Expecting the [`IGuard`](#IGuard) to have a parameterless constructor and be derived from the [`Guard`](#Guard) base class.
+
+The `Build` function of the [`GuardFactory`](#GuardFactory) requires being passed the `Type` of the [`Guard`](#Guard) you want to build. For example, if you wanted the `Factory` to build a `ExampleGuard` class (that inherits from [`Guard`](#Guard)), you would call `Build` like so: `Build(typeof(ExampleGuard))`.
+
+### Guards
+
+Currently, [`Guards`](#Guards) can only be applied to [`Command`](#ICommand)'s, via a related [`ICommandMapping`](#ICommandMapping).
+
+[`Guards`](#Guards) require that before the item they're 'guarding' is allowed to be used/executed, they have to be 'Satisfied'. Whilst this can't be enforced, it is expected and done anywhere that accepts [`Guards`](#Guards) in the main distribution of [`TinYard`](#TinYard).
+
+All [`Guards`](#Guards) that you want to create and use should inherit the [`Guard`](#Guard) base class - They should also have a parameterless constructor that doesn't perform anything. All checks should be done in the `Satisfy` method.
+
+[`Guards`](#Guards) can and should be injected into before calling the 'Satisfied' method.
+
+#### IGuard
+
+[`IGuard`](#IGuard) is the interface that all [`Guards`](#Guards) implement.
+
+This interface is always required as it provides the `Satisfy` method that is the most important part of [`Guards`](#Guards).
+
+#### Guard
+
+[`Guard`](#Guard) is an abstract base class to all [`Guards`](#Guards). The reason we have this base class is so that we have a guaranteed parameterless constructor for the [`GuardFactory`](#GuardFactory) class to invoke.
+
+This is the class that should be inherited for all [`Guards`](#Guards) that you want to use and create.
 
 ### IExtension
 
@@ -539,6 +575,13 @@ The [`Event Command Map`](#Event-Command-Map) is the base impl of [`ICommandMap`
 
 Internally it does this by having reference to the mapped [`IEventDispatcher`](#IEventDispatcher) and adding a listener to that, with a callback function that builds and invokes the correct [`command`](#ICommand).
 
+Before any [`Command`](#ICommand) is executed, the [`ICommandMapping`](#ICommandMapping) is checked for [`Guards`](#Guards). If any [`Guards`](#Guards) are related to the mapping:   
+   * They are built via the [`GuardFactory`](#GuardFactory).
+   * They are then injected into.
+   * The `Satisfies` method is then called.
+       * If the method returns false, the [`ICommand`](#ICommand) is not executed and we return early.
+       * If the method returns true, we move onto the next [`Guard`](#IGuard) until all have been satisifed. If all are satisfied, we execute the [`ICommand`](#ICommand).
+
 ### ICommandFactory
 
 [`ICommandFactory`](#ICommandFactory) is an [`IFactory`](#IFactory) that is made for specifically creating [`ICommand`](#ICommand)'s.
@@ -551,9 +594,97 @@ Internally it does this by having reference to the mapped [`IEventDispatcher`](#
 
 [`ICommandMapping`](#ICommandMapping) is a spin on [`IMappingObject`](#IMappingObject), but changed for keeping a correlation between [`event`](#IEvent)'s and [`command`](#ICommand)'s.
 
+[`ICommandMapping`](#ICommandMapping)'s can have [`Guards`](#Guards) that should be 'satisfied' before executing the [`ICommand`](#ICommand).
+
 ### CommandMapping
 
 [`CommandMapping`](#CommandMapping) is the base impl of [`ICommandMapping`](#ICommandMapping) and is also a spin on [`MappingObject`](#MappingObject).
+
+## Callback Timer Extension
+
+### Dependencies
+
+The [Callback Timer Extension](#Callback-Timer-Extension) is depdendant on:
+
+* [Event System Extension](#Event-System-Extension)
+* [Command System Extension](#Command-System-Extension)
+
+### About the Extension
+
+The [Callback Timer Extension](#Callback-Timer-Extension) provides you the ability to easily invoke any Action in any amount of time from now.
+
+Need to dispatch an event in 5 seconds? Use the [`ICallbackTimer`](#ICallback-Timer) instead of writing some messy get around.
+
+To use the [`ICallbackTimer`](#ICallback-Timer) you can inject it into your anything, or use the new events provided.
+
+#### Extension and Configurations
+
+To install the [Callback Timer Extension](#Callback-Timer-Extension), install the [`CallbackTimerExtension`](#Callback-Timer-Extension) class into your [Context](#IContext).
+
+No configurations are available for the [Callback Timer Extension](#Callback-Timer-Extension).
+
+## ICallback Timer
+
+The [`ICallbackTimer`](#ICallback-Timer) interface is the bread-and-butter of this extension for the user. You should `inject` the [`ICallbackTimer`](#ICallback-Timer) when wanting to make use of the `extension`, or use the `event`s found further below.
+
+This interface has only a few functions: 
+
+```c#
+void AddTimer(int ticks, Action callback)
+void AddTimer(double seconds, Action callback)
+
+bool RemoveTimer(Action callback)
+```
+
+## Events
+
+In the [Callback Timer Extension](#Callback-Timer-Extension) there are two `event`s that can be utilised to save you from needing to inject the [`ICallbackTimer`](#ICallback-Timer).
+
+These are:    
+[`AddCallbackTimerEvent`](#Add-Event),    
+[`RemoveCallbackTimerEvent`](#Remove-Event)
+
+### Add Event
+
+The [`AddCallbackTimerEvent`](#Add-Event) has two constructors; one allows you to specify the [`Timer`](#Timer) duration in `tick`s and the other allows you to specify the duration in  seconds.
+
+The length of a `tick` is determined by the `System.Diagnostics.Stopwatch.Frequency` property.
+
+### Remove Event
+
+The [`RemoveCallbackTimerEvent`](#Remove-Event) has only one constructor:
+`RemoveCallbackTimerEvent(Type type, Action callbackToRemove)`.
+
+This seems pretty self-explanatory. Pass in the same callback as what was added, and it will remove any timers with that callback.
+
+## Commands
+
+There are, like the events, only two commands in the [`Callback Timer Extension`](#Callback-Timer-Extension).
+
+[`AddCallbackTimerCommand`](#Add-Command)
+[`RemoveCallbackTimerCommand`](#Remove-Command)
+
+### Add Command
+
+The [`AddCallbackTimerCommand`](#Add-Command) has the [`ICallbackTimer`](#ICallback-Timer) injected, and simply calls the `AddTimer` function with the callback and duration provided from the `event`.
+
+### Remove Command
+
+The [`RemoveCallbackTimerCommand`](#Remove-Command) has an even easier job than the [`AddCallbackTimerCommand`](#Add-Command) - It is setup the same, but just has to call `RemoveTimer` on the [`ICallbackTimer`](#ICallback-Timer) with the provided callback.
+
+## Callback Timer Service
+
+The [`CallbackTimerService`](#Callback-Timer-Service) class is the meat of the `extension`. This class inherits the [`ICallbackTimer`](#ICallback Timer) interface and implements it - it is then `mapped` onto the `context` by the `extension` under the interface.
+
+Upon construction, the [`CallbackTimerService`] starts a `Task` that is an Update loop - A never ending loop that will each loop call `UpdateTimers`, which in turn calls `Update` on each [`Timer`](#Timer).
+
+Each loop has a small amount of time between it, known as `delta time`. This is passed onto the [`Timer`](#Timer)'s so that they can internally update their time tracking. `delta time` is determined by using a `System.Diagnostics.Stopwatch` and recording the time between each loop.
+
+## Timer
+
+The [`Timer`](#Timer) VO class is a simple class that makes keeping track of callbacks easier for the [`CallbackTimerService`](#CallbackTimerService). 
+
+The main functionality of the class is in the `Update` function that increments the `CurrentLifetime` property. Once `CurrentLifetime` is bigger or equal to the `TimerDuration` property, the `TimerCallback` action is invoked. 
 
 ---
 

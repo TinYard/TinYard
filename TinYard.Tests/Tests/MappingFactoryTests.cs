@@ -26,7 +26,7 @@ namespace TinYard.Tests
             _mapper = _context.Mapper;
             _mappingFactory = new MappingValueFactory(_mapper);
 
-            _testingMappingObject = _mapper.Map<TestCreatable>().ToValue<TestCreatable>();
+            _testingMappingObject = _mapper.Map<TestCreatable>().BuildValue<TestCreatable>();
         }
 
         [TestCleanup]

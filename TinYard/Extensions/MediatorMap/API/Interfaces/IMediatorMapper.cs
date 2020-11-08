@@ -10,14 +10,12 @@ namespace TinYard.Extensions.MediatorMap.API.Interfaces
         event Action<IMediatorMappingObject> OnMediatorMapping;
         IMediatorFactory MediatorFactory { get; }
 
-        IMediatorMappingObject Map<T>() where T : IView;
+        IMediatorMappingObject Map<T>();
         IMediatorMappingObject Map(IView view);
+        IMediatorMappingObject Map(object view);
 
-        IMediatorMappingObject GetMapping<T>() where T : IView;
-        IMediatorMappingObject GetMapping(IView type);
+        IEnumerable<IMediatorMappingObject> GetMappings<T>();
+        IEnumerable<IMediatorMappingObject> GetMappings(IView type);
         IReadOnlyList<IMediatorMappingObject> GetAllMappings();
-
-        object GetMappingMediator<T>() where T : IView;
-        object GetMappingMediator(IView type);
     }
 }

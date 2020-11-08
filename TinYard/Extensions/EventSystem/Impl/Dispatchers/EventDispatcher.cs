@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using TinYard.API.Interfaces;
 using TinYard.Extensions.EventSystem.API.Interfaces;
+using TinYard.Extensions.EventSystem.Impl.Exceptions;
 using TinYard.Extensions.EventSystem.Impl.VO;
 
 namespace TinYard.Extensions.EventSystem.Impl
@@ -19,12 +20,14 @@ namespace TinYard.Extensions.EventSystem.Impl
 
         public virtual bool HasListener(Enum type)
         {
+            if (type == null)
+                throw new EventTypeException("Cannot look for listener of type null");
+
             return _listeners.ContainsKey(type);
         }
 
         public virtual void AddListener<T>(Enum type, Action<T> listenerCallback)
         {
-            //TODO : Make use of T
             AddListener(type, listenerCallback as Delegate);
         }
 
@@ -35,6 +38,9 @@ namespace TinYard.Extensions.EventSystem.Impl
 
         public virtual void AddListener(Enum type, Delegate listenerCallback)
         {
+            if (type == null)
+                throw new EventTypeException("Cannot add listener for type null");
+
             if (HasListener(type))
             {
                 _listeners[type].AddListener(listenerCallback);

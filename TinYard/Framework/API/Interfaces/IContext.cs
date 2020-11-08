@@ -10,6 +10,7 @@ namespace TinYard.API.Interfaces
         event Action PostExtensionsInstalled;
         event Action PreConfigsInstalled;
         event Action PostConfigsInstalled;
+        event Action PostInitialize;
 
         //Properties
         IMapper Mapper { get; }
@@ -23,5 +24,8 @@ namespace TinYard.API.Interfaces
 
         bool ContainsExtension(IExtension extension);
         bool ContainsExtension<T>() where T : IExtension;
+
+        void Detain(object objToDetain);
+        void Release(object objToRelease);
     }
 }

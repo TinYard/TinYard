@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using TinYard.API.Interfaces;
 using TinYard.Framework.API.Interfaces;
+using TinYard.Framework.Impl.Factories;
 using TinYard.Framework.Impl.Injectors;
 using TinYard.Impl.Exceptions;
 using TinYard.Impl.Mappers;
@@ -40,6 +41,8 @@ namespace TinYard
         private List<IConfig> _configsToInstall;
         private HashSet<IConfig> _configsInstalled;
 
+        private HashSet<object> _detainedObjs;
+
         private bool _initialized = false;
 
         public Context()
@@ -47,6 +50,8 @@ namespace TinYard
             _bundlesToInstall = new List<IBundle>();
             _extensionsToInstall = new List<IExtension>();
             _configsToInstall = new List<IConfig>();
+
+            _detainedObjs = new HashSet<object>();
 
             //Create our mapper, then add a hook so that we can inject into anything that gets mapped
             _mapper = new ValueMapper();
@@ -58,6 +63,9 @@ namespace TinYard
             _mapper.Map<IContext>().ToValue(this);
             _mapper.Map<IMapper>().ToValue(_mapper);
             _mapper.Map<IInjector>().ToValue(_injector);
+
+
+            _mapper.Map<IGuardFactory>().ToValue(new GuardFactory());
         }
 
         public IContext Install(IExtension extension)
@@ -126,6 +134,17 @@ namespace TinYard
             _initialized = true;
 
             PostInitialize?.Invoke();
+        }
+
+        public void Detain(object objToDetain)
+        {
+            _detainedObjs.Add(objToDetain);
+        }
+
+        public void Release(object objToRelease)
+        {
+            if(_detainedObjs.Contains(objToRelease))
+                _detainedObjs.Remove(objToRelease);
         }
 
         private void InstallBundles()

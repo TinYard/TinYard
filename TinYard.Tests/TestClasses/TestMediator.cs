@@ -16,6 +16,8 @@ namespace TinYard.Tests.TestClasses
 
         public override void Configure()
         {
+            AddViewListener(TestEvent.Type.Test1, () => Dispatch(new TestEvent(TestEvent.Type.Test2)));
+
             AddViewListener(TestEvent.Type.Test1, () => OnViewEventHeard?.Invoke());
 
             AddContextListener(TestEvent.Type.Test1, () => OnContextEventHeard?.Invoke());
