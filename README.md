@@ -22,11 +22,10 @@
 
 ## What is TinYard?
 
-TinYard is a C# Framework.
+TinYard is an IoC-container written in C# for .NET that brings more features than just a bog-standard IoC-container.
 
 TinYard aims to improve your code by providing an easy-to-use IoC container and more through its powerful but simple extensibility.
-
-The framework provides a few tools to help you do this, such as;
+The framework provides a few tools to help you create awesome things, such as:
 
 * [Dependency Injection / IoC](#IInjector)
 * [Event System](#Event-System-Extension)
