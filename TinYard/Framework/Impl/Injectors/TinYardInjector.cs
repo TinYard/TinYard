@@ -27,35 +27,18 @@ namespace TinYard.Framework.Impl.Injectors
             _extraInjectables[injectableType] = injectableObject;
         }
 
-        public void Inject(object classToInjectInto)
+        public void Inject(object target)
         {
             //GetType as it's correct at run-time rather than compile time!
-            Type classType = classToInjectInto.GetType();
+            Type targetType = target.GetType();
 
-            List<FieldInfo> injectables = InjectAttribute.GetInjectables(classType);
-
-            foreach(FieldInfo field in injectables)
-            {
-                Type fieldType = field.FieldType;
-                if(_mapper.GetMapping(fieldType) != null)
-                {
-                    var valueToInject = _mapper.GetMappingValue(fieldType);
-                    Inject(valueToInject);
-
-                    field.SetValue(classToInjectInto, _mapper.GetMappingValue(fieldType));
-                }
-                else if(_extraInjectables.ContainsKey(fieldType))
-                {
-                    var valueToInject = _extraInjectables[fieldType];
-                    Inject(valueToInject);
-                    field.SetValue(classToInjectInto, valueToInject);
-                }
-            }
+            InjectValues(target, targetType);
         }
 
         public void Inject(object target, object value)
         {
-            List<FieldInfo> injectables = InjectAttribute.GetInjectables(target.GetType());
+            Type targetType = target.GetType();
+            List<FieldInfo> injectables = InjectAttribute.GetInjectables(targetType);
 
             Type valueType = value.GetType();
 
@@ -66,6 +49,29 @@ namespace TinYard.Framework.Impl.Injectors
                 if(valueType == fieldType || fieldType.IsAssignableFrom(valueType))
                 {
                     field.SetValue(target, value);
+                }
+            }
+        }
+
+        private void InjectValues(object target, Type targetType)
+        {
+            List<FieldInfo> injectables = InjectAttribute.GetInjectables(targetType);
+
+            foreach (FieldInfo field in injectables)
+            {
+                Type fieldType = field.FieldType;
+                if (_mapper.GetMapping(fieldType) != null)
+                {
+                    var valueToInject = _mapper.GetMappingValue(fieldType);
+                    Inject(valueToInject);
+
+                    field.SetValue(target, _mapper.GetMappingValue(fieldType));
+                }
+                else if (_extraInjectables.ContainsKey(fieldType))
+                {
+                    var valueToInject = _extraInjectables[fieldType];
+                    Inject(valueToInject);
+                    field.SetValue(target, valueToInject);
                 }
             }
         }
