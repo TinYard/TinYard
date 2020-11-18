@@ -27,6 +27,65 @@ namespace TinYard.Framework.Impl.Injectors
             _extraInjectables[injectableType] = injectableObject;
         }
 
+        public T Inject<T>()
+        {
+            Type targetType = typeof(T);
+
+            ConstructorInfo[] constructors = targetType.GetConstructors();
+
+            ConstructorInfo bestMatchedConstructor = null;
+            foreach(ConstructorInfo constructor in constructors)
+            {
+                ParameterInfo[] constructorParams = constructor.GetParameters();
+
+                bool canInjectAllParams = true;
+
+                //Check if we can inject all the parameters
+                foreach(ParameterInfo parameterInfo in constructorParams)
+                {
+                    if (parameterInfo.IsOut)
+                    {
+                        canInjectAllParams = false;
+                        break;
+                    }
+
+                    Type paramType = parameterInfo.ParameterType;
+
+                    //We can't inject a value for this parameter if there's nothing in our magic hat to pull out into it
+                    if (_mapper.GetMapping(paramType) == null && !(_extraInjectables.ContainsKey(paramType)) )
+                    {
+                        canInjectAllParams = false;
+                        break;
+                    }
+                }
+
+                //We match more parameters, this is our new choice
+                if(canInjectAllParams && (bestMatchedConstructor == null || constructorParams.Length > bestMatchedConstructor.GetParameters().Length))
+                {
+                    bestMatchedConstructor = constructor;
+                }
+            }
+
+            if(bestMatchedConstructor != null)
+            {
+                ParameterInfo[] constructorParams = bestMatchedConstructor.GetParameters();
+                object[] parameters = new object[constructorParams.Length];
+
+                for(int i = 0; i < constructorParams.Length; i++)
+                {
+                    object value = GetInjectableValue(constructorParams[i].ParameterType);
+
+                    parameters[i] = value;
+                }
+
+                return (T)bestMatchedConstructor.Invoke(parameters);
+            }
+            else
+            {
+                return default(T);
+            }
+        }
+
         public void Inject(object target)
         {
             //GetType as it's correct at run-time rather than compile time!
@@ -60,20 +119,30 @@ namespace TinYard.Framework.Impl.Injectors
             foreach (FieldInfo field in injectables)
             {
                 Type fieldType = field.FieldType;
-                if (_mapper.GetMapping(fieldType) != null)
-                {
-                    var valueToInject = _mapper.GetMappingValue(fieldType);
-                    Inject(valueToInject);
+                object valueToInject = GetInjectableValue(fieldType);
 
-                    field.SetValue(target, _mapper.GetMappingValue(fieldType));
-                }
-                else if (_extraInjectables.ContainsKey(fieldType))
+                if(valueToInject != null)
                 {
-                    var valueToInject = _extraInjectables[fieldType];
                     Inject(valueToInject);
                     field.SetValue(target, valueToInject);
                 }
             }
+        }
+
+        private object GetInjectableValue(Type valueType)
+        {
+            object injectableValue = null;
+
+            if (_mapper.GetMapping(valueType) != null)
+            {
+                injectableValue = _mapper.GetMappingValue(valueType);
+            }
+            else if (_extraInjectables.ContainsKey(valueType))
+            {
+                injectableValue = _extraInjectables[valueType];
+            }
+
+            return injectableValue;
         }
     }
 }
