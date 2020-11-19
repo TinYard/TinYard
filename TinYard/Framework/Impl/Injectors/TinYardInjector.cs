@@ -33,51 +33,11 @@ namespace TinYard.Framework.Impl.Injectors
 
             ConstructorInfo[] constructors = targetType.GetConstructors();
 
-            ConstructorInfo bestMatchedConstructor = null;
-            foreach(ConstructorInfo constructor in constructors)
-            {
-                ParameterInfo[] constructorParams = constructor.GetParameters();
-
-                bool canInjectAllParams = true;
-
-                //Check if we can inject all the parameters
-                foreach(ParameterInfo parameterInfo in constructorParams)
-                {
-                    if (parameterInfo.IsOut)
-                    {
-                        canInjectAllParams = false;
-                        break;
-                    }
-
-                    Type paramType = parameterInfo.ParameterType;
-
-                    //We can't inject a value for this parameter if there's nothing in our magic hat to pull out into it
-                    if (_mapper.GetMapping(paramType) == null && !(_extraInjectables.ContainsKey(paramType)) )
-                    {
-                        canInjectAllParams = false;
-                        break;
-                    }
-                }
-
-                //We match more parameters, this is our new choice
-                if(canInjectAllParams && (bestMatchedConstructor == null || constructorParams.Length > bestMatchedConstructor.GetParameters().Length))
-                {
-                    bestMatchedConstructor = constructor;
-                }
-            }
+            ConstructorInfo bestMatchedConstructor = GetBestInjectableConstructor(constructors);
 
             if(bestMatchedConstructor != null)
             {
-                ParameterInfo[] constructorParams = bestMatchedConstructor.GetParameters();
-                object[] parameters = new object[constructorParams.Length];
-
-                for(int i = 0; i < constructorParams.Length; i++)
-                {
-                    object value = GetInjectableValue(constructorParams[i].ParameterType);
-                    Inject(value);
-
-                    parameters[i] = value;
-                }
+                object[] parameters = CreateConstructorParameters(bestMatchedConstructor);
 
                 return (T)bestMatchedConstructor.Invoke(parameters);
             }
@@ -144,6 +104,61 @@ namespace TinYard.Framework.Impl.Injectors
             }
 
             return injectableValue;
+        }
+
+        private ConstructorInfo GetBestInjectableConstructor(ConstructorInfo[] constructorsToCompare)
+        {
+            ConstructorInfo bestInjectableConstructor = null;
+
+            foreach (ConstructorInfo constructor in constructorsToCompare)
+            {
+                ParameterInfo[] constructorParams = constructor.GetParameters();
+
+                bool canInjectAllParams = true;
+
+                //Check if we can inject all the parameters
+                foreach (ParameterInfo parameterInfo in constructorParams)
+                {
+                    if (parameterInfo.IsOut)
+                    {
+                        canInjectAllParams = false;
+                        break;
+                    }
+
+                    Type paramType = parameterInfo.ParameterType;
+
+                    //We can't inject a value for this parameter if there's nothing in our magic hat to pull out into it
+                    if (_mapper.GetMapping(paramType) == null && !(_extraInjectables.ContainsKey(paramType)))
+                    {
+                        canInjectAllParams = false;
+                        break;
+                    }
+                }
+
+                //We match more parameters, this is our new choice
+                if (canInjectAllParams && (bestInjectableConstructor == null || constructorParams.Length > bestInjectableConstructor.GetParameters().Length))
+                {
+                    bestInjectableConstructor = constructor;
+                }
+            }
+
+            return bestInjectableConstructor;
+        }
+
+        private object[] CreateConstructorParameters(ConstructorInfo constructorInfo)
+        {
+            ParameterInfo[] constructorParams = constructorInfo.GetParameters();
+            object[] parameters = new object[constructorParams.Length];
+
+            for (int i = 0; i < constructorParams.Length; i++)
+            {
+                object value = GetInjectableValue(constructorParams[i].ParameterType);
+                Inject(value);
+
+                parameters[i] = value;
+            }
+
+            return parameters;
         }
     }
 }
