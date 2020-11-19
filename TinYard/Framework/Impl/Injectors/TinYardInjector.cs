@@ -74,6 +74,7 @@ namespace TinYard.Framework.Impl.Injectors
                 for(int i = 0; i < constructorParams.Length; i++)
                 {
                     object value = GetInjectableValue(constructorParams[i].ParameterType);
+                    Inject(value);
 
                     parameters[i] = value;
                 }

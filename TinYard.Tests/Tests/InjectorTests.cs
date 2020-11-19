@@ -100,5 +100,16 @@ namespace TinYard.Tests
 
             Assert.AreEqual(expected, injectable.Value);
         }
+
+        [TestMethod]
+        public void Injector_Can_Create_Injectable_Constructor()
+        {
+            float expected = 3.14f;
+            _context.Mapper.Map<float>().ToValue(expected);
+
+            TestInjectable constructed = _injector.Inject<TestInjectable>();
+
+            Assert.AreEqual(constructed.ConstructedFloat, expected);
+        }
     }
 }
