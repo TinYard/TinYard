@@ -239,12 +239,14 @@ The `BuildValue<T>()` function can create the `MappedValue` object of type `T` f
 
 ### IInjector
 
-An `IInjector` should provide two easy-to-use `Inject` methods.
+An `IInjector` should provide three easy-to-use `Inject` methods.
 
 One `Inject` method should provide an object, that has been provided as a parameter, values to any Field that has the [`Inject` attribute](#Inject-Attribute).
 
-The other `Inject` method should have `target` and `value` objects passed as arguments. The `target` object should be injected into, specifically looking to provide it with the `value` object if possible.
+The second `Inject` method should have `target` and `value` objects passed as arguments. The `target` object should be injected into, specifically looking to provide it with the `value` object if possible.
  
+The third `Inject` method should be provided with a Generic `T` parameter. This `Inject` method works slightly different than the others - It will create and return an instance of Type `T` that is has created via Constructor Injection.
+
 All [`IInjector`](#IInjector)'s should also have an internal collection of values that can be injected into any class when the first `Inject` method is called upon it. This collection should be added to / provided to the [`IInjector`](#IInjector) via the `AddInjectable` method. 
 
 #### TinYardInjector
@@ -257,9 +259,9 @@ All [`IInjector`](#IInjector)'s should also have an internal collection of value
 
 #### Inject Attribute
 
-The `Inject` attribute can be added to any Field.
+The `Inject` attribute can be added to any Field or Class Constructor.
 
-The `Inject` attribute acts as a flag to the [`IMapper`](#IMapper) in your [`IContext`](#IContext).
+The `Inject` attribute acts as a flag to the [`IInjector`](#IInjector) in your [`IContext`](#IContext).
 
 In the standard implementation of [`IContext`](#IContext), [`Context`](#Context) -
 When a value is added to an [`IMappingObject`](#IMappingObject), the [`IMapper`](#IMapper) lets the [`IContext`](#IContext) know that the value needs injecting into, which in turn tells its [`IInjector`](#IInjector) to Inject into it.
