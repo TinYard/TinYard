@@ -31,15 +31,26 @@ namespace TinYard.Framework.Impl.Injectors
         {
             Type targetType = typeof(T);
 
-            ConstructorInfo[] constructors = targetType.GetConstructors();
-
+            //Prefer constructors with an attribute over non-attributed constructors
+            List<ConstructorInfo> constructors = InjectAttribute.GetInjectableConstructors(targetType);
             ConstructorInfo bestMatchedConstructor = GetBestInjectableConstructor(constructors);
+
+            //If no attributed constructors could be completed, lets try normal ones
+            if(bestMatchedConstructor == null)
+            {
+                constructors.Clear();
+                constructors.AddRange(targetType.GetConstructors());
+                bestMatchedConstructor = GetBestInjectableConstructor(constructors);
+            }
 
             if(bestMatchedConstructor != null)
             {
                 object[] parameters = CreateConstructorParameters(bestMatchedConstructor);
 
-                return (T)bestMatchedConstructor.Invoke(parameters);
+                T constructedT = (T)bestMatchedConstructor.Invoke(parameters);
+                Inject(constructedT);
+
+                return constructedT;
             }
             else
             {
@@ -58,7 +69,7 @@ namespace TinYard.Framework.Impl.Injectors
         public void Inject(object target, object value)
         {
             Type targetType = target.GetType();
-            List<FieldInfo> injectables = InjectAttribute.GetInjectables(targetType);
+            List<FieldInfo> injectables = InjectAttribute.GetInjectableFields(targetType);
 
             Type valueType = value.GetType();
 
@@ -75,7 +86,7 @@ namespace TinYard.Framework.Impl.Injectors
 
         private void InjectValues(object target, Type targetType)
         {
-            List<FieldInfo> injectables = InjectAttribute.GetInjectables(targetType);
+            List<FieldInfo> injectables = InjectAttribute.GetInjectableFields(targetType);
 
             foreach (FieldInfo field in injectables)
             {
@@ -106,7 +117,7 @@ namespace TinYard.Framework.Impl.Injectors
             return injectableValue;
         }
 
-        private ConstructorInfo GetBestInjectableConstructor(ConstructorInfo[] constructorsToCompare)
+        private ConstructorInfo GetBestInjectableConstructor(IEnumerable<ConstructorInfo> constructorsToCompare)
         {
             ConstructorInfo bestInjectableConstructor = null;
 

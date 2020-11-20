@@ -111,5 +111,20 @@ namespace TinYard.Tests
 
             Assert.AreEqual(constructed.ConstructedFloat, expected);
         }
+
+        [TestMethod]
+        public void Injector_Prefers_Attributed_Constructor()
+        {
+            float expectedFloat = 3.14f;
+            double expectedDouble = 3.147d;
+
+            _context.Mapper.Map<float>().ToValue(expectedFloat);
+            _context.Mapper.Map<double>().ToValue(expectedDouble);
+
+            TestSecondaryInjectable constructed = _injector.Inject<TestSecondaryInjectable>();
+
+            Assert.AreNotEqual(constructed.InjectableFloat, expectedFloat);
+            Assert.AreEqual(constructed.InjectableDouble, expectedDouble);
+        }
     }
 }
