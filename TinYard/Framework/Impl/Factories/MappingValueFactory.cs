@@ -43,34 +43,8 @@ namespace TinYard.Framework.Impl.Factories
             if (type == null)
                 type = mappingObject.MappedType;
 
-            object[] constructorDependencies = GetConstructorDependencies(type);
-
-            //If we have any null objects, we can break something further down the line.
-            //Making the array null means we should use the default constructor instead when possible
-            if (constructorDependencies.Any().GetType() == null)
-                constructorDependencies = null;
-
-            object value = Activator.CreateInstance(type, constructorDependencies);
+            object value = _mapper.GetMappingValue<IInjector>().CreateInjected(type);
             return mappingObject.ToValue(value);
-        }
-
-        private object[] GetConstructorDependencies(Type type)
-        {
-            ParameterInfo[] constructorInfo = type.GetConstructors().FirstOrDefault().GetParameters();
-
-            List<object> constructorParams = new List<object>();
-            foreach(ParameterInfo constructorParameter in constructorInfo)
-            {
-                object value = GetValueFromMapper(constructorParameter.ParameterType);
-                constructorParams.Add(value);
-            }
-
-            return constructorParams.ToArray();
-        }
-
-        private object GetValueFromMapper(Type parameterType)
-        {
-            return _mapper.GetMappingValue(parameterType);
         }
     }
 }
