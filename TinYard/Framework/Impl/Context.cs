@@ -57,7 +57,7 @@ namespace TinYard
             _mapper = new ValueMapper();
             _mapper.OnValueMapped += InjectValueMapper;
 
-            _injector = new TinYardInjector(this);
+            _injector = new TinYardInjector(this, _mapper);
 
             //Ensure the context, mapper and injector are mapped for injection needs
             _mapper.Map<IContext>().ToValue(this);

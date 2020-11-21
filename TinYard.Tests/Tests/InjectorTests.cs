@@ -16,7 +16,7 @@ namespace TinYard.Tests
         public void Setup()
         {
             _context = new Context();
-            _injector = new TinYardInjector(_context);
+            _injector = new TinYardInjector(_context, _context.Mapper);
         }
 
         [TestCleanup]
@@ -107,7 +107,7 @@ namespace TinYard.Tests
             float expected = 3.14f;
             _context.Mapper.Map<float>().ToValue(expected);
 
-            TestInjectable constructed = _injector.Inject<TestInjectable>();
+            TestInjectable constructed = _injector.CreateInjected<TestInjectable>();
 
             Assert.AreEqual(constructed.ConstructedFloat, expected);
         }
@@ -121,7 +121,7 @@ namespace TinYard.Tests
             _context.Mapper.Map<float>().ToValue(expectedFloat);
             _context.Mapper.Map<double>().ToValue(expectedDouble);
 
-            TestSecondaryInjectable constructed = _injector.Inject<TestSecondaryInjectable>();
+            TestSecondaryInjectable constructed = _injector.CreateInjected<TestSecondaryInjectable>();
 
             Assert.AreNotEqual(constructed.InjectableFloat, expectedFloat);
             Assert.AreEqual(constructed.InjectableDouble, expectedDouble);

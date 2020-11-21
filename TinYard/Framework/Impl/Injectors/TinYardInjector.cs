@@ -14,10 +14,10 @@ namespace TinYard.Framework.Impl.Injectors
 
         private Dictionary<Type, object> _extraInjectables;
 
-        public TinYardInjector(IContext context)
+        public TinYardInjector(IContext context, IMapper mapper)
         {
             _context = context;
-            _mapper = _context.Mapper;
+            _mapper = mapper;
 
             _extraInjectables = new Dictionary<Type, object>();
         }
@@ -27,34 +27,38 @@ namespace TinYard.Framework.Impl.Injectors
             _extraInjectables[injectableType] = injectableObject;
         }
 
-        public T Inject<T>()
+        public T CreateInjected<T>()
         {
             Type targetType = typeof(T);
+            return (T)CreateInjected(targetType);
+        }
 
+        public object CreateInjected(Type targetType)
+        {
             //Prefer constructors with an attribute over non-attributed constructors
             List<ConstructorInfo> constructors = InjectAttribute.GetInjectableConstructors(targetType);
             ConstructorInfo bestMatchedConstructor = GetBestInjectableConstructor(constructors);
 
             //If no attributed constructors could be completed, lets try normal ones
-            if(bestMatchedConstructor == null)
+            if (bestMatchedConstructor == null)
             {
                 constructors.Clear();
                 constructors.AddRange(targetType.GetConstructors());
                 bestMatchedConstructor = GetBestInjectableConstructor(constructors);
             }
 
-            if(bestMatchedConstructor != null)
+            if (bestMatchedConstructor != null)
             {
                 object[] parameters = CreateConstructorParameters(bestMatchedConstructor);
 
-                T constructedT = (T)bestMatchedConstructor.Invoke(parameters);
-                Inject(constructedT);
+                object constructedObj = bestMatchedConstructor.Invoke(parameters);
+                Inject(constructedObj);
 
-                return constructedT;
+                return constructedObj;
             }
             else
             {
-                return default(T);
+                return null;
             }
         }
 
