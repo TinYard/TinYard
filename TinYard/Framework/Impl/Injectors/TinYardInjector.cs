@@ -36,16 +36,7 @@ namespace TinYard.Framework.Impl.Injectors
         public object CreateInjected(Type targetType)
         {
             //Prefer constructors with an attribute over non-attributed constructors
-            List<ConstructorInfo> constructors = InjectAttribute.GetInjectableConstructors(targetType);
-            ConstructorInfo bestMatchedConstructor = GetBestInjectableConstructor(constructors);
-
-            //If no attributed constructors could be completed, lets try normal ones
-            if (bestMatchedConstructor == null)
-            {
-                constructors.Clear();
-                constructors.AddRange(targetType.GetConstructors());
-                bestMatchedConstructor = GetBestInjectableConstructor(constructors);
-            }
+            ConstructorInfo bestMatchedConstructor = GetTargetConstructor(targetType);
 
             if (bestMatchedConstructor != null)
             {
@@ -121,7 +112,40 @@ namespace TinYard.Framework.Impl.Injectors
             return injectableValue;
         }
 
-        private ConstructorInfo GetBestInjectableConstructor(IEnumerable<ConstructorInfo> constructorsToCompare)
+        private object[] CreateConstructorParameters(ConstructorInfo constructorInfo)
+        {
+            ParameterInfo[] constructorParams = constructorInfo.GetParameters();
+            object[] parameters = new object[constructorParams.Length];
+
+            for (int i = 0; i < constructorParams.Length; i++)
+            {
+                object value = GetInjectableValue(constructorParams[i].ParameterType);
+                Inject(value);
+
+                parameters[i] = value;
+            }
+
+            return parameters;
+        }
+
+        private ConstructorInfo GetTargetConstructor(Type targetType)
+        {
+            List<ConstructorInfo> constructorsToCompare = InjectAttribute.GetInjectableConstructors(targetType);
+            ConstructorInfo targetConstructor = GetMostInjectableConstructor(constructorsToCompare);
+
+            //If no attributed constructors could be completed, lets try normal ones
+            if (targetConstructor == null)
+            {
+                constructorsToCompare.Clear();
+                constructorsToCompare.AddRange(targetType.GetConstructors());
+
+                targetConstructor = GetMostInjectableConstructor(constructorsToCompare);
+            }
+
+            return targetConstructor;
+        }
+
+        private ConstructorInfo GetMostInjectableConstructor(IEnumerable<ConstructorInfo> constructorsToCompare)
         {
             ConstructorInfo bestInjectableConstructor = null;
 
@@ -155,25 +179,10 @@ namespace TinYard.Framework.Impl.Injectors
                 {
                     bestInjectableConstructor = constructor;
                 }
+
             }
 
             return bestInjectableConstructor;
-        }
-
-        private object[] CreateConstructorParameters(ConstructorInfo constructorInfo)
-        {
-            ParameterInfo[] constructorParams = constructorInfo.GetParameters();
-            object[] parameters = new object[constructorParams.Length];
-
-            for (int i = 0; i < constructorParams.Length; i++)
-            {
-                object value = GetInjectableValue(constructorParams[i].ParameterType);
-                Inject(value);
-
-                parameters[i] = value;
-            }
-
-            return parameters;
         }
     }
 }
