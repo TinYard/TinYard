@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using TinYard.API.Interfaces;
 using TinYard.Framework.API.Interfaces;
@@ -136,10 +137,9 @@ namespace TinYard.Framework.Impl.Injectors
             //If no attributed constructors could be completed, lets try normal ones
             if (targetConstructor == null)
             {
-                constructorsToCompare.Clear();
-                constructorsToCompare.AddRange(targetType.GetConstructors());
-
-                targetConstructor = GetMostInjectableConstructor(constructorsToCompare);
+                //Get constructors that haven't got the attribute via filtering
+                IEnumerable<ConstructorInfo> remainingConstructors = targetType.GetConstructors().Except(constructorsToCompare);
+                targetConstructor = GetMostInjectableConstructor(remainingConstructors);
             }
 
             return targetConstructor;
