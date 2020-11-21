@@ -6,5 +6,17 @@ namespace TinYard_Tests.TestClasses
     {
         [Inject]
         public int Value;
+
+        public float ConstructedFloat { get; private set; }
+
+        public TestInjectable()
+        {
+
+        }
+
+        public TestInjectable(float injectableFloat)
+        {
+            ConstructedFloat = injectableFloat;
+        }
     }
 }

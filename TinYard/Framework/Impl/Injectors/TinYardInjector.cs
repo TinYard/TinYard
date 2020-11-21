@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using TinYard.API.Interfaces;
 using TinYard.Framework.API.Interfaces;
@@ -14,10 +15,10 @@ namespace TinYard.Framework.Impl.Injectors
 
         private Dictionary<Type, object> _extraInjectables;
 
-        public TinYardInjector(IContext context)
+        public TinYardInjector(IContext context, IMapper mapper)
         {
             _context = context;
-            _mapper = _context.Mapper;
+            _mapper = mapper;
 
             _extraInjectables = new Dictionary<Type, object>();
         }
@@ -27,35 +28,44 @@ namespace TinYard.Framework.Impl.Injectors
             _extraInjectables[injectableType] = injectableObject;
         }
 
-        public void Inject(object classToInjectInto)
+        public T CreateInjected<T>()
+        {
+            Type targetType = typeof(T);
+            return (T)CreateInjected(targetType);
+        }
+
+        public object CreateInjected(Type targetType)
+        {
+            //Prefer constructors with an attribute over non-attributed constructors
+            ConstructorInfo bestMatchedConstructor = GetTargetConstructor(targetType);
+
+            if (bestMatchedConstructor != null)
+            {
+                object[] parameters = CreateConstructorParameters(bestMatchedConstructor);
+
+                object constructedObj = bestMatchedConstructor.Invoke(parameters);
+                Inject(constructedObj);
+
+                return constructedObj;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public void Inject(object target)
         {
             //GetType as it's correct at run-time rather than compile time!
-            Type classType = classToInjectInto.GetType();
+            Type targetType = target.GetType();
 
-            List<FieldInfo> injectables = InjectAttribute.GetInjectables(classType);
-
-            foreach(FieldInfo field in injectables)
-            {
-                Type fieldType = field.FieldType;
-                if(_mapper.GetMapping(fieldType) != null)
-                {
-                    var valueToInject = _mapper.GetMappingValue(fieldType);
-                    Inject(valueToInject);
-
-                    field.SetValue(classToInjectInto, _mapper.GetMappingValue(fieldType));
-                }
-                else if(_extraInjectables.ContainsKey(fieldType))
-                {
-                    var valueToInject = _extraInjectables[fieldType];
-                    Inject(valueToInject);
-                    field.SetValue(classToInjectInto, valueToInject);
-                }
-            }
+            InjectValues(target, targetType);
         }
 
         public void Inject(object target, object value)
         {
-            List<FieldInfo> injectables = InjectAttribute.GetInjectables(target.GetType());
+            Type targetType = target.GetType();
+            List<FieldInfo> injectables = InjectAttribute.GetInjectableFields(targetType);
 
             Type valueType = value.GetType();
 
@@ -68,6 +78,111 @@ namespace TinYard.Framework.Impl.Injectors
                     field.SetValue(target, value);
                 }
             }
+        }
+
+        private void InjectValues(object target, Type targetType)
+        {
+            List<FieldInfo> injectables = InjectAttribute.GetInjectableFields(targetType);
+
+            foreach (FieldInfo field in injectables)
+            {
+                Type fieldType = field.FieldType;
+                object valueToInject = GetInjectableValue(fieldType);
+
+                if(valueToInject != null)
+                {
+                    Inject(valueToInject);
+                    field.SetValue(target, valueToInject);
+                }
+            }
+        }
+
+        private object GetInjectableValue(Type valueType)
+        {
+            object injectableValue = null;
+
+            if (_mapper.GetMapping(valueType) != null)
+            {
+                injectableValue = _mapper.GetMappingValue(valueType);
+            }
+            else if (_extraInjectables.ContainsKey(valueType))
+            {
+                injectableValue = _extraInjectables[valueType];
+            }
+
+            return injectableValue;
+        }
+
+        private object[] CreateConstructorParameters(ConstructorInfo constructorInfo)
+        {
+            ParameterInfo[] constructorParams = constructorInfo.GetParameters();
+            object[] parameters = new object[constructorParams.Length];
+
+            for (int i = 0; i < constructorParams.Length; i++)
+            {
+                object value = GetInjectableValue(constructorParams[i].ParameterType);
+                Inject(value);
+
+                parameters[i] = value;
+            }
+
+            return parameters;
+        }
+
+        private ConstructorInfo GetTargetConstructor(Type targetType)
+        {
+            List<ConstructorInfo> constructorsToCompare = InjectAttribute.GetInjectableConstructors(targetType);
+            ConstructorInfo targetConstructor = GetMostInjectableConstructor(constructorsToCompare);
+
+            //If no attributed constructors could be completed, lets try normal ones
+            if (targetConstructor == null)
+            {
+                //Get constructors that haven't got the attribute via filtering
+                IEnumerable<ConstructorInfo> remainingConstructors = targetType.GetConstructors().Except(constructorsToCompare);
+                targetConstructor = GetMostInjectableConstructor(remainingConstructors);
+            }
+
+            return targetConstructor;
+        }
+
+        private ConstructorInfo GetMostInjectableConstructor(IEnumerable<ConstructorInfo> constructorsToCompare)
+        {
+            ConstructorInfo bestInjectableConstructor = null;
+
+            foreach (ConstructorInfo constructor in constructorsToCompare)
+            {
+                ParameterInfo[] constructorParams = constructor.GetParameters();
+
+                bool canInjectAllParams = true;
+
+                //Check if we can inject all the parameters
+                foreach (ParameterInfo parameterInfo in constructorParams)
+                {
+                    if (parameterInfo.IsOut)
+                    {
+                        canInjectAllParams = false;
+                        break;
+                    }
+
+                    Type paramType = parameterInfo.ParameterType;
+
+                    //We can't inject a value for this parameter if there's nothing in our magic hat to pull out into it
+                    if (_mapper.GetMapping(paramType) == null && !(_extraInjectables.ContainsKey(paramType)))
+                    {
+                        canInjectAllParams = false;
+                        break;
+                    }
+                }
+
+                //We match more parameters, this is our new choice
+                if (canInjectAllParams && (bestInjectableConstructor == null || constructorParams.Length > bestInjectableConstructor.GetParameters().Length))
+                {
+                    bestInjectableConstructor = constructor;
+                }
+
+            }
+
+            return bestInjectableConstructor;
         }
     }
 }

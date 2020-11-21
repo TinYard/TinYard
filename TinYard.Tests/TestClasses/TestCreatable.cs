@@ -6,6 +6,11 @@ namespace TinYard.Tests.TestClasses
     {
         public IContext Context { get; }
 
+        public TestCreatable()
+        {
+
+        }
+
         public TestCreatable(IContext context)
         {
             Context = context;

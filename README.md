@@ -239,27 +239,35 @@ The `BuildValue<T>()` function can create the `MappedValue` object of type `T` f
 
 ### IInjector
 
-An `IInjector` should provide two easy-to-use `Inject` methods.
+An `IInjector` should provide two easy-to-use `Inject` methods, and twi `CreateInjected` methods.
 
-One `Inject` method should provide an object, that has been provided as a parameter, values to any Field that has the [`Inject` attribute](#Inject-Attribute).
+The first `Inject` method should provide an object, that has been provided as a parameter, values to any Field that has the [`Inject` attribute](#Inject-Attribute).
 
-The other `Inject` method should have `target` and `value` objects passed as arguments. The `target` object should be injected into, specifically looking to provide it with the `value` object if possible.
+The second `Inject` method should have `target` and `value` objects passed as arguments. The `target` object should be injected into, specifically looking to provide it with the `value` object if possible.
  
+The `CreateInjected` method has two versions:
+
+One should be provided with a Generic `T` parameter. This method will create and return an instance of Type `T` that is has created via Constructor Injection and provided dependencies.
+
+The other is identical except that it accepts a `Type` parameter instead of a Generic.
+
 All [`IInjector`](#IInjector)'s should also have an internal collection of values that can be injected into any class when the first `Inject` method is called upon it. This collection should be added to / provided to the [`IInjector`](#IInjector) via the `AddInjectable` method. 
 
 #### TinYardInjector
 
 `TinYardInjector` is the standard implementation of [`IInjector`](#IInjector) used by the [standard `IContext` implementation](#Context).
 
-`TinYardInjector` requires an [`IContext`](#IContext) object to be passed to it when constructed.
+`TinYardInjector` requires an [`IContext`](#IContext) and an [`IMapper`](#IMapper) to be passed to it when constructed.
 
 `TinYardInjector` provides the 'injected' value of a Field by finding a [`Mapping`](#IMappingObject) of the Field via the [`IContext`](#IContext) provided in construction and the [`IMapper`](#IMapper) that it has, alongside its internal collection that can be added to via the `AddInjectable` method.
 
+To perform Construction Injection, you need to use one of the `CreateInjected` methods. Internally these methods are identical, the Generic version calls the non-Generic version with `typeof(T)`. The `TinYardInjector` will firstly identify any constructors for the object Type that are marked with the [`Inject` attribute](#Inject-Attribute), if any are found it will attempt to create the object with these constructors as a priority - it then will attempt to create the object by finding the constructor it can provide the most parameters to.
+
 #### Inject Attribute
 
-The `Inject` attribute can be added to any Field.
+The `Inject` attribute can be added to any Field or Class Constructor.
 
-The `Inject` attribute acts as a flag to the [`IMapper`](#IMapper) in your [`IContext`](#IContext).
+The `Inject` attribute acts as a flag to the [`IInjector`](#IInjector) in your [`IContext`](#IContext).
 
 In the standard implementation of [`IContext`](#IContext), [`Context`](#Context) -
 When a value is added to an [`IMappingObject`](#IMappingObject), the [`IMapper`](#IMapper) lets the [`IContext`](#IContext) know that the value needs injecting into, which in turn tells its [`IInjector`](#IInjector) to Inject into it.
@@ -283,6 +291,8 @@ It is expected that most, if not all, [`Factories`](#Factories) will override th
 The [`MappingValueFactory`](#MappingValueFactory) is used by the [`ValueMapper`](#ValueMapper), and aids in creation of [`IMappingObject`](#IMappingObject)'s values.
 
 As all [`IMappingObject`](#IMappingObject)'s have a method that might need a value object to be created, the [`ValueMapper`](#ValueMapper) provides the [`MappingObject`](#MappingObject) with its factory to create that value from.
+
+Internally, the `BuildValue<T>` method uses the [`IInjector`](#IInjector) that is mapped to its parent [`IMapper`](#IMapper) after determining the type required.  
 
 #### GuardFactory
 

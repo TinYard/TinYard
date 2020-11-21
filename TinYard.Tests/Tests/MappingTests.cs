@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using TinYard.API.Interfaces;
+using TinYard.Framework.API.Interfaces;
 using TinYard.Impl.Mappers;
 using TinYard.Tests.TestClasses;
 
@@ -15,6 +16,8 @@ namespace TinYard.Tests
         public void Setup()
         {
             _mapper = new ValueMapper();
+            //Need a MockInjector for the internal Factory
+            _mapper.Map<IInjector>().ToValue(new MockInjector());
         }
 
         [TestCleanup]

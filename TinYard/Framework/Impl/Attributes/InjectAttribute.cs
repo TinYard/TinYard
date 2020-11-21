@@ -6,10 +6,10 @@ using System.Reflection;
 namespace TinYard.Framework.Impl.Attributes
 {
     //TODO: See if we can allow injection into Properties.. Might be an issue due to private sets?
-    [AttributeUsage(AttributeTargets.Field /*| AttributeTargets.Property*/, AllowMultiple = false, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Constructor /*| AttributeTargets.Property*/, AllowMultiple = false, Inherited = true)]
     public class InjectAttribute : Attribute
     {
-        public static List<FieldInfo> GetInjectables(Type classToInjectInto)
+        public static List<FieldInfo> GetInjectableFields(Type classToInjectInto)
         {
             List<FieldInfo> injectables = new List<FieldInfo>();
             
@@ -20,6 +20,19 @@ namespace TinYard.Framework.Impl.Attributes
             }
 
             return injectables;
+        }
+
+        public static List<ConstructorInfo> GetInjectableConstructors(Type classToInjectInto)
+        {
+            List<ConstructorInfo> injectableConstructors = new List<ConstructorInfo>();
+
+            foreach(ConstructorInfo constructor in classToInjectInto.GetConstructors())
+            {
+                if (constructor.GetCustomAttributes<InjectAttribute>(true).Count() > 0)
+                    injectableConstructors.Add(constructor);
+            }
+
+            return injectableConstructors;
         }
     }
 }
