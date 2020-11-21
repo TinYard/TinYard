@@ -292,6 +292,8 @@ The [`MappingValueFactory`](#MappingValueFactory) is used by the [`ValueMapper`]
 
 As all [`IMappingObject`](#IMappingObject)'s have a method that might need a value object to be created, the [`ValueMapper`](#ValueMapper) provides the [`MappingObject`](#MappingObject) with its factory to create that value from.
 
+Internally, the `BuildValue<T>` method uses the [`IInjector`](#IInjector) that is mapped to its parent [`IMapper`](#IMapper) after determining the type required.  
+
 #### GuardFactory
 
 The [`GuardFactory`](#GuardFactory) is created and mapped in the [`Context`](#Context) to `IGuardFactory`. The [`GuardFactory`](#GuardFactory) is a super simple [`Factory`](#IFactory) that creates [`IGuard`](#IGuard)'s via the `Activator` class - Expecting the [`IGuard`](#IGuard) to have a parameterless constructor and be derived from the [`Guard`](#Guard) base class.
