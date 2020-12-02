@@ -3,6 +3,7 @@ using System;
 using TinYard.API.Interfaces;
 using TinYard.Framework.API.Interfaces;
 using TinYard.Impl.Mappers;
+using TinYard.Impl.VO;
 using TinYard.Tests.TestClasses;
 
 namespace TinYard.Tests
@@ -52,6 +53,24 @@ namespace TinYard.Tests
 
             Assert.IsNotNull(actual);
             Assert.IsInstanceOfType(actual, expected);
+        }
+
+        [TestMethod]
+        public void MappingObject_Build_Functionality_Can_Be_Overwritten()
+        {
+            int expected = 4096;
+
+            Action<IMappingObject> overrideBuild = new Action<IMappingObject>((mappingObj) =>
+            {
+                mappingObj.ToValue(expected);
+            });
+
+            MappingObject mappingObject = new MappingObject();
+            mappingObject.BuildDelegate = overrideBuild;
+            mappingObject.Map<int>();
+            mappingObject.BuildValue<int>();
+
+            Assert.AreEqual(expected, mappingObject.MappedValue);
         }
     }
 }
