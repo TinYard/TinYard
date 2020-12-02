@@ -231,6 +231,8 @@ Internally, `Map<T>()` on the `ValueMapper` calls `Map<T>()` on a newly created 
 
 The `BuildValue<T>()` function can create the `MappedValue` object of type `T` for you. This should have a default implementation, but you can also modify how this works by setting the `BuildDelegate<IMappingObject, Type>` Action.
 
+The `BuildDelegate<IMappingObject, Type>` Action, when invoked, should provide you the `IMappingObject` that is calling it and the type of the generic `T` passed into the `BuildValue<T>` function.
+
 #### MappingObject
 
 `MappingObject` provides a super-simple implementation of [`IMappingObject`](#IMappingObject) that is used by [`ValueMapper`](#ValueMapper). 
