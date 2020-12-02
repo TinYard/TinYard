@@ -60,7 +60,7 @@ namespace TinYard.Tests
         {
             int expected = 4096;
 
-            Action<IMappingObject> overrideBuild = new Action<IMappingObject>((mappingObj) =>
+            Action<IMappingObject, Type> overrideBuild = new Action<IMappingObject, Type>((mappingObj, valType) =>
             {
                 mappingObj.ToValue(expected);
             });
