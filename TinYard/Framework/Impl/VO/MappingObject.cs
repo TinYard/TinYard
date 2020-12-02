@@ -13,14 +13,17 @@ namespace TinYard.Impl.VO
 
         public event Action<IMappingObject> OnValueMapped;
 
+        public Action<IMappingObject, Type> BuildDelegate { get; set; }
+        private readonly Action<IMappingObject, Type> _defaultBuildDelegate;
+
         private IMapper _parentMapper;
 
         public MappingObject()
         {
-
+            _defaultBuildDelegate = (obj, _) => obj.ToValue(_parentMapper?.MappingFactory?.Build(obj).MappedValue);
         }
 
-        public MappingObject(IMapper parentMapper)
+        public MappingObject(IMapper parentMapper) : this()
         {
             _parentMapper = parentMapper;
         }
@@ -49,9 +52,17 @@ namespace TinYard.Impl.VO
 
         public IMappingObject BuildValue<T>()
         {
-            _mappedValue = typeof(T);
-            
-            _mappedValue = _parentMapper?.MappingFactory?.Build(this).MappedValue;
+            Type valueType = typeof(T);
+
+            if (BuildDelegate != null)
+            {
+                BuildDelegate.Invoke(this, valueType);
+            }
+            else
+            {
+                _mappedValue = typeof(T);
+                _defaultBuildDelegate.Invoke(this, valueType);
+            }
 
             if (OnValueMapped != null)
                 OnValueMapped.Invoke(this);

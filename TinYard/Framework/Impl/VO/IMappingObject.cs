@@ -9,6 +9,8 @@ namespace TinYard.Impl.VO
 
         event Action<IMappingObject> OnValueMapped;
 
+        Action<IMappingObject, Type> BuildDelegate { get; set; }
+
         IMappingObject Map<T>();
         IMappingObject Map(Type type);
 
