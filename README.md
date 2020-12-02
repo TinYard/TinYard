@@ -229,13 +229,13 @@ Internally, `Map<T>()` on the `ValueMapper` calls `Map<T>()` on a newly created 
 
 `MappedValue` is then the value that is set with the `ToValue(object value)` method.
 
-The `BuildValue<T>()` function can create the `MappedValue` object of type `T` for you. It should be doing this via a Factory it has access to.
+The `BuildValue<T>()` function can create the `MappedValue` object of type `T` for you. This should have a default implementation, but you can also modify how this works by setting the `BuildDelegate<IMappingObject, Type>` Action.
 
 #### MappingObject
 
 `MappingObject` provides a super-simple implementation of [`IMappingObject`](#IMappingObject) that is used by [`ValueMapper`](#ValueMapper). 
 
-`MappingObject` optionally has a reference to the `IMapper` that creates it, passed to it via the constructor. This is so that it can use the Factory that the `IMapper` has to build an object when `BuildValue<T>` is called on the `MappingObject`. If no `IMapper` is provided, it will simply not be able to build the value.
+`MappingObject` optionally has a reference to the `IMapper` that creates it, passed to it via the constructor. This is so that it can use the Factory that the `IMapper` has to build an object when the default `BuildValue<T>` is called on the `MappingObject`. If no `IMapper` is provided, it will simply not be able to build the value unless an override has been provided on the `BuildDelegate<IMappingObject, Type>` Action.
 
 ### IInjector
 
