@@ -42,9 +42,20 @@ namespace TinYard.Impl.Mappers
 
         public IMappingObject GetMapping(Type type, string mappingName = null)
         {
-            var mappingsOfType = _mappingObjects.Where(mapping => mapping.MappedType.IsAssignableFrom(type));
+            List<IMappingObject> mappingsOfType = _mappingObjects.Where(mapping => mapping.MappedType.IsAssignableFrom(type)).ToList();
 
-            var value = mappingsOfType.FirstOrDefault(mapping => mapping.Name.Equals(mappingName));
+            IMappingObject value = null;
+
+            //If we're looking for a specific name, try find it
+            if(!string.IsNullOrWhiteSpace(mappingName))
+            {
+                value = mappingsOfType.FirstOrDefault(mapping => mapping.Name.Equals(mappingName));
+            }
+            else if(mappingsOfType.Count() > 0)
+            {
+                //Else, grab the first one
+                value = mappingsOfType[0];
+            }
 
             return value;
         }
