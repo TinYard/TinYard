@@ -186,7 +186,7 @@ Currently, all that happens here is that the Post Initalize Hook is invoked.
 
 `IMapper` should be implemented by an object that is going to be providing Mapping functionality.
 
-Mapping is where we can 'map' an object, to another - They're linked.
+Mapping is where we can 'map' an object, to another - They're linked. When we `Map` something, we can also provide it with a `Name` to help with filtering later on. This should be an optional parameter in the `Map` functions.
 
 `IMapper` should also make use of [`IMappingObject`](#IMappingObject)'s to be consistent across implementations.
 
@@ -214,12 +214,18 @@ This example, means that when we request the Value of [`IContext`](#IContext) fr
 
 `IMappingObject` is used in tandem with [`IMapper`](#IMapper). 
 
-`IMappingObject` has two components:
+`IMappingObject` has three components, the two main ones are:
 
 * `MappedType`
 * `MappedValue`
 
 `MappedType` is the `type` that this `IMappingObject` is a reference to.
+
+The third component is:
+
+* `Name`
+
+The `Name` is simply an extra, and optional, property to help differentiate `IMappingObject`s.
 
 So, looking at the example used in [Value Mapper](#ValueMapper):
 
@@ -241,7 +247,7 @@ The `BuildDelegate<IMappingObject, Type>` Action, when invoked, should provide y
 
 ### IInjector
 
-An `IInjector` should provide two easy-to-use `Inject` methods, and twi `CreateInjected` methods.
+An `IInjector` should provide two easy-to-use `Inject` methods, and two `CreateInjected` methods.
 
 The first `Inject` method should provide an object, that has been provided as a parameter, values to any Field that has the [`Inject` attribute](#Inject-Attribute).
 
@@ -261,7 +267,7 @@ All [`IInjector`](#IInjector)'s should also have an internal collection of value
 
 `TinYardInjector` requires an [`IContext`](#IContext) and an [`IMapper`](#IMapper) to be passed to it when constructed.
 
-`TinYardInjector` provides the 'injected' value of a Field by finding a [`Mapping`](#IMappingObject) of the Field via the [`IContext`](#IContext) provided in construction and the [`IMapper`](#IMapper) that it has, alongside its internal collection that can be added to via the `AddInjectable` method.
+`TinYardInjector` provides the 'injected' value of a Field by finding a [`Mapping`](#IMappingObject) of the Field (with the `mappingName`, if provided) via the [`IMapper`](#IMapper) that it has access to, alongside its internal collection that can be added to via the `AddInjectable` method.
 
 To perform Construction Injection, you need to use one of the `CreateInjected` methods. Internally these methods are identical, the Generic version calls the non-Generic version with `typeof(T)`. The `TinYardInjector` will firstly identify any constructors for the object Type that are marked with the [`Inject` attribute](#Inject-Attribute), if any are found it will attempt to create the object with these constructors as a priority - it then will attempt to create the object by finding the constructor it can provide the most parameters to.
 
@@ -270,6 +276,15 @@ To perform Construction Injection, you need to use one of the `CreateInjected` m
 The `Inject` attribute can be added to any Field or Class Constructor.
 
 The `Inject` attribute acts as a flag to the [`IInjector`](#IInjector) in your [`IContext`](#IContext).
+
+When you add the `Inject` attribute you can also provide an optional `Name` value. This will be used by the `IInjector` to provide the specific `Mapping` with the same `Name` when injecting the value - Be careful with this though. The current implementation of [`TinYardInjector`](#TinYardInjector) will not provide a value if it can't find a `Mapping` with an identical `Name`.
+
+Example of a `Named` `Inject` attribute:
+
+```c-sharp
+[Inject("ExampleFoo")]
+public int FooBar;
+```
 
 In the standard implementation of [`IContext`](#IContext), [`Context`](#Context) -
 When a value is added to an [`IMappingObject`](#IMappingObject), the [`IMapper`](#IMapper) lets the [`IContext`](#IContext) know that the value needs injecting into, which in turn tells its [`IInjector`](#IInjector) to Inject into it.
