@@ -49,7 +49,13 @@ namespace TinYard.Impl.Mappers
             //If we're looking for a specific name, try find it
             if(!string.IsNullOrWhiteSpace(mappingName))
             {
-                value = mappingsOfType.FirstOrDefault(mapping => mapping.Name.Equals(mappingName));
+                value = mappingsOfType.FirstOrDefault(mapping =>
+                {
+                    if (string.IsNullOrWhiteSpace(mapping.Name))
+                        return false;
+
+                    return mapping.Name.Equals(mappingName);
+                });
             }
             else if(mappingsOfType.Count() > 0)
             {
