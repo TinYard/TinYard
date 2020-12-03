@@ -72,5 +72,26 @@ namespace TinYard.Tests
 
             Assert.AreEqual(expected, mappingObject.MappedValue);
         }
+
+        [TestMethod]
+        public void Mapping_Can_Be_Given_Name()
+        {
+            _mapper.Map<int>("foobar");
+        }
+
+        [TestMethod]
+        public void Mapper_Provides_Named_Mappings()
+        {
+            string mappingName = "foobar";
+            int expected = 1;
+
+            _mapper.Map<int>(mappingName).ToValue(expected);
+            
+            var mapping = _mapper.GetMapping<int>(mappingName);
+            var mappingValue = _mapper.GetMappingValue<int>(mappingName);
+            
+            Assert.IsNotNull(mapping);
+            Assert.AreEqual(expected, mappingValue);
+        }
     }
 }

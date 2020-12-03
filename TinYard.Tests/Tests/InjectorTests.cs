@@ -126,5 +126,23 @@ namespace TinYard.Tests
             Assert.AreNotEqual(constructed.InjectableFloat, expectedFloat);
             Assert.AreEqual(constructed.InjectableDouble, expectedDouble);
         }
+
+        [TestMethod]
+        public void Injector_Injects_Into_Named_Attributes()
+        {
+            string valueToInject = "foobar";
+            _context.Mapper.Map<string>("TestIn").ToValue(valueToInject);
+
+            TestInjectable injectable = new TestInjectable();
+
+            string preInjectValue = injectable.NamedInjectable;
+            _injector.Inject(injectable);
+
+            //Shouldn't be the same as pre-inject
+            Assert.AreNotEqual(preInjectValue, injectable.NamedInjectable);
+
+            //Should be the value we mapped
+            Assert.AreEqual(injectable.NamedInjectable, valueToInject);
+        }
     }
 }
