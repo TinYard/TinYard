@@ -11,6 +11,9 @@ namespace TinYard.Impl.VO
         public object MappedValue { get { return _mappedValue; } }
         private object _mappedValue = null;
 
+        public string Name { get { return _name; } }
+        private string _name = null;
+
         public event Action<IMappingObject> OnValueMapped;
 
         public Action<IMappingObject, Type> BuildDelegate { get; set; }
@@ -28,14 +31,15 @@ namespace TinYard.Impl.VO
             _parentMapper = parentMapper;
         }
 
-        public IMappingObject Map<T>()
+        public IMappingObject Map<T>(string mappingName = null)
         {
-            return Map(typeof(T));
+            return Map(typeof(T), mappingName);
         }
 
-        public IMappingObject Map(Type type)
+        public IMappingObject Map(Type type, string mappingName = null)
         {
             _mappedType = type;
+            _name = mappingName;
 
             return this;
         }

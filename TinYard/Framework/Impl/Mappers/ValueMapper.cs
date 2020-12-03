@@ -22,9 +22,9 @@ namespace TinYard.Impl.Mappers
             _mappingFactory = new MappingValueFactory(this);
         }
 
-        public IMappingObject Map<T>()
+        public IMappingObject Map<T>(string mappingName = null)
         {
-            var mappingObj = new MappingObject(this).Map<T>();
+            var mappingObj = new MappingObject(this).Map<T>(mappingName);
 
             if (OnValueMapped != null)
                 mappingObj.OnValueMapped += ( mapping ) => OnValueMapped.Invoke(mapping);
@@ -33,16 +33,18 @@ namespace TinYard.Impl.Mappers
             return mappingObj;
         }
 
-        public IMappingObject GetMapping<T>()
+        public IMappingObject GetMapping<T>(string mappingName = null)
         {
             Type type = typeof(T);
 
-            return GetMapping(type);
+            return GetMapping(type, mappingName);
         }
 
-        public IMappingObject GetMapping(Type type)
+        public IMappingObject GetMapping(Type type, string mappingName = null)
         {
-            var value = _mappingObjects.FirstOrDefault(mapping => mapping.MappedType.IsAssignableFrom(type));
+            var mappingsOfType = _mappingObjects.Where(mapping => mapping.MappedType.IsAssignableFrom(type));
+
+            var value = mappingsOfType.FirstOrDefault(mapping => mapping.Name.Equals(mappingName));
 
             return value;
         }
@@ -52,15 +54,15 @@ namespace TinYard.Impl.Mappers
             return _mappingObjects.AsReadOnly();
         }
 
-        public T GetMappingValue<T>()
+        public T GetMappingValue<T>(string mappingName = null)
         {
-            var mappedValue = GetMapping<T>()?.MappedValue;
+            var mappedValue = GetMapping<T>(mappingName)?.MappedValue;
             return mappedValue is T ? (T)mappedValue : default(T);
         }
 
-        public object GetMappingValue(Type type)
+        public object GetMappingValue(Type type, string mappingName = null)
         {
-            return GetMapping(type)?.MappedValue;
+            return GetMapping(type, mappingName)?.MappedValue;
         }
     }
 }

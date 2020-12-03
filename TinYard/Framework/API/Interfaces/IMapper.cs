@@ -10,13 +10,15 @@ namespace TinYard.API.Interfaces
         event Action<IMappingObject> OnValueMapped;
         IMappingFactory MappingFactory { get; }
 
-        IMappingObject Map<T>();
+        IMappingObject Map<T>(string mappingName = null);
 
-        IMappingObject GetMapping<T>();
-        IMappingObject GetMapping(Type type);
+        IMappingObject GetMapping<T>(string mappingName = null);
+
+        IMappingObject GetMapping(Type type, string mappingName = null);
         IReadOnlyList<IMappingObject> GetAllMappings();
 
-        T GetMappingValue<T>();
-        object GetMappingValue(Type type);
+        T GetMappingValue<T>(string mappingName = null);
+
+        object GetMappingValue(Type type, string mappingName = null);
     }
 }
