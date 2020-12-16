@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using TinYard.Framework.Impl.VO;
 
 namespace TinYard.Framework.Impl.Attributes
 {
@@ -9,14 +10,33 @@ namespace TinYard.Framework.Impl.Attributes
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Constructor /*| AttributeTargets.Property*/, AllowMultiple = false, Inherited = true)]
     public class InjectAttribute : Attribute
     {
-        public static List<FieldInfo> GetInjectableFields(Type classToInjectInto)
+        #region Constructors and Properties
+
+        public string Name { get { return _name; } }
+        private string _name;
+
+        public InjectAttribute(string name = null)
         {
-            List<FieldInfo> injectables = new List<FieldInfo>();
+            this._name = name;
+        }
+
+        #endregion
+
+
+        #region Helper functions
+
+        public static List<InjectableInformation> GetInjectableInformation(Type classToInjectInto)
+        {
+            List<InjectableInformation> injectables = new List<InjectableInformation>();
             
             foreach(FieldInfo field in classToInjectInto.GetFields())
             {
-                if (field.GetCustomAttributes<InjectAttribute>(true).Count() > 0)
-                    injectables.Add(field);
+                var attribute = field.GetCustomAttributes<InjectAttribute>(true).FirstOrDefault();
+                if (attribute != null)
+                {
+                    InjectableInformation info = new InjectableInformation(attribute, field);
+                    injectables.Add(info);
+                }
             }
 
             return injectables;
@@ -34,5 +54,7 @@ namespace TinYard.Framework.Impl.Attributes
 
             return injectableConstructors;
         }
+
+        #endregion
     }
 }

@@ -11,12 +11,21 @@ namespace TinYard.API.Interfaces
         IMappingFactory MappingFactory { get; }
 
         IMappingObject Map<T>();
+        IMappingObject Map<T>(string mappingName);
 
         IMappingObject GetMapping<T>();
+        IMappingObject GetMapping<T>(string mappingName);
+
         IMappingObject GetMapping(Type type);
+        IMappingObject GetMapping(Type type, string mappingName);
+
         IReadOnlyList<IMappingObject> GetAllMappings();
+        IReadOnlyList<IMappingObject> GetAllNamedMappings();
 
         T GetMappingValue<T>();
+        T GetMappingValue<T>(string mappingName);
+
         object GetMappingValue(Type type);
+        object GetMappingValue(Type type, string mappingName);
     }
 }

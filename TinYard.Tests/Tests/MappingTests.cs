@@ -72,5 +72,65 @@ namespace TinYard.Tests
 
             Assert.AreEqual(expected, mappingObject.MappedValue);
         }
+
+        [TestMethod]
+        public void Mapping_Can_Be_Given_Name()
+        {
+            _mapper.Map<int>("foobar");
+        }
+
+        [TestMethod]
+        public void Mapper_Provides_Named_Mappings()
+        {
+            string mappingName = "foobar";
+            int expected = 1;
+
+            _mapper.Map<int>(mappingName).ToValue(expected);
+            
+            var mapping = _mapper.GetMapping<int>(mappingName);
+            var mappingValue = _mapper.GetMappingValue<int>(mappingName);
+            
+            Assert.IsNotNull(mapping);
+            Assert.AreEqual(expected, mappingValue);
+        }
+
+        [TestMethod]
+        public void Mapper_Provides_Named_Mappings_Over_Normal_Order_Dependent()
+        {
+            string mappingName = "foobar";
+            int expected = 1;
+            int notExpected = 2;
+
+            //Map two to the int type, and see if the mapper prefers the one with the name - Maybe because it's mapped first
+            _mapper.Map<int>(mappingName).ToValue(expected);
+            _mapper.Map<int>().ToValue(notExpected);
+
+            var mapping = _mapper.GetMapping<int>(mappingName);
+            var mappingValue = _mapper.GetMappingValue<int>(mappingName);
+
+            Assert.IsNotNull(mapping);
+            Assert.AreEqual(expected, mappingValue);
+            Assert.AreNotEqual(notExpected, mappingValue);
+        }
+
+        [TestMethod]
+        public void Mapper_Provides_Named_Mappings_Over_Normal_Order_Independent()
+        {
+            string mappingName = "foobar";
+            int expected = 1;
+            int notExpected = 2;
+
+            //Map two to the int type, and see if the mapper prefers the one with the name.
+            //Map the named one second so that this test ensures the order of mapping isn't relevant
+            _mapper.Map<int>().ToValue(notExpected);
+            _mapper.Map<int>(mappingName).ToValue(expected);
+
+            var mapping = _mapper.GetMapping<int>(mappingName);
+            var mappingValue = _mapper.GetMappingValue<int>(mappingName);
+
+            Assert.IsNotNull(mapping);
+            Assert.AreEqual(expected, mappingValue);
+            Assert.AreNotEqual(notExpected, mappingValue);
+        }
     }
 }

@@ -20,9 +20,9 @@ namespace TinYard.Tests
         [TestMethod]
         public void Inject_Attribute_Provides_Fields_To_Inject_Into()
         {
-            var fields = InjectAttribute.GetInjectableFields(typeof(TestInjectable));
+            var infos = InjectAttribute.GetInjectableInformation(typeof(TestInjectable));
 
-            Assert.IsTrue(fields.Count > 0);
+            Assert.IsTrue(infos.Count > 0);
         }
 
         [TestMethod]

@@ -5,6 +5,7 @@ using System.Reflection;
 using TinYard.API.Interfaces;
 using TinYard.Framework.API.Interfaces;
 using TinYard.Framework.Impl.Attributes;
+using TinYard.Framework.Impl.VO;
 
 namespace TinYard.Framework.Impl.Injectors
 {
@@ -65,14 +66,14 @@ namespace TinYard.Framework.Impl.Injectors
         public void Inject(object target, object value)
         {
             Type targetType = target.GetType();
-            List<FieldInfo> injectables = InjectAttribute.GetInjectableFields(targetType);
+            List<InjectableInformation> injectables = InjectAttribute.GetInjectableInformation(targetType);
 
             Type valueType = value.GetType();
 
-            foreach(FieldInfo field in injectables)
+            foreach(InjectableInformation injectable in injectables)
             {
+                FieldInfo field = injectable.Field;
                 Type fieldType = field.FieldType;
-
                 if(valueType == fieldType || fieldType.IsAssignableFrom(valueType))
                 {
                     field.SetValue(target, value);
@@ -82,12 +83,13 @@ namespace TinYard.Framework.Impl.Injectors
 
         private void InjectValues(object target, Type targetType)
         {
-            List<FieldInfo> injectables = InjectAttribute.GetInjectableFields(targetType);
+            List<InjectableInformation> injectables = InjectAttribute.GetInjectableInformation(targetType);
 
-            foreach (FieldInfo field in injectables)
+            foreach (InjectableInformation injectable in injectables)
             {
+                FieldInfo field = injectable.Field;
                 Type fieldType = field.FieldType;
-                object valueToInject = GetInjectableValue(fieldType);
+                object valueToInject = GetInjectableValue(fieldType, injectable.Attribute.Name);
 
                 if(valueToInject != null)
                 {
@@ -97,13 +99,14 @@ namespace TinYard.Framework.Impl.Injectors
             }
         }
 
-        private object GetInjectableValue(Type valueType)
+        private object GetInjectableValue(Type valueType, string injectableName = null)
         {
             object injectableValue = null;
 
-            if (_mapper.GetMapping(valueType) != null)
+            var mapping = _mapper.GetMapping(valueType, injectableName);
+            if (mapping != null)
             {
-                injectableValue = _mapper.GetMappingValue(valueType);
+                injectableValue = mapping.MappedValue;
             }
             else if (_extraInjectables.ContainsKey(valueType))
             {
