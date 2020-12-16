@@ -13,8 +13,11 @@ namespace TinYard.Impl.VO
 
         Action<IMappingObject, Type> BuildDelegate { get; set; }
 
-        IMappingObject Map<T>(string mappingName = null);
-        IMappingObject Map(Type type, string mappingName = null);
+        IMappingObject Map<T>();
+        IMappingObject Map<T>(string mappingName);
+
+        IMappingObject Map(Type type);
+        IMappingObject Map(Type type, string mappingName);
 
         IMappingObject ToValue(object value);
         IMappingObject BuildValue<T>();

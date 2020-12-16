@@ -31,12 +31,24 @@ namespace TinYard.Impl.VO
             _parentMapper = parentMapper;
         }
 
-        public IMappingObject Map<T>(string mappingName = null)
+        public IMappingObject Map<T>()
+        {
+            return Map(typeof(T));
+        }
+
+        public IMappingObject Map<T>(string mappingName)
         {
             return Map(typeof(T), mappingName);
         }
 
-        public IMappingObject Map(Type type, string mappingName = null)
+        public IMappingObject Map(Type type)
+        {
+            _mappedType = type;
+
+            return this;
+        }
+
+        public IMappingObject Map(Type type, string mappingName)
         {
             _mappedType = type;
             _name = mappingName;

@@ -22,7 +22,12 @@ namespace TinYard.Impl.Mappers
             _mappingFactory = new MappingValueFactory(this);
         }
 
-        public IMappingObject Map<T>(string mappingName = null)
+        public IMappingObject Map<T>()
+        {
+            return Map<T>(null);
+        }
+
+        public IMappingObject Map<T>(string mappingName)
         {
             var mappingObj = new MappingObject(this).Map<T>(mappingName);
 
@@ -33,37 +38,42 @@ namespace TinYard.Impl.Mappers
             return mappingObj;
         }
 
-        public IMappingObject GetMapping<T>(string mappingName = null)
+        public IMappingObject GetMapping<T>()
+        {
+            Type type = typeof(T);
+
+            return GetMapping(type);
+        }
+
+        public IMappingObject GetMapping<T>(string mappingName)
         {
             Type type = typeof(T);
 
             return GetMapping(type, mappingName);
         }
 
-        public IMappingObject GetMapping(Type type, string mappingName = null)
+        public IMappingObject GetMapping(Type type)
         {
-            List<IMappingObject> mappingsOfType = _mappingObjects.Where(mapping => mapping.MappedType.IsAssignableFrom(type)).ToList();
-
-            IMappingObject value = null;
-
-            //If we're looking for a specific name, try find it
-            if(!string.IsNullOrWhiteSpace(mappingName))
-            {
-                value = mappingsOfType.FirstOrDefault(mapping =>
-                {
-                    if (string.IsNullOrWhiteSpace(mapping.Name))
-                        return false;
-
-                    return mapping.Name.Equals(mappingName);
-                });
-            }
-            else if(mappingsOfType.Count() > 0)
-            {
-                //Else, grab the first one
-                value = mappingsOfType[0];
-            }
+            IMappingObject value = _mappingObjects.FirstOrDefault(mapping => mapping.MappedType.IsAssignableFrom(type));
 
             return value;
+        }
+
+        public IMappingObject GetMapping(Type type, string mappingName)
+        {
+            if(string.IsNullOrWhiteSpace(mappingName))
+            {
+                return GetMapping(type);
+            }
+
+            IReadOnlyList<IMappingObject> namedMappings = GetAllNamedMappings();
+
+            if(namedMappings.Count() <= 0)
+            {
+                return null;
+            }
+
+            return namedMappings.FirstOrDefault(mapping => mapping.Name.Equals(mappingName));
         }
 
         public IReadOnlyList<IMappingObject> GetAllMappings()
@@ -71,13 +81,35 @@ namespace TinYard.Impl.Mappers
             return _mappingObjects.AsReadOnly();
         }
 
-        public T GetMappingValue<T>(string mappingName = null)
+        public IReadOnlyList<IMappingObject> GetAllNamedMappings()
         {
-            var mappedValue = GetMapping<T>(mappingName)?.MappedValue;
-            return mappedValue is T ? (T)mappedValue : default(T);
+            var mappingObjects = GetAllMappings();
+
+            var namedMappingObjects = mappingObjects.Where(mapping => !string.IsNullOrWhiteSpace(mapping.Name));
+
+            return namedMappingObjects.ToList().AsReadOnly();
         }
 
-        public object GetMappingValue(Type type, string mappingName = null)
+        public T GetMappingValue<T>()
+        {
+            Type type = typeof(T);
+            var value = GetMappingValue(type);
+            return value is T ? (T)value : default(T);
+        }
+
+        public T GetMappingValue<T>(string mappingName)
+        {
+            Type type = typeof(T);
+            var value = GetMappingValue(type, mappingName);
+            return value is T ? (T)value : default(T);
+        }
+
+        public object GetMappingValue(Type type)
+        {
+            return GetMapping(type)?.MappedValue;
+        }
+
+        public object GetMappingValue(Type type, string mappingName)
         {
             return GetMapping(type, mappingName)?.MappedValue;
         }
