@@ -106,7 +106,7 @@ namespace TinYard.Framework.Impl.Injectors
         {
             object injectableValue = null;
 
-            var mapping = _mapper.GetMapping(valueType, injectableName);
+            var mapping = _mapper.GetMapping(valueType, Environment, injectableName);
             if (mapping != null)
             {
                 injectableValue = mapping.MappedValue;

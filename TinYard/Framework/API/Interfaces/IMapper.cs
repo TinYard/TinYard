@@ -16,18 +16,26 @@ namespace TinYard.API.Interfaces
         IMappingObject Map<T>(string mappingName);
 
         IMappingObject GetMapping<T>();
+        IMappingObject GetMapping<T>(object environment);
         IMappingObject GetMapping<T>(string mappingName);
+        IMappingObject GetMapping<T>(object environment, string mappingName);
 
         IMappingObject GetMapping(Type type);
+        IMappingObject GetMapping(Type type, object environment);
         IMappingObject GetMapping(Type type, string mappingName);
+        IMappingObject GetMapping(Type type, object environment, string mappingName);
 
         IReadOnlyList<IMappingObject> GetAllMappings();
         IReadOnlyList<IMappingObject> GetAllNamedMappings();
 
         T GetMappingValue<T>();
+        T GetMappingValue<T>(object environment);
         T GetMappingValue<T>(string mappingName);
+        T GetMappingValue<T>(object environment, string mappingName);
 
         object GetMappingValue(Type type);
+        object GetMappingValue(Type type, object environment);
         object GetMappingValue(Type type, string mappingName);
+        object GetMappingValue(Type type, object environment, string mappingName);
     }
 }

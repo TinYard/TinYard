@@ -14,6 +14,9 @@ namespace TinYard.Impl.VO
         public string Name { get { return _name; } }
         private string _name = null;
 
+        public object Environment { get { return _environment; } }
+        private object _environment;
+
         public event Action<IMappingObject> OnValueMapped;
 
         public Action<IMappingObject, Type> BuildDelegate { get; set; }
@@ -26,9 +29,20 @@ namespace TinYard.Impl.VO
             _defaultBuildDelegate = (obj, _) => obj.ToValue(_parentMapper?.MappingFactory?.Build(obj).MappedValue);
         }
 
+        public MappingObject(object environment) : this()
+        {
+            _environment = environment;
+        }
+
         public MappingObject(IMapper parentMapper) : this()
         {
             _parentMapper = parentMapper;
+        }
+
+        public MappingObject(IMapper parentMapper, object environment)
+        {
+            _parentMapper = parentMapper;
+            _environment = environment;
         }
 
         public IMappingObject Map<T>()
