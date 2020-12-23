@@ -31,6 +31,9 @@ namespace TinYard
         public IInjector Injector { get { return _injector; } }
         private IInjector _injector;
 
+        public object Environment { get { return _environment;} set { SetEnvironment(value); } }
+        private object _environment;
+
         //Private variables
         private List<IExtension> _extensionsToInstall;
         private HashSet<IExtension> _extensionsInstalled;
@@ -205,6 +208,12 @@ namespace TinYard
             }
 
             _configsToInstall.Clear();
+        }
+
+        private void SetEnvironment(object newEnvironment)
+        {
+            _injector.Environment = newEnvironment;
+            _mapper.Environment = newEnvironment;
         }
 
         private void InjectValueMapper(IMappingObject mappingObject)

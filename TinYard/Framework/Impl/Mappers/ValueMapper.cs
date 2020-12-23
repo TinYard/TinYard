@@ -17,6 +17,9 @@ namespace TinYard.Impl.Mappers
         public IMappingFactory MappingFactory { get { return _mappingFactory; } }
         protected IMappingFactory _mappingFactory;
 
+        public object Environment { get { return _environment; } set { _environment = value; }}
+        private object _environment;
+
         public ValueMapper()
         {
             _mappingFactory = new MappingValueFactory(this);

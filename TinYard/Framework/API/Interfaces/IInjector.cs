@@ -4,6 +4,8 @@ namespace TinYard.Framework.API.Interfaces
 {
     public interface IInjector
     {
+        object Environment { get; set; }
+
         void AddInjectable(Type injectableType, object injectableObject);
 
         T CreateInjected<T>();

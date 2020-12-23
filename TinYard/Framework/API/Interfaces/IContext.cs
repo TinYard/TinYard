@@ -16,6 +16,8 @@ namespace TinYard.API.Interfaces
         IMapper Mapper { get; }
         IInjector Injector { get; }
 
+        object Environment { get; set; }
+
         IContext Install(IExtension extension);
         IContext Install(IBundle bundle);
         IContext Configure(IConfig configuration);
