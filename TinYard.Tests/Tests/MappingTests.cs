@@ -150,5 +150,20 @@ namespace TinYard.Tests
             Assert.AreNotEqual(notExpected, actual);
             Assert.AreEqual(expected, actual);
         }
+
+        [TestMethod]
+        public void Mapper_Provides_Mapping_From_Environment()
+        {
+            _mapper.Environment = TestEnvironments.Test1;
+            _mapper.Map<int>().ToValue(20);
+
+            _mapper.Environment = TestEnvironments.Test2;
+            var expectedMapping = _mapper.Map<int>().ToValue(5);
+
+            _mapper.Environment = TestEnvironments.Test1;
+            var actualMapping = _mapper.GetMapping<int>(TestEnvironments.Test2);
+
+            Assert.AreEqual(expectedMapping, actualMapping);
+        }
     }
 }
