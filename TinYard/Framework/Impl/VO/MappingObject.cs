@@ -39,7 +39,7 @@ namespace TinYard.Impl.VO
             _parentMapper = parentMapper;
         }
 
-        public MappingObject(IMapper parentMapper, object environment)
+        public MappingObject(IMapper parentMapper, object environment) : this()
         {
             _parentMapper = parentMapper;
             _environment = environment;
