@@ -27,12 +27,22 @@ namespace TinYard.Impl.Mappers
 
         public IMappingObject Map<T>()
         {
-            return Map<T>(null);
+            return Map<T>(Environment, null);
+        }
+
+        public IMappingObject Map<T>(object environment)
+        {
+            return Map<T>(environment, null);
         }
 
         public IMappingObject Map<T>(string mappingName)
         {
-            var mappingObj = new MappingObject(this, Environment).Map<T>(mappingName);
+            return Map<T>(Environment, mappingName);
+        }
+
+        public IMappingObject Map<T>(object environment, string mappingName)
+        {
+            var mappingObj = new MappingObject(this, environment).Map<T>(mappingName);
 
             if (OnValueMapped != null)
                 mappingObj.OnValueMapped += ( mapping ) => OnValueMapped.Invoke(mapping);

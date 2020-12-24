@@ -13,7 +13,9 @@ namespace TinYard.API.Interfaces
         object Environment { get; set; }
 
         IMappingObject Map<T>();
+        IMappingObject Map<T>(object environment);
         IMappingObject Map<T>(string mappingName);
+        IMappingObject Map<T>(object environment, string mappingName);
 
         IMappingObject GetMapping<T>();
         IMappingObject GetMapping<T>(object environment);
