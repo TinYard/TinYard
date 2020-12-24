@@ -136,7 +136,19 @@ namespace TinYard.Tests
         [TestMethod]
         public void Mapper_Provides_Correct_Environment_Mapping()
         {
-            Assert.Fail();
+            _mapper.Environment = TestEnvironments.Test1;
+            
+            int notExpected = 5;
+            _mapper.Map<int>().ToValue(notExpected);
+
+            _mapper.Environment = TestEnvironments.Test2;
+
+            int expected = 20;
+            _mapper.Map<int>().ToValue(expected);
+
+            var actual = _mapper.GetMapping<int>().MappedValue;
+            Assert.AreNotEqual(notExpected, actual);
+            Assert.AreEqual(expected, actual);
         }
     }
 }

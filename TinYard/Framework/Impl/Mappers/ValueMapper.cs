@@ -45,14 +45,14 @@ namespace TinYard.Impl.Mappers
         {
             Type type = typeof(T);
 
-            return GetMapping(type);
+            return GetMapping(type, _environment);
         }
 
         public IMappingObject GetMapping<T>(string mappingName)
         {
             Type type = typeof(T);
 
-            return GetMapping(type, mappingName);
+            return GetMapping(type, _environment, mappingName);
         }
 
         public IMappingObject GetMapping<T>(object environment)
@@ -71,9 +71,12 @@ namespace TinYard.Impl.Mappers
 
         public IMappingObject GetMapping(Type type)
         {
-            IMappingObject value = _mappingObjects.FirstOrDefault(mapping => mapping.MappedType.IsAssignableFrom(type));
-
-            return value;
+            return  _mappingObjects.FirstOrDefault
+            (
+                mapping => 
+                mapping.MappedType.IsAssignableFrom(type) && 
+                mapping.Environment == _environment
+            );
         }
 
         public IMappingObject GetMapping(Type type, object environment)
