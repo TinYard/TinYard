@@ -132,5 +132,11 @@ namespace TinYard.Tests
             Assert.AreEqual(expected, mappingValue);
             Assert.AreNotEqual(notExpected, mappingValue);
         }
+
+        [TestMethod]
+        public void Mapper_Provides_Correct_Environment_Mapping()
+        {
+            Assert.Fail();
+        }
     }
 }
