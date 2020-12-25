@@ -27,7 +27,7 @@ namespace TinYard.Impl.Mappers
 
         public IMappingObject Map<T>()
         {
-            return Map<T>(Environment, null);
+            return Map<T>(null, null);
         }
 
         public IMappingObject Map<T>(object environment)
@@ -37,11 +37,14 @@ namespace TinYard.Impl.Mappers
 
         public IMappingObject Map<T>(string mappingName)
         {
-            return Map<T>(Environment, mappingName);
+            return Map<T>(null, mappingName);
         }
 
         public IMappingObject Map<T>(object environment, string mappingName)
         {
+            if(environment == null)
+                environment = Environment;
+
             var mappingObj = new MappingObject(this, environment).Map<T>(mappingName);
 
             if (OnValueMapped != null)
@@ -55,21 +58,21 @@ namespace TinYard.Impl.Mappers
         {
             Type type = typeof(T);
 
-            return GetMapping(type, Environment);
-        }
-
-        public IMappingObject GetMapping<T>(string mappingName)
-        {
-            Type type = typeof(T);
-
-            return GetMapping(type, Environment, mappingName);
+            return GetMapping(type, null, null);
         }
 
         public IMappingObject GetMapping<T>(object environment)
         {
             Type type = typeof(T);
 
-            return GetMapping(type, environment);
+            return GetMapping(type, environment, null);
+        }
+
+        public IMappingObject GetMapping<T>(string mappingName)
+        {
+            Type type = typeof(T);
+
+            return GetMapping(type, null, mappingName);
         }
 
         public IMappingObject GetMapping<T>(object environment, string mappingName)
@@ -81,57 +84,32 @@ namespace TinYard.Impl.Mappers
 
         public IMappingObject GetMapping(Type type)
         {
-            return  _mappingObjects.FirstOrDefault
-            (
-                mapping => 
-                mapping.MappedType.IsAssignableFrom(type) && 
-                mapping.Environment == Environment
-            );
+            return GetMapping(type, null, null);
         }
 
         public IMappingObject GetMapping(Type type, object environment)
         {
-            if(environment == null)
-            {
-                return GetMapping(type);
-            }
-
-            var typeMappings = _mappingObjects.Where(mapping => mapping.MappedType.IsAssignableFrom(type));
-
-            return typeMappings.FirstOrDefault(mapping => mapping.Environment == environment);
+            return GetMapping(type, environment, null);
         }
 
         public IMappingObject GetMapping(Type type, string mappingName)
         {
-            if(string.IsNullOrWhiteSpace(mappingName))
-            {
-                return GetMapping(type);
-            }
-
-            IReadOnlyList<IMappingObject> namedMappings = GetAllNamedMappings();
-
-            if(namedMappings.Count() <= 0)
-            {
-                return null;
-            }
-
-            return namedMappings.FirstOrDefault(mapping => mapping.Name.Equals(mappingName));
+            return GetMapping(type, null, mappingName);
         }
 
         public IMappingObject GetMapping(Type type, object environment, string mappingName)
-        {
-            if(String.IsNullOrWhiteSpace(mappingName))
+        {            
+            if(environment == null)
+                environment = Environment;
+
+            var filteredMappings = FilterByEnvironment(_mappingObjects, environment);
+
+            if(!String.IsNullOrWhiteSpace(mappingName))
             {
-                return GetMapping(type, environment);
-            }
-            else if(environment == null)
-            {
-                return GetMapping(type, mappingName);
+                filteredMappings = FilterByName(filteredMappings, mappingName);
             }
 
-            var namedMappings = GetAllNamedMappings();
-
-            return namedMappings.FirstOrDefault(mapping => mapping.Environment == environment);
+            return FilterByType(filteredMappings, type).FirstOrDefault();
         }
 
         public IReadOnlyList<IMappingObject> GetAllMappings()
@@ -194,6 +172,21 @@ namespace TinYard.Impl.Mappers
         public object GetMappingValue(Type type, object environment, string mappingName)
         {
             return GetMapping(type, environment, mappingName)?.MappedValue;
+        }
+
+        private IEnumerable<IMappingObject> FilterByEnvironment(IEnumerable<IMappingObject> setToFilter, object filterEnvironment)
+        {
+            return setToFilter.Where(mapping => mapping.Environment == filterEnvironment);
+        }
+
+        private IEnumerable<IMappingObject> FilterByName(IEnumerable<IMappingObject> setToFilter, string filterName)
+        {
+            return setToFilter.Where(mapping => mapping.Name == filterName);
+        }
+
+        private IEnumerable<IMappingObject> FilterByType(IEnumerable<IMappingObject> setToFilter, Type filterType)
+        {
+            return setToFilter.Where(mapping => mapping.MappedType.IsAssignableFrom(filterType));
         }
     }
 }
