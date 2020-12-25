@@ -154,13 +154,18 @@ namespace TinYard.Tests
         [TestMethod]
         public void Mapper_Provides_Mapping_From_Environment()
         {
+            //Create unexpected mapping in env 1
             _mapper.Environment = TestEnvironments.Test1;
-            _mapper.Map<int>().ToValue(20);
+            var unexpectedMapping = _mapper.Map<int>().ToValue(20);
 
+            //Create expected mapping in env 2
             _mapper.Environment = TestEnvironments.Test2;
             var expectedMapping = _mapper.Map<int>().ToValue(5);
 
+            //Swap back to env 1
             _mapper.Environment = TestEnvironments.Test1;
+
+            //Request mapping from env 2
             var actualMapping = _mapper.GetMapping<int>(TestEnvironments.Test2);
 
             Assert.AreEqual(expectedMapping, actualMapping);

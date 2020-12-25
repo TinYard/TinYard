@@ -43,7 +43,9 @@ namespace TinYard.Impl.Mappers
         public IMappingObject Map<T>(object environment, string mappingName)
         {
             if(environment == null)
+            {
                 environment = Environment;
+            }
 
             var mappingObj = new MappingObject(this, environment).Map<T>(mappingName);
 
@@ -100,7 +102,9 @@ namespace TinYard.Impl.Mappers
         public IMappingObject GetMapping(Type type, object environment, string mappingName)
         {            
             if(environment == null)
+            {
                 environment = Environment;
+            }
 
             var filteredMappings = FilterByEnvironment(_mappingObjects, environment);
 
