@@ -186,6 +186,16 @@ namespace TinYard.Impl.Mappers
                 {
                     return ((Enum)mapping.Environment).Equals((Enum)filterEnvironment);
                 }
+                else if (mapping.Environment != null && filterEnvironment != null)
+                {
+                    Type environmentType = mapping.Environment.GetType();
+                    Type filterEnvironmentType = filterEnvironment.GetType();
+
+                    if(environmentType == filterEnvironmentType)
+                    {
+                        return Convert.ChangeType(mapping.Environment, environmentType).Equals(Convert.ChangeType(filterEnvironment, filterEnvironmentType));
+                    }
+                }
 
                 return mapping.Environment == filterEnvironment;
             });
