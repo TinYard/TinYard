@@ -180,17 +180,31 @@ namespace TinYard.Impl.Mappers
 
         private IEnumerable<IMappingObject> FilterByEnvironment(IEnumerable<IMappingObject> setToFilter, object filterEnvironment)
         {
-            return setToFilter.Where(mapping => mapping.Environment == filterEnvironment);
+            return setToFilter.Where(mapping =>
+            {
+                if(mapping.Environment is Enum && filterEnvironment is Enum)
+                {
+                    return ((Enum)mapping.Environment).Equals((Enum)filterEnvironment);
+                }
+
+                return mapping.Environment == filterEnvironment;
+            });
         }
 
         private IEnumerable<IMappingObject> FilterByName(IEnumerable<IMappingObject> setToFilter, string filterName)
         {
-            return setToFilter.Where(mapping => mapping.Name == filterName);
+            return setToFilter.Where(mapping =>
+            {
+                return mapping.Name == filterName;
+            });
         }
 
         private IEnumerable<IMappingObject> FilterByType(IEnumerable<IMappingObject> setToFilter, Type filterType)
         {
-            return setToFilter.Where(mapping => mapping.MappedType.IsAssignableFrom(filterType));
+            return setToFilter.Where(mapping =>
+            {
+                return mapping.MappedType.IsAssignableFrom(filterType);
+            });
         }
     }
 }
