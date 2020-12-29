@@ -90,7 +90,7 @@ Here's some advanced features:
 
 `Environment`s are a feature that allow for easier cross-platform/multi-target development. `Environment`s are an optional feature so you don't need to be worried about them unless you want to use them.
 
-Technically, `Environment`s are always in-play. The default `Environment` is `null` so if you ever need to switch back to the default setup call `SetEnvironment(null)` on your `IContext`.
+Technically, `Environment`s are always in-play. The default `Environment` is `null` so if you ever need to switch back to the default setup set `Environment` on your `IContext` to `null`.
 
 When an `IMappingObject` is mapped via your `IMapper`, an `Environment` property should be set on the `IMappingObject`. In the `ValueMapper` implementation of `IMapper`, the `Environment` set is the same as `ValueMapper.Environment`. The `IMapper` should provide the ability to filter through mappings via `Environment`, and the `IInjector` that is mapped to your `IContext` should be requesting only mappings that have the same `Environment` as the `IInjector.Environment`.  
 
