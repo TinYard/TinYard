@@ -118,7 +118,6 @@ Tip: If you only need to change the `Config` used based on the `Environment`, yo
 * [IInjector](#IInjector)
     * [TinYard Injector](#TinYardInjector)
     * [Inject Attribute](#Inject-Attribute)
-* [Environments](#Environments)
 * [Factories](#Factories)
     * [MappingValueFactory](#MappingValueFactory)
     * [GuardFactory](#GuardFactory)
