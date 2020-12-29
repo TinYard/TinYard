@@ -171,10 +171,13 @@ namespace TinYard
 
         private void InstallExtensions()
         {
-            //TODO : Add Environments to Extensions
             _extensionsInstalled = new HashSet<IExtension>();
             foreach (IExtension currentExtension in _extensionsToInstall)
             {
+                //Skip the extension if it's in a different environment
+                if (currentExtension.Environment != Environment)
+                    break;
+
                 currentExtension.Install(this);
                 bool added = _extensionsInstalled.Add(currentExtension);
 
@@ -190,11 +193,14 @@ namespace TinYard
 
         private void InstallConfigs()
         {
-            //TODO : Add Environments to Configs
             _configsInstalled = new HashSet<IConfig>();
 
             foreach(IConfig currentConfig in _configsToInstall)
             {
+                //Skip the config if it's in a different environment
+                if (currentConfig.Environment != Environment)
+                    break;
+
                 //Inject into the config before we call configure, ensuring it has anything needed
                 _injector.Inject(currentConfig);
 
