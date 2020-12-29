@@ -98,7 +98,11 @@ The primary, and safest way, to change `Environment`s is to call `SetEnvironment
 
 The primary use-case `Environment`s were created for is for switching between production and test systems without the need for a recompile.
 
-For example: You could easily setup two configs, one for test and one for production - Rather than having to change which config you compile with based on where you will be deploying, you could instead install the two configs with different `Environment`s. Upon launch, you could load a config file that determines which `Environment` to set on the `IContext` - Allowing a switch simply from restarting the program.
+For example: You could easily setup two `IConfig`s, one for test and one for production - Rather than having to change which `IConfig` you compile with based on where you will be deploying, you could instead install the two `IConfig`s with different `Environment`s. Upon launch, you could load a config file that determines which `Environment` to set on the `IContext` - Allowing you to switch `Environment`s simply from altering a config file and restarting the program.
+
+NB: Make sure that if you're using specific Configurations or Extensions based on the `Environment` that you set the `Environment` before calling `Initialize` on your `IContext`.
+
+Tip: If you only need to change the `Config` used based on the `Environment`, you can still use an `IExtension` to load any `Config` file that determines this - Just use the `IContext.PostExtensionsInstalled` or `IContext.PreConfigsInstalled` hook to set the `Environment` after the `IExtension` is installed but before your `IConfig` is.   
 
 ---
 
