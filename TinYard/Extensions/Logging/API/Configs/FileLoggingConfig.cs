@@ -1,6 +1,4 @@
-﻿using System;
-using System.IO;
-using TinYard.API.Interfaces;
+﻿using TinYard.API.Interfaces;
 using TinYard.Extensions.Logging.API.Interfaces;
 using TinYard.Extensions.Logging.Impl.Loggers;
 using TinYard.Framework.Impl.Attributes;
@@ -12,11 +10,19 @@ namespace TinYard.Extensions.Logging.API.Configs
         [Inject]
         public IContext _context;
 
+        public object Environment { get { return _environment; } }
+        private object _environment;
+
         private FileLogger _fileLogger;
 
         private string _fileDestination;
         private string _fileNamePrefix;
         private int _maxLogPerFile = 1000;
+
+        public FileLoggingConfig(object environment = null)
+        {
+            _environment = environment;
+        }
 
         public void Configure()
         {
@@ -58,7 +64,7 @@ namespace TinYard.Extensions.Logging.API.Configs
 
         private void SetDefaultFileDestination()
         {
-            _fileDestination = Environment.CurrentDirectory;
+            _fileDestination = System.Environment.CurrentDirectory;
         }
         
         private void SetDefaultFileNamePrefix()

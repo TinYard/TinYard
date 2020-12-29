@@ -15,6 +15,14 @@ namespace TinYard.Extensions.Bundles
     /// </summary>
     public class MVCBundle : IBundle
     {
+        public object Environment { get { return _environment; } }
+        private object _environment;
+
+        public MVCBundle(object environment = null)
+        {
+            _environment = environment;
+        }
+
         public void Install(IContext context)
         {
             context

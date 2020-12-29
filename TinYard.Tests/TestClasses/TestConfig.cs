@@ -9,6 +9,9 @@ namespace TinYard.Tests.MockClasses
         [Inject]
         public IContext context;
 
+        public object Environment { get { return _environment; } }
+        private object _environment;
+
         public void Configure()
         {
             

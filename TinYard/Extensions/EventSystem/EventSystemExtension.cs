@@ -6,9 +6,17 @@ namespace TinYard.Extensions.EventSystem
 {
     public class EventSystemExtension : IExtension
     {
+        public object Environment { get { return _environment; } }
+        private object _environment;
+
         private IContext _context;
 
         private IEventDispatcher _eventDispatcher;
+
+        public EventSystemExtension(object environment = null)
+        {
+            _environment = environment;
+        }
 
         public void Install(IContext context)
         {

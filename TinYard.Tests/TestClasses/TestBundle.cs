@@ -4,6 +4,9 @@ namespace TinYard.Tests.MockClasses
 {
     public class TestBundle : IBundle
     {
+        public object Environment { get { return _environment; } }
+        private object _environment;
+
         public void Install(IContext context)
         {
             context
