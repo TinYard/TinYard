@@ -182,6 +182,7 @@ namespace TinYard.Impl.Mappers
         {
             return setToFilter.Where(mapping =>
             {
+                //Specific Enum handling
                 if(mapping.Environment is Enum && filterEnvironment is Enum)
                 {
                     return ((Enum)mapping.Environment).Equals((Enum)filterEnvironment);
@@ -191,6 +192,7 @@ namespace TinYard.Impl.Mappers
                     Type environmentType = mapping.Environment.GetType();
                     Type filterEnvironmentType = filterEnvironment.GetType();
 
+                    //Required for some specific cases
                     if(environmentType == filterEnvironmentType)
                     {
                         return Convert.ChangeType(mapping.Environment, environmentType).Equals(Convert.ChangeType(filterEnvironment, filterEnvironmentType));
