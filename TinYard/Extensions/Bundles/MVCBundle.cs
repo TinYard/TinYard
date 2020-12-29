@@ -26,10 +26,10 @@ namespace TinYard.Extensions.Bundles
         public void Install(IContext context)
         {
             context
-                .Install(new EventSystemExtension())
-                .Install(new ViewControllerExtension())
-                .Install(new MediatorMapExtension())
-                .Install(new CommandSystemExtension());
+                .Install(new EventSystemExtension(Environment))
+                .Install(new ViewControllerExtension(Environment))
+                .Install(new MediatorMapExtension(Environment))
+                .Install(new CommandSystemExtension(Environment));
         }
     }
 }
