@@ -192,7 +192,7 @@ namespace TinYard.Impl.Mappers
                     Type environmentType = mapping.Environment.GetType();
                     Type filterEnvironmentType = filterEnvironment.GetType();
 
-                    //Required for some specific cases
+                    //Required for some weird specific cases including values from static classes??
                     if(environmentType == filterEnvironmentType)
                     {
                         return Convert.ChangeType(mapping.Environment, environmentType).Equals(Convert.ChangeType(filterEnvironment, filterEnvironmentType));
