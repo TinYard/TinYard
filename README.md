@@ -541,8 +541,6 @@ The [Mediator Map Extension](#Mediator-Map-Extension) provides:
 
 To install the [Mediator Map Extension](#Mediator-Map-Extension), install the [`MediatorMapExtension`](#Mediator-Map-Extension) class into your [Context](#IContext).
 
-There is an `MediatorMapConfig` class but don't worry about calling `.Configure()` on it as the `MediatorMapExtension` does this itself.
-
 ### IMediator
 
 A [`Mediator`](#IMediator) provides the ability for each [`View`](#View) to send and receive events from every [`IEventDispatcher`](#IEventDispatcher) linked to the [`IContext`](#IContext).
