@@ -68,6 +68,7 @@ namespace TinYard.Extensions.CommandSystem.Impl.CommandMaps
             {
                 var guard = GuardFactory.Build(guardType);
                 _injector.Inject(guard);
+                _injector.Inject(guard, evt);
 
                 if (!guard.Satisfies())
                     return;
