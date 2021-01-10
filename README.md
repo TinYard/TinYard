@@ -511,6 +511,12 @@ The job of [`ViewRegister`](#ViewRegister) is to provide a place where all [`Vie
 
 ## Mediator Map Extension
 
+### Notes
+
+TinYard versions `v1.2.0` and below (that have this extension within) may have trouble regarding accessing the `IMediatorMapper` in their `IExtension`s and `IConfig`s.
+
+Original implementation of this `IExtension` added the `IMediatorMapper` to the `Context.IMapper` using the `Context.PostConfigsInstalled` hook and thus require you to access it there too. This is a pain, hence the fix! 
+
 ### Dependencies
 
 This Extension is dependant on:
@@ -535,7 +541,7 @@ The [Mediator Map Extension](#Mediator-Map-Extension) provides:
 
 To install the [Mediator Map Extension](#Mediator-Map-Extension), install the [`MediatorMapExtension`](#Mediator-Map-Extension) class into your [Context](#IContext).
 
-Currently, there are no configurations for the Extension.
+There is an `MediatorMapConfig` class but don't worry about calling `.Configure()` on it as the `MediatorMapExtension` does this itself.
 
 ### IMediator
 
@@ -554,6 +560,7 @@ When the related [`IView`](#IView) property, known as ViewComponent, is set the 
 The base [`Mediator`](#Mediator) class provides methods to add listeners to the [`IView`](#IView), as well as to the [`IContext`](#IContext)'s mapped [`IEventDispatcher`](#IEventDispatcher).
 
 ##### Configure
+
 When creating your own [`Mediator`](#Mediator), you will have to provide a `Configure` method implementation. This is where you should add any listeners, as you will not have a reference to your [`IView`](#IView) in the constructor but this method should be called when a [`IView`](#IView) is provided.
 
 ##### Attached View
