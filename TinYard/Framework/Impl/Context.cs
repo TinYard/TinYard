@@ -149,6 +149,12 @@ namespace TinYard
 
         private void InstallBundles()
         {
+            //Get the previous installed extensions and configs out of the way so we can place
+            //the extensions after the bundles
+
+            //REFACTOR : Is there a better way to do this?
+            //Maybe we can use the `PostBundlesInstalled` hook in .Install & .Configure methods
+            //So we don't need to reallocate/move these below
             IExtension[] extensionsToHold = new IExtension[_extensionsToInstall.Count];
             _extensionsToInstall.CopyTo(extensionsToHold);
 
