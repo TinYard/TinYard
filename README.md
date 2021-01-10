@@ -649,7 +649,7 @@ Internally it does this by having reference to the mapped [`IEventDispatcher`](#
 
 Before any [`Command`](#ICommand) is executed, the [`ICommandMapping`](#ICommandMapping) is checked for [`Guards`](#Guards). If any [`Guards`](#Guards) are related to the mapping:   
    * They are built via the [`GuardFactory`](#GuardFactory).
-   * They are then injected into.
+   * They are then injected into. The `event` that has caused the `ICommand` to be created is also injected into the `Guard`.
    * The `Satisfies` method is then called.
        * If the method returns false, the [`ICommand`](#ICommand) is not executed and we return early.
        * If the method returns true, we move onto the next [`Guard`](#IGuard) until all have been satisifed. If all are satisfied, we execute the [`ICommand`](#ICommand).
