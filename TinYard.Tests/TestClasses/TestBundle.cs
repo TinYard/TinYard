@@ -6,12 +6,19 @@ namespace TinYard.Tests.MockClasses
     {
         public object Environment { get { return _environment; } }
         private object _environment;
+        
+        public readonly bool HaveDependencies;
+
+        public TestBundle(bool haveDependencies = false)
+        {
+            HaveDependencies = haveDependencies;
+        }
 
         public void Install(IContext context)
         {
             context
                 .Install(new TestExtension())
-                .Configure(new TestConfig());
+                .Configure(new TestConfig(HaveDependencies));
         }
     }
 }

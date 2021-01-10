@@ -16,9 +16,6 @@ namespace TinYard
         public event Action PreExtensionsInstalled;
         public event Action PostExtensionsInstalled;
         
-        public event Action PreBundlesInstalled;
-        public event Action PostBundlesInstalled;
-
         public event Action PreConfigsInstalled;
         public event Action PostConfigsInstalled;
 
@@ -38,7 +35,6 @@ namespace TinYard
         private List<IExtension> _extensionsToInstall;
         private HashSet<IExtension> _extensionsInstalled;
 
-        private List<IBundle> _bundlesToInstall;
         private HashSet<IBundle> _bundlesInstalled;
 
         private List<IConfig> _configsToInstall;
@@ -50,7 +46,7 @@ namespace TinYard
 
         public Context()
         {
-            _bundlesToInstall = new List<IBundle>();
+            _bundlesInstalled = new HashSet<IBundle>();
             _extensionsToInstall = new List<IExtension>();
             _configsToInstall = new List<IConfig>();
 
@@ -80,8 +76,16 @@ namespace TinYard
 
         public IContext Install(IBundle bundle)
         {
-            _bundlesToInstall.Add(bundle);
-            
+            //Unpack the bundle now so order integrity is kept
+            bundle.Install(this);
+
+            bool added = _bundlesInstalled.Add(bundle);
+
+            if (!added)
+            {
+                throw new ContextException("Bundle " + bundle.ToString() + " already installed");
+            }
+
             return this;
         }
 
@@ -113,13 +117,6 @@ namespace TinYard
             if (_initialized)
                 throw new ContextException("Context already initialized");
 
-            //Install bundles first as they'll be adding to the extensions and configs list - Don't want this happening when we're enumerating those lists
-            PreBundlesInstalled?.Invoke();
-
-            InstallBundles();
-
-            PostBundlesInstalled?.Invoke();
-
             //Let anything know we're about to install extensions
             PreExtensionsInstalled?.Invoke();
 
@@ -148,25 +145,6 @@ namespace TinYard
         {
             if(_detainedObjs.Contains(objToRelease))
                 _detainedObjs.Remove(objToRelease);
-        }
-
-        private void InstallBundles()
-        {
-            _bundlesInstalled = new HashSet<IBundle>();
-            foreach(IBundle bundle in _bundlesToInstall)
-            {
-                //This simply passes the Context into the Bundle so that it can call
-                //context.install(extension).Configure(config);
-                bundle.Install(this);
-                bool added = _bundlesInstalled.Add(bundle);
-
-                if(!added)
-                {
-                    throw new ContextException("Bundle " + bundle.ToString() + " already installed");
-                }
-            }
-
-            _bundlesToInstall.Clear();
         }
 
         private void InstallExtensions()
