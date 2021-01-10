@@ -149,6 +149,15 @@ namespace TinYard
 
         private void InstallBundles()
         {
+            IExtension[] extensionsToHold = new IExtension[_extensionsToInstall.Count];
+            _extensionsToInstall.CopyTo(extensionsToHold);
+
+            IConfig[] configsToHold = new IConfig[_configsToInstall.Count];
+            _configsToInstall.CopyTo(configsToHold);
+
+            _extensionsToInstall.Clear();
+            _configsToInstall.Clear();
+
             _bundlesInstalled = new HashSet<IBundle>();
             foreach(IBundle bundle in _bundlesToInstall)
             {
@@ -164,6 +173,9 @@ namespace TinYard
             }
 
             _bundlesToInstall.Clear();
+
+            _extensionsToInstall.AddRange(extensionsToHold);
+            _configsToInstall.AddRange(configsToHold);
         }
 
         private void InstallExtensions()
