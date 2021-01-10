@@ -4,6 +4,7 @@ using TinYard.API.Interfaces;
 using TinYard.Framework.API.Interfaces;
 using TinYard.Impl.Exceptions;
 using TinYard.Tests.MockClasses;
+using TinYard.Tests.TestClasses;
 using TinYard_Tests.TestClasses;
 
 namespace TinYard.Tests
@@ -90,6 +91,22 @@ namespace TinYard.Tests
             _context.Initialize();
 
             //Assert nothing, if it doesn't throw it's a success
+        }
+
+        [TestMethod]
+        public void Context_Installs_Bundles_Before_Others()
+        {
+            IBundle testBundle = new TestBundle(true);
+            _context.Install(testBundle);
+            _context.Configure(new DependableTestConfig());
+
+            //This should throw. TestConfig in the bundle is dependant on the DependableTestConfig.
+            //If the bundle was installed _after_ the other config then the value it is after will be available
+            //and the config wont throw an exception
+            Assert.ThrowsException<ArgumentOutOfRangeException>(()=>
+            {
+                _context.Initialize();
+            });
         }
 
         //

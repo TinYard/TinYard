@@ -129,30 +129,29 @@ The [`Context`](#Context), [`Mapper`](#IMapper), and [`Injector`](#IInjector) ar
 
 The [`Context`](#Context) can only be 'Initalized' once - This means you can only call the [`Initalize`](#Initialize) method once, any more calls to it will raise a [Context Exception](#ContextException).
 
-The `Initalize` method has four steps:
-* [Install Bundles](#Install-Bundles)
+The `Initalize` method has three steps:
 * [Install Extensions](#Install-Extensions)
 * [Install Configs](#Install-Configs)
 * [Post Initialize](#Post-Initialize)
 
+A pre-cursor to the `Initialize` method is the [Install Bundles step](#install-bundles).
+
 Each step has two `event` hook that can be subscribed to, one is invoked before the step and the other is invoked afterwards - Except for [Post Initialize](#Post-Initialize).
 
 Hook order:
-1. `PreBundlesInstalled`
-2. `PostBundlesInstalled`
-3. `PreExtensionsInstalled`
-4. `PostExtensionsInstalled`
-5. `PreConfigsInstalled`
-6. `PostConfigsInstalled`
-7. `PostInitialize`
+1. `PreExtensionsInstalled`
+2. `PostExtensionsInstalled`
+3. `PreConfigsInstalled`
+4. `PostConfigsInstalled`
+5. `PostInitialize`
 
 ##### Install Bundles
 
-Install Bundles is the first of the four steps. It runs first, as it has a direct effect on the next two steps.
+Install Bundles is a unique step and so isn't included above. It runs first, as it has a direct effect on the next steps.
 
-[Bundles](#IBundle) should typically be just installing [`IExtension`](#IExtension)'s and [`IConfig`](#IConfig)'s.  
+[Bundles](#IBundle) are installed instantly. When you call the `Install` method on your `Context` and pass it a `Bundle`, it will call the `Install` method instantly on the `Bundle` so that each `Extension` and `Config` within gets added to the `Context` in the correct order.
 
-When an [`IBundle`](#IBundle) is installed via the `Install(IBundle bundle)` method, it is added to a `private List<IBundle> _bundlesToInstall`. When the [`Context`](#Context) goes to install the List of `IBundle`'s it simply calls the `Install` method on each and passes itself to the Bundle, which in form then usually calls `Install(IExtension extension)` and `Configure(IConfig config)` onto the [`Context`](#Context), just making the installation of multiple Extensions and Configs that are together a bit tidier.
+[Bundles](#IBundle) should be just installing [`IExtension`](#IExtension)'s and [`IConfig`](#IConfig)'s, except in unique cases. This is due to the manner in which they are treated as explained above.
 
 So, Bundles are simply just wrappers for installing multiple Extensions and Configs. Because of that, this is why they are installed first - So that the actual extensions and configs installation has the extensions and configs from these bundles in their lists.
 
