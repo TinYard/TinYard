@@ -6,7 +6,7 @@ namespace TinYard.Tests.TestClasses
     public class TestGuard : Guard
     {
         [Inject]
-        public object Injectable;
+        public string Injectable;
 
         public override bool Satisfies()
         {
