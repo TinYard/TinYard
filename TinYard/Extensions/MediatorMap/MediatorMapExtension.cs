@@ -1,4 +1,7 @@
 ﻿using TinYard.API.Interfaces;
+using TinYard.Extensions.MediatorMap.API.Interfaces;
+using TinYard.Extensions.MediatorMap.Impl.Mappers;
+using TinYard.Extensions.ViewController.API.Interfaces;
 
 namespace TinYard.Extensions.MediatorMap
 {
@@ -10,7 +13,10 @@ namespace TinYard.Extensions.MediatorMap
         {
             _context = context;
 
-            _context.Configure(new MediatorMapConfig());
+            var viewRegister = _context.Mapper.GetMappingValue<IViewRegister>();
+
+            MediatorMapper mediatorMapper = new MediatorMapper(context, viewRegister);
+            _context.Mapper.Map<IMediatorMapper>().ToValue(mediatorMapper);
         }
     }
 }
