@@ -11,6 +11,8 @@ namespace TinYard.Tests.TestClasses
         [Inject]
         public IContext context;
 
+        public object Environment { get; set; }
+
         public void Configure()
         {
             context.Mapper.Map<int>().ToValue(69);
