@@ -132,5 +132,51 @@ namespace TinYard.Tests
             Assert.AreEqual(expected, mappingValue);
             Assert.AreNotEqual(notExpected, mappingValue);
         }
+
+        [TestMethod]
+        public void Mapper_Provides_Mapping_From_Value_Environment()
+        {
+            object env1 = TestEnvironments.Test1;
+            object env2 = TestEnvironments.Test2;
+
+            (var unexpectedMapping, var expectedMapping) = CreateEnvironmentMappings<object>(env1, env2);
+
+            //Request mapping from env 2
+            var actualMapping = _mapper.GetMapping<object>(env2);
+
+            Assert.AreEqual(expectedMapping, actualMapping);
+        }
+
+        [TestMethod]
+        public void Mapper_Provides_Mapping_From_Enum_Environment()
+        {
+            (var unexpectedMapping, var expectedMapping) = CreateEnvironmentMappings<object>(TestEnvironments.Test1, TestEnvironments.Test2);
+
+            //Request mapping from env 2
+            var actualMapping = _mapper.GetMapping<object>(TestEnvironments.Test2);
+
+            Assert.AreEqual(expectedMapping, actualMapping);
+        }
+
+        [TestMethod]
+        public void Mapper_Provides_Mapping_From_Static_Environment()
+        {
+            (var unexpectedMapping, var expectedMapping) = CreateEnvironmentMappings<object>(StaticTestClass.TestValue, StaticTestClass.OtherTestValue);
+
+            var actualMapping = _mapper.GetMapping<object>(StaticTestClass.OtherTestValue);
+
+            Assert.AreEqual(expectedMapping, actualMapping);
+        }
+
+        private (IMappingObject unexpectedMapping, IMappingObject expectedMapping) CreateEnvironmentMappings<T>(object env1, object env2)
+        {
+            //Create mapping in env 1
+            var unexpectedMapping = _mapper.Map<T>(env1).ToValue(env1);
+
+            //Create mapping in env 2
+            var expectedMapping = _mapper.Map<T>(env2).ToValue(env2);
+
+            return (unexpectedMapping, expectedMapping); 
+        }
     }
 }

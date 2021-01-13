@@ -7,7 +7,15 @@ namespace TinYard.Extensions.MediatorMap
 {
     public class MediatorMapExtension : IExtension
     {
+        public object Environment { get { return _environment; } }
+        private object _environment;
+
         private IContext _context;
+
+        public MediatorMapExtension(object environment = null)
+        {
+            _environment = environment;
+        }
 
         public void Install(IContext context)
         {

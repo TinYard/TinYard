@@ -10,6 +10,14 @@ namespace TinYard.Extensions.Logging.API.Configs
         [Inject]
         public IMapper mapper;
 
+        public object Environment { get { return _environment; } }
+        private object _environment;
+
+        public ConsoleLoggingConfig(object environment = null)
+        {
+            _environment = environment;
+        }
+
         public void Configure()
         {
             ConsoleLogger consoleLogger = new ConsoleLogger();

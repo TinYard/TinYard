@@ -9,6 +9,14 @@ namespace TinYard.Extensions.CallbackTimer
 {
     public class CallbackTimerExtension : IExtension
     {
+        public object Environment { get { return _environment; } }
+        private object _environment;
+
+        public CallbackTimerExtension(object environment = null)
+        {
+            _environment = environment;
+        }
+
         public void Install(IContext context)
         {
             context.Mapper.Map<ICallbackTimer>().ToValue(new CallbackTimerService());

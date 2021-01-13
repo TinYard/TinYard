@@ -6,6 +6,8 @@ namespace TinYard.API.Interfaces
 {
     public interface IConfig
     {
+        object Environment { get; }
+
         void Configure();
     }
 }

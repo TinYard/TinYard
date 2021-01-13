@@ -6,6 +6,9 @@ namespace TinYard.Tests.MockClasses
     {
         public IContext context;
 
+        public object Environment { get { return _environment; } }
+        private object _environment;
+
         public void Install(IContext context)
         {
             this.context = context;

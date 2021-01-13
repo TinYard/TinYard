@@ -28,6 +28,9 @@ namespace TinYard
         public IInjector Injector { get { return _injector; } }
         private IInjector _injector;
 
+        public object Environment { get { return _environment; } set { SetEnvironment(value); } }
+        private object _environment;
+
         //Private variables
         private List<IExtension> _extensionsToInstall;
         private HashSet<IExtension> _extensionsInstalled;
@@ -149,6 +152,10 @@ namespace TinYard
             _extensionsInstalled = new HashSet<IExtension>();
             foreach (IExtension currentExtension in _extensionsToInstall)
             {
+                //Skip the extension if it's in a different environment
+                if (currentExtension.Environment != Environment)
+                    break;
+
                 currentExtension.Install(this);
                 bool added = _extensionsInstalled.Add(currentExtension);
 
@@ -168,6 +175,10 @@ namespace TinYard
 
             foreach(IConfig currentConfig in _configsToInstall)
             {
+                //Skip the config if it's in a different environment
+                if (currentConfig.Environment != Environment)
+                    break;
+
                 //Inject into the config before we call configure, ensuring it has anything needed
                 _injector.Inject(currentConfig);
 
@@ -183,6 +194,14 @@ namespace TinYard
             }
 
             _configsToInstall.Clear();
+        }
+
+        private void SetEnvironment(object newEnvironment)
+        {
+            _environment = newEnvironment;
+
+            _injector.Environment = newEnvironment;
+            _mapper.Environment = newEnvironment;
         }
 
         private void InjectValueMapper(IMappingObject mappingObject)

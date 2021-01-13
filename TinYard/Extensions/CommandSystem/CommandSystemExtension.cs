@@ -8,7 +8,15 @@ namespace TinYard.Extensions.CommandSystem
 {
     public class CommandSystemExtension : IExtension
     {
+        public object Environment { get { return _environment; } }
+        private object _environment;
+
         private IContext _context;
+
+        public CommandSystemExtension(object environment = null)
+        {
+            _environment = environment;
+        }
 
         public void Install(IContext context)
         {

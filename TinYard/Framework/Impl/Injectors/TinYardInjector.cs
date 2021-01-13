@@ -11,6 +11,9 @@ namespace TinYard.Framework.Impl.Injectors
 {
     public class TinYardInjector : IInjector
     {
+        public object Environment { get { return _environment; } set { _environment = value; } }
+        private object _environment;
+
         private IContext _context;
         private IMapper _mapper;
 
@@ -103,7 +106,7 @@ namespace TinYard.Framework.Impl.Injectors
         {
             object injectableValue = null;
 
-            var mapping = _mapper.GetMapping(valueType, injectableName);
+            var mapping = _mapper.GetMapping(valueType, Environment, injectableName);
             if (mapping != null)
             {
                 injectableValue = mapping.MappedValue;

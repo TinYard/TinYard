@@ -11,6 +11,7 @@
 * [Using TinYard](#Using-TinYard)
     * [Getting Started](#Getting-Started)
     * [Example Projects](#Example-Projects)
+    * [Advanced Features](#Advanced-Features)
 * [TinYard Internals](#TinYard-Internals)
 * [TinYard Extensions](#TinYard-Extensions)
 * [TinYard Bundles](#TinYard-Bundles)
@@ -64,18 +65,46 @@ public class InjectableExample
 ```
 Now, to get this `InjectableExample` provided with the value, we have two options:
 
-1. Map `InjectableExample` on the `context.Mapper`
+1. Map `InjectableExample` on the `context.Mapper` (as shown above)
 2. Call `Inject` on the `context.Injector`
 
 Often, you'll find you end up doing option 1 without thinking about it as it can be handy to `Map` many objects.. but sometimes, you really will not want to do that!
 
 This is where option 2 can come in. The `context.Injector` handles all `injections`, so simply call `context.Inject(injectableExampleInstance)` and voila!
 
-A lot of the above is performed for you in the [`MVC Bundle`](#MVC-Bundle) extensions, making it a great tool for more complex use. To learn a bit more about this, take a look at [extensions](#TinYard-Extensions).
+A lot of the above is performed for you in the [`MVC Bundle`](#MVC-Bundle) extensions, making it a great tool for more complex use. To learn a bit more about this, take a look at [extensions](#TinYard-Extensions). 
 
 ### Example Projects
 
 * [Example To Do List](https://github.com/TinYard/TinYard-Basic-Example)
+
+### Advanced Features
+
+TinYard has more advanced features for those who need unlimited power.
+
+Here's some advanced features:
+
+* [Environments](#Environments)
+
+### Environments
+
+`Environment`s are a feature that allow for easier cross-platform/multi-target development. `Environment`s are an optional feature so you don't need to be worried about them unless you want to use them.
+
+Technically, `Environment`s are always in-play. The default `Environment` is `null` so if you ever need to switch back to the default setup set `Environment` on your `IContext` to `null`.
+
+When an `IMappingObject` is mapped via your `IMapper`, an `Environment` property should be set on the `IMappingObject`. In the `ValueMapper` implementation of `IMapper`, the `Environment` set is the same as `ValueMapper.Environment`. The `IMapper` should provide the ability to filter through mappings via `Environment`, and the `IInjector` that is mapped to your `IContext` should be requesting only mappings that have the same `Environment` as the `IInjector.Environment`.  
+
+The primary, and safest way, to change `Environment`s is to call `SetEnvironment` on your `IContext`. Your `IContext` should then change the `Environment` on the correct objects so that it works across the board.  
+
+The primary use-case `Environment`s were created for is for switching between production and test systems without the need for a recompile.
+
+For example: You could easily setup two `IConfig`s, one for test and one for production - Rather than having to change which `IConfig` you compile with based on where you will be deploying, you could instead install the two `IConfig`s with different `Environment`s. Upon launch, you could load a config file that determines which `Environment` to set on the `IContext` - Allowing you to switch `Environment`s simply from altering a config file and restarting the program.
+
+NB: Make sure that if you're using specific Configurations or Extensions based on the `Environment` that you set the `Environment` before calling `Initialize` on your `IContext`.
+
+Tip: If you only need to change the `Config` used based on the `Environment`, you can still use an `IExtension` to load any `Config` file that determines this - Just use the `IContext.PostExtensionsInstalled` or `IContext.PreConfigsInstalled` hook to set the `Environment` after the `IExtension` is installed but before your `IConfig` is.   
+
+---
 
 ## TinYard Internals
 

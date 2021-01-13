@@ -5,6 +5,8 @@ namespace TinYard.Tests.TestClasses
 {
     public class MockInjector : IInjector
     {
+        public object Environment { get; set; }
+        
         public void AddInjectable(Type injectableType, object injectableObject)
         {
         }
