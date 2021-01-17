@@ -5,7 +5,6 @@ using TinYard.Framework.API.Interfaces;
 using TinYard.Impl.Exceptions;
 using TinYard.Tests.MockClasses;
 using TinYard.Tests.TestClasses;
-using TinYard_Tests.TestClasses;
 
 namespace TinYard.Tests
 {
