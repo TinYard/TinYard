@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using TinYard.API.Interfaces;
+using TinYard.ExtensionMethods;
 using TinYard.Framework.API.Interfaces;
 using TinYard.Framework.Impl.Attributes;
 using TinYard.Framework.Impl.VO;
+using TinYard.Impl.VO;
 
 namespace TinYard.Framework.Impl.Injectors
 {
@@ -63,7 +65,18 @@ namespace TinYard.Framework.Impl.Injectors
             //GetType as it's correct at run-time rather than compile time!
             Type targetType = target.GetType();
 
-            InjectValues(target, targetType);
+            var enumerable = target as System.Collections.IEnumerable;
+            if(enumerable != null)
+            {
+                foreach(var obj in enumerable)
+                {
+                    Inject(obj);
+                }
+            }
+            else
+            {
+                InjectValues(target, targetType);
+            }
         }
 
         public void Inject(object target, object value)
@@ -91,8 +104,23 @@ namespace TinYard.Framework.Impl.Injectors
             foreach (InjectableInformation injectable in injectables)
             {
                 FieldInfo field = injectable.Field;
+                
                 Type fieldType = field.FieldType;
-                object valueToInject = GetInjectableValue(fieldType, injectable.Attribute.Name);
+
+                object valueToInject = null;
+
+                if(injectable.Attribute.AllowMultiple)
+                {
+                    //Use this so that if we have an IEnumerable because of allow multiple,
+                    //we look for the generic used in the IEnumerable instead
+                    fieldType = injectable.GetFieldValueType();
+
+                    valueToInject = GetAllInjectableValues(fieldType, injectable.Attribute.Name);
+                }
+                else
+                {
+                    valueToInject = GetInjectableValue(fieldType, injectable.Attribute.Name);
+                }
 
                 if(valueToInject != null)
                 {
@@ -117,6 +145,24 @@ namespace TinYard.Framework.Impl.Injectors
             }
 
             return injectableValue;
+        }
+
+        private object GetAllInjectableValues(Type valueType, string injectableName = null)
+        {
+            IEnumerable<IMappingObject> mappings = _mapper.GetAllMappings(valueType);
+
+            if(!string.IsNullOrWhiteSpace(injectableName))
+            {
+                mappings = mappings.Where(mapping => mapping.Name.Equals(injectableName));
+            }
+
+            var mappingValues = GenericConstructionExtensions.CreateList(valueType);
+            foreach(var mapping in mappings)
+            {
+                mappingValues.Add(mapping.MappedValue);
+            }
+
+            return mappingValues;
         }
 
         private object[] CreateConstructorParameters(ConstructorInfo constructorInfo)
