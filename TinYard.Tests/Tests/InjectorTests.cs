@@ -1,8 +1,9 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Linq;
 using TinYard.API.Interfaces;
 using TinYard.Framework.API.Interfaces;
 using TinYard.Framework.Impl.Injectors;
-using TinYard_Tests.TestClasses;
+using TinYard.Tests.TestClasses;
 
 namespace TinYard.Tests
 {
@@ -143,6 +144,57 @@ namespace TinYard.Tests
 
             //Should be the value we mapped
             Assert.AreEqual(injectable.NamedInjectable, valueToInject);
+        }
+
+        [TestMethod]
+        public void Injector_Provides_Multiple_Injectables()
+        {
+            double valToInject1 = 3.14d;
+            double valToInject2 = 7.28d;
+            _context.Mapper.Map<double>().ToValue(valToInject1);
+            _context.Mapper.Map<double>().ToValue(valToInject2);
+
+            TestInjectable injectable = new TestInjectable();
+            _injector.Inject(injectable);
+
+            var injectedVals = injectable.MultipleInjectedDoubles;
+
+            Assert.IsTrue(
+                injectedVals.Contains(valToInject1) &&
+                injectedVals.Contains(valToInject2)
+                );
+        }
+
+        [TestMethod]
+        public void Injector_Injects_Into_Multiple_Injectables_List()
+        {
+            double valToInject1 = 3.14d;
+            double valToInject2 = 7.28d;
+            _context.Mapper.Map<double>().ToValue(valToInject1);
+            _context.Mapper.Map<double>().ToValue(valToInject2);
+
+            int valToInject3 = 69;
+            _context.Mapper.Map<int>().ToValue(valToInject3);
+
+            TestInjectable valToInject4 = new TestInjectable();
+            TestInjectable valToInject5 = new TestInjectable();
+            _context.Mapper.Map<TestInjectable>().ToValue(valToInject4);
+            _context.Mapper.Map<TestInjectable>().ToValue(valToInject5);
+
+            TestTertiaryInjectable injectable = new TestTertiaryInjectable();
+            _injector.Inject(injectable);
+
+            var primaryInjectables = injectable.Injectables;
+
+            foreach(TestInjectable primaryInjectable in primaryInjectables)
+            {
+                Assert.IsTrue(
+                    primaryInjectable.MultipleInjectedDoubles.Contains(valToInject1) &&
+                    primaryInjectable.MultipleInjectedDoubles.Contains(valToInject2)
+                    );
+
+                Assert.AreEqual(valToInject3, primaryInjectable.Value);
+            }
         }
     }
 }

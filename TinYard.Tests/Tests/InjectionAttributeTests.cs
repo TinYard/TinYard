@@ -1,6 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TinYard.Framework.Impl.Attributes;
-using TinYard_Tests.TestClasses;
+using TinYard.Tests.TestClasses;
 
 namespace TinYard.Tests
 {

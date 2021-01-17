@@ -15,9 +15,23 @@ namespace TinYard.Framework.Impl.Attributes
         public string Name { get { return _name; } }
         private string _name;
 
-        public InjectAttribute(string name = null)
+        public bool AllowMultiple { get { return _allowMultiple; } }
+        private bool _allowMultiple = false;
+
+        public InjectAttribute(string name) : this(name, false)
+        {
+
+        }
+
+        public InjectAttribute(bool allowMultiple) : this(null, allowMultiple)
+        {
+
+        }
+
+        public InjectAttribute(string name = null, bool allowMultiple = false)
         {
             this._name = name;
+            this._allowMultiple = allowMultiple;
         }
 
         #endregion
