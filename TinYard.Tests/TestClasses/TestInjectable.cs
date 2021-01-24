@@ -12,6 +12,12 @@ namespace TinYard_Tests.TestClasses
 
         public float ConstructedFloat { get; private set; }
 
+        [Inject]
+        public double InjectableProperty { get; set; }
+
+        [Inject]
+        public double InjectablePrivateProperty { get; private set; }
+
         public TestInjectable()
         {
 

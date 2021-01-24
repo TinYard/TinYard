@@ -75,11 +75,23 @@ namespace TinYard.Framework.Impl.Injectors
 
             foreach(InjectableInformation injectable in injectables)
             {
-                FieldInfo field = injectable.Field;
-                Type fieldType = field.FieldType;
-                if(valueType == fieldType || fieldType.IsAssignableFrom(valueType))
+                if(injectable.Field != null)
                 {
-                    field.SetValue(target, value);
+                    FieldInfo field = injectable.Field;
+                    Type fieldType = field.FieldType;
+                    if(valueType == fieldType || fieldType.IsAssignableFrom(valueType))
+                    {
+                        field.SetValue(target, value);
+                    }
+                }
+                else if(injectable.Property != null)
+                {
+                    PropertyInfo property = injectable.Property;
+                    Type propertyType = property.PropertyType;
+                    if(valueType == propertyType || propertyType.IsAssignableFrom(valueType))
+                    {
+                        property.SetValue(target, value);
+                    }
                 }
             }
         }
@@ -91,13 +103,34 @@ namespace TinYard.Framework.Impl.Injectors
             foreach (InjectableInformation injectable in injectables)
             {
                 FieldInfo field = injectable.Field;
-                Type fieldType = field.FieldType;
-                object valueToInject = GetInjectableValue(fieldType, injectable.Attribute.Name);
+                Type fieldType = field?.FieldType;
+
+                PropertyInfo property = injectable.Property;
+                Type propertyType = property?.PropertyType;
+
+                object valueToInject = null;
+                
+                if(field != null)
+                {
+                    valueToInject = GetInjectableValue(fieldType, injectable.Attribute.Name);
+                }
+                else if(property != null)
+                {
+                    valueToInject = GetInjectableValue(propertyType, injectable.Attribute.Name);
+                }
 
                 if(valueToInject != null)
                 {
                     Inject(valueToInject);
-                    field.SetValue(target, valueToInject);
+
+                    if(field != null)
+                    {
+                        field.SetValue(target, valueToInject);
+                    }
+                    else
+                    {
+                        property.SetValue(target, valueToInject);
+                    }
                 }
             }
         }

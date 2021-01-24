@@ -144,5 +144,55 @@ namespace TinYard.Tests
             //Should be the value we mapped
             Assert.AreEqual(injectable.NamedInjectable, valueToInject);
         }
+
+        [TestMethod]
+        public void Injector_Can_Inject_Into_Property()
+        {
+            double expected = 69d;
+            _context.Mapper.Map<double>().ToValue(expected);
+
+            TestInjectable injectable = new TestInjectable();
+
+            _injector.Inject(injectable);
+
+            Assert.AreEqual(expected, injectable.InjectableProperty);
+        }
+
+        [TestMethod]
+        public void Injector_Can_Inject_Into_Private_Set_Property()
+        {
+            double expected = 69d;
+            _context.Mapper.Map<double>().ToValue(expected);
+
+            TestInjectable injectable = new TestInjectable();
+
+            _injector.Inject(injectable);
+
+            Assert.AreEqual(expected, injectable.InjectablePrivateProperty);
+        }
+
+        [TestMethod]
+        public void Injector_Can_Directly_Inject_Property()
+        {
+            double expected = 69d;
+
+            TestInjectable injectable = new TestInjectable();
+
+            _injector.Inject(injectable, expected);
+
+            Assert.AreEqual(expected, injectable.InjectableProperty);
+        }
+
+        [TestMethod]
+        public void Injector_Can_Directly_Inject_Private_Property()
+        {
+            double expected = 69d;
+
+            TestInjectable injectable = new TestInjectable();
+
+            _injector.Inject(injectable, expected);
+
+            Assert.AreEqual(expected, injectable.InjectablePrivateProperty);
+        }
     }
 }

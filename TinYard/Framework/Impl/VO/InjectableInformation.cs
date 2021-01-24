@@ -7,6 +7,13 @@ namespace TinYard.Framework.Impl.VO
     {
         public InjectAttribute Attribute { get; }
         public FieldInfo Field { get; }
+        public PropertyInfo Property { get; }
+
+        public InjectableInformation(InjectAttribute attribute, PropertyInfo property)
+        {
+            Attribute = attribute;
+            Property = property;
+        }
 
         public InjectableInformation(InjectAttribute attribute, FieldInfo field)
         {

@@ -7,7 +7,7 @@ using TinYard.Framework.Impl.VO;
 namespace TinYard.Framework.Impl.Attributes
 {
     //TODO: See if we can allow injection into Properties.. Might be an issue due to private sets?
-    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Constructor /*| AttributeTargets.Property*/, AllowMultiple = false, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Constructor | AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
     public class InjectAttribute : Attribute
     {
         #region Constructors and Properties
@@ -29,6 +29,16 @@ namespace TinYard.Framework.Impl.Attributes
         {
             List<InjectableInformation> injectables = new List<InjectableInformation>();
             
+            foreach(PropertyInfo property in classToInjectInto.GetProperties())
+            {
+                var attribute = property.GetCustomAttributes<InjectAttribute>(true).FirstOrDefault();
+                if(attribute != null && property.GetSetMethod(true) != null)//Get the Set method of property, even if not public
+                {
+                    InjectableInformation info = new InjectableInformation(attribute, property);
+                    injectables.Add(info);
+                }
+            }
+
             foreach(FieldInfo field in classToInjectInto.GetFields())
             {
                 var attribute = field.GetCustomAttributes<InjectAttribute>(true).FirstOrDefault();
