@@ -62,20 +62,34 @@ namespace TinYard.Framework.Impl.Injectors
 
         public void Inject(object target)
         {
-            //GetType as it's correct at run-time rather than compile time!
-            Type targetType = target.GetType();
+            var injectableInformations = GetInjectableInformation(target);
 
-            var enumerable = target as System.Collections.IEnumerable;
-            if(enumerable != null)
+            //If IEnumerable, and specifically asking for multiple
+            if (target is System.Collections.IEnumerable && (injectableInformations.Count() > 0 && injectableInformations.ToList()[0].Attribute.AllowMultiple))
             {
-                foreach(var obj in enumerable)
-                {
-                    Inject(obj);
-                }
+                HandleIEnumerableInjection(target as System.Collections.IEnumerable);
             }
             else
             {
-                InjectValues(target, targetType);
+                InjectValues(target, injectableInformations);
+            }
+        }
+
+        private IEnumerable<InjectableInformation> GetInjectableInformation(object target)
+        {
+            //GetType as it's correct at run-time rather than compile time!
+            Type targetType = target.GetType();
+            List<InjectableInformation> injectables = InjectAttribute.GetInjectableInformation(targetType);
+
+            return injectables;
+        }
+
+        private void HandleIEnumerableInjection(System.Collections.IEnumerable target)
+        {
+            foreach (var obj in target)
+            {
+                //Recursively handle injection for items in IEnumerable
+                Inject(obj);
             }
         }
 
@@ -97,11 +111,9 @@ namespace TinYard.Framework.Impl.Injectors
             }
         }
 
-        private void InjectValues(object target, Type targetType)
+        private void InjectValues(object target, IEnumerable<InjectableInformation> targetInjectableInformation) 
         {
-            List<InjectableInformation> injectables = InjectAttribute.GetInjectableInformation(targetType);
-
-            foreach (InjectableInformation injectable in injectables)
+            foreach (InjectableInformation injectable in targetInjectableInformation)
             {
                 FieldInfo field = injectable.Field;
                 

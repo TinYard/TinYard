@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
 using System.Linq;
 using TinYard.API.Interfaces;
 using TinYard.Framework.API.Interfaces;
@@ -184,7 +185,7 @@ namespace TinYard.Tests
             TestTertiaryInjectable injectable = new TestTertiaryInjectable();
             _injector.Inject(injectable);
 
-            var primaryInjectables = injectable.Injectables;
+            var primaryInjectables = injectable.MultipleInjectables;
 
             foreach(TestInjectable primaryInjectable in primaryInjectables)
             {
@@ -195,6 +196,39 @@ namespace TinYard.Tests
 
                 Assert.AreEqual(valToInject3, primaryInjectable.Value);
             }
+        }
+
+        [TestMethod]
+        public void Injector_Only_Injects_Multiple_When_Requested()
+        {
+            double valToInject1 = 3.14d;
+            double valToInject2 = 7.28d;
+            _context.Mapper.Map<double>().ToValue(valToInject1);
+            _context.Mapper.Map<double>().ToValue(valToInject2);
+
+            int valToInject3 = 69;
+            _context.Mapper.Map<int>().ToValue(valToInject3);
+
+            List<TestInjectable> valToInject4 = new List<TestInjectable>();
+            var mockVal1 = new TestInjectable();
+            var mockVal2 = new TestInjectable();
+            valToInject4.Add(mockVal1);
+            valToInject4.Add(mockVal2);
+
+            TestInjectable valToInject5 = new TestInjectable();
+            TestInjectable valToInject6 = new TestInjectable();
+
+            _context.Mapper.Map<IEnumerable<TestInjectable>>().ToValue(valToInject4);
+            _context.Mapper.Map<TestInjectable>().ToValue(valToInject5);
+            _context.Mapper.Map<TestInjectable>().ToValue(valToInject6);
+
+            TestTertiaryInjectable injectable = new TestTertiaryInjectable();
+            _injector.Inject(injectable);
+
+            var primaryInjectables = injectable.NotMultipleInjectables;
+
+            Assert.IsTrue(primaryInjectables.Contains(mockVal1));
+            Assert.IsTrue(primaryInjectables.Contains(mockVal2));
         }
     }
 }
