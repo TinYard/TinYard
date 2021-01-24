@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace TinYard.ExtensionMethods
 {
-    //Internal so that this doesn't get included in the build
+    //Internal so that this doesn't get included for use outside of this dll
     internal static class GenericConstructionExtensions
     {
         public static IList CreateList(Type listType)
