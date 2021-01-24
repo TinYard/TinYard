@@ -85,6 +85,7 @@ TinYard has more advanced features for those who need unlimited power.
 Here's some advanced features:
 
 * [Environments](#Environments)
+* [Inject Multiple](#Inject-Multiple)
 
 ### Environments
 
@@ -103,6 +104,50 @@ For example: You could easily setup two `IConfig`s, one for test and one for pro
 NB: Make sure that if you're using specific Configurations or Extensions based on the `Environment` that you set the `Environment` before calling `Initialize` on your `IContext`.
 
 Tip: If you only need to change the `Config` used based on the `Environment`, you can still use an `IExtension` to load any `Config` file that determines this - Just use the `IContext.PostExtensionsInstalled` or `IContext.PreConfigsInstalled` hook to set the `Environment` after the `IExtension` is installed but before your `IConfig` is.   
+
+
+### Inject Multiple
+
+Sometimes (very rarely most likely!), you are going to want all of the values that can be provided for a certain type injected into your class. This is where the `allowMultiple` override comes into play on the [`Inject`](#inject-attribute) attribute.
+
+This is best explained with an example:
+
+Imagine you have multiple types of 'beverages' that implement an `IBeverage` interface in your application and you have all of these mapped under the `IBeverage` interface with different values - In your `RestockFridgeCommand` you want to know all the types of `IBeverage` mapped, so that you can restock your fridge with them of course!
+
+Here's how you would get hold of these `IBeverage`'s:
+
+```csharp
+public class RestockFridgeCommand : ICommand
+{
+    [Inject(allowMultiple: true)]
+    public IEnumerable<IBeverage> beverages;
+
+    [Inject]
+    public IFridge barFridge;
+
+    public void Execute()
+    {
+        //Iterate each mapped IBeverage to restock the fridge
+        foreach(IBeverage beverage in beverages)
+        {
+            barFridge.Restock(beverage);
+        }
+    } 
+}
+```
+
+Notice what we did? I'll point it out: 
+```csharp
+[Inject(allowMultiple: true)]
+public IEnumerable<IBeverage> beverages;
+```
+
+> NB: Now, this is probably not the best example - Let us know if you come up with a better example. 
+Realistically, the types of `IBeverage` available should probably be coming from a `Model` or `Service` instead that provides information of what's _actually_ available.
+
+When you want to be 'provided' with multiple of a type like above, you should be using an `IEnumerable<T>` of what you want ***and*** `allowMultiple` to be `true`. If this is not the case, it probably will throw an error!
+
+Don't worry though, if `allowMultiple` isn't set to `true` (which is the case by default) you can still be provided with an `IEnumerable` as long as it's mapped as one.
 
 ---
 
