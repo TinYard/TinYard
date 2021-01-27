@@ -78,6 +78,37 @@ A lot of the above is performed for you in the [`MVC Bundle`](#MVC-Bundle) exten
 
 * [Example To Do List](https://github.com/TinYard/TinYard-Basic-Example)
 
+## Dependency Injection Quick-Start
+
+A core feature of TinYard is dependency injection. All of this is achieved through the [IInjector](#iinjector) which is implemented (by default) in the [TinYard Injector](#tinyardinjector).
+
+Currently, there are three ways to get your dependencies into your classes:
+
+* Constructor Injection
+* Inject attribute on Public Fields
+* Inject attribute on Public Properties
+
+### Constructor Injection
+
+To have your class be provided dependencies at construction, you'll need to make use of the `IInjector` and call the `CreateInjected<T>` method - With the `T` generic being the type of class that you want created and injected into.
+
+Your constructor does not need to be marked with the `Inject` attribute but is suggested if you have a preferred constructor. If no constructor is marked with the attribute, or multiple are, then the `IInjector` will look for the constructor it can provide the most values for.
+
+E.g:
+
+```c-sharp
+public ExampleConstructor(IInjector injector) {}
+
+//The IInjector will create the object with this constructor
+public ExampleConstructor(IInjector injector, IMapper) {}
+```
+
+### Public Field Injection
+
+### Public Property Injection
+
+---
+
 ### Advanced Features
 
 TinYard has more advanced features for those who need unlimited power.
