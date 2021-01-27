@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Linq;
 using TinYard.Framework.Impl.Attributes;
 using TinYard_Tests.TestClasses;
 
@@ -23,6 +24,16 @@ namespace TinYard.Tests
             var infos = InjectAttribute.GetInjectableInformation(typeof(TestInjectable));
 
             Assert.IsTrue(infos.Count > 0);
+            Assert.IsTrue(infos.Any(info => info.Field != null));
+        }
+
+        [TestMethod]
+        public void Inject_Attribute_Provides_Properties_To_Inject_Into()
+        {
+            var infos = InjectAttribute.GetInjectableInformation(typeof(TestInjectable));
+
+            Assert.IsTrue(infos.Count > 0);
+            Assert.IsTrue(infos.Any(info => info.Property != null));
         }
 
         [TestMethod]

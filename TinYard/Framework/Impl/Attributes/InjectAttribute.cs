@@ -6,7 +6,6 @@ using TinYard.Framework.Impl.VO;
 
 namespace TinYard.Framework.Impl.Attributes
 {
-    //TODO: See if we can allow injection into Properties.. Might be an issue due to private sets?
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Constructor | AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
     public class InjectAttribute : Attribute
     {
