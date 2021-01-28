@@ -88,6 +88,8 @@ Currently, there are three ways to get your dependencies into your classes:
 * Inject attribute on Public Fields
 * Inject attribute on Public Properties
 
+> NB: Due to the way non-constructor based injection happens, the most reliable way is Constructor Injection. You have a guarantee of when these values are provided.
+
 ### Constructor Injection
 
 To have your class be provided dependencies at construction, you'll need to make use of the `IInjector` and call the `CreateInjected<T>` method - With the `T` generic being the type of class that you want created and injected into.
@@ -96,7 +98,7 @@ Your constructor does not need to be marked with the `Inject` attribute but is s
 
 E.g:
 
-```c-sharp
+```c#
 public ExampleConstructor(IInjector injector) {}
 
 //The IInjector will create the object with this constructor
@@ -105,7 +107,48 @@ public ExampleConstructor(IInjector injector, IMapper) {}
 
 ### Public Field Injection
 
+This is the classic, original way to have your dependencies injected. Simply tag your public Field with the `Inject` attribute, and ensure that the `IInjector.Inject` method is called with the target object being provided to it.
+
+E.g:
+```c#
+public class InjectableExample
+{
+    [Inject]
+    public IMapper mapper;
+    ...
+}
+...
+//Elsewhere in your application
+InjectableExample example = new InjectableExample();
+
+IInjector injector = context.Injector;
+injector.Inject(example);
+```
+
 ### Public Property Injection
+
+This is similar to the [Public Field Injection](#public-field-injection) method but with added benefit of properties.
+
+Obviously, you may not want everything to be a public field that is accessible to all - The furthest we can get from this is allowing public properties with private setters.
+
+This works identically to [Public Field Injection](#public-field-injection).
+
+E.g:
+
+```c#
+public class InjectableExample
+{
+    [Inject]
+    public IMapper Mapper { get; private set; }
+    ...
+}
+...
+//Elsewhere in your application
+InjectableExample example = new InjectableExample();
+
+IInjector injector = context.Injector;
+injector.Inject(example);
+```
 
 ---
 
