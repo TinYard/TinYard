@@ -1,6 +1,6 @@
 using TinYard.Framework.Impl.Attributes;
 
-namespace TinYard_Tests.TestClasses
+namespace TinYard.Tests.TestClasses
 {
     public class TestSecondaryInjectable
     {
