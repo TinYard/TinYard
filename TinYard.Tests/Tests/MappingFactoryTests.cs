@@ -6,7 +6,6 @@ using TinYard.Framework.Impl.Factories;
 using TinYard.Impl.Mappers;
 using TinYard.Impl.VO;
 using TinYard.Tests.TestClasses;
-using TinYard_Tests.TestClasses;
 
 namespace TinYard.Tests
 {

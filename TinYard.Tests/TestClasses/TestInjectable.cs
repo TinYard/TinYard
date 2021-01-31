@@ -1,6 +1,8 @@
-﻿using TinYard.Framework.Impl.Attributes;
+﻿using System.Collections;
+using System.Collections.Generic;
+using TinYard.Framework.Impl.Attributes;
 
-namespace TinYard_Tests.TestClasses
+namespace TinYard.Tests.TestClasses
 {
     public class TestInjectable
     {
@@ -9,6 +11,9 @@ namespace TinYard_Tests.TestClasses
 
         [Inject("TestIn")]
         public string NamedInjectable;
+
+        [Inject(allowMultiple: true)]
+        public IEnumerable<double> MultipleInjectedDoubles;
 
         public float ConstructedFloat { get; private set; }
 

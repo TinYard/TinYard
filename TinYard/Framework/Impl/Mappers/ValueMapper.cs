@@ -116,16 +116,35 @@ namespace TinYard.Impl.Mappers
             return FilterByType(filteredMappings, type).FirstOrDefault();
         }
 
+        public IReadOnlyList<IMappingObject> GetAllMappings<T>()
+        {
+            return GetAllMappings(typeof(T));
+        }
+
+        public IReadOnlyList<IMappingObject> GetAllMappings(Type type)
+        {
+            return _mappingObjects.Where(mapping => mapping.MappedType == type).ToList().AsReadOnly();
+        }
+
         public IReadOnlyList<IMappingObject> GetAllMappings()
         {
             return _mappingObjects.AsReadOnly();
         }
 
+        public IReadOnlyList<IMappingObject> GetAllNamedMappings<T>()
+        {
+            return GetAllNamedMappings(typeof(T));
+        }
+
+        public IReadOnlyList<IMappingObject> GetAllNamedMappings(Type type)
+        {
+            var mappings = GetAllNamedMappings().Where(mapping => mapping.MappedType == type);
+            return mappings.ToList().AsReadOnly();
+        }
+
         public IReadOnlyList<IMappingObject> GetAllNamedMappings()
         {
-            var mappingObjects = GetAllMappings();
-
-            var namedMappingObjects = mappingObjects.Where(mapping => !string.IsNullOrWhiteSpace(mapping.Name));
+            var namedMappingObjects = _mappingObjects.Where(mapping => !string.IsNullOrWhiteSpace(mapping.Name));
 
             return namedMappingObjects.ToList().AsReadOnly();
         }

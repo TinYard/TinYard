@@ -6,7 +6,6 @@ using TinYard.Extensions.CommandSystem.Impl.Factories;
 using TinYard.Extensions.EventSystem.Tests.MockClasses;
 using TinYard.Framework.API.Interfaces;
 using TinYard.Tests.TestClasses;
-using TinYard_Tests.TestClasses;
 
 namespace TinYard.Extensions.CommandSystem.Tests
 {
