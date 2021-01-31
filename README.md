@@ -11,6 +11,10 @@
 * [Using TinYard](#Using-TinYard)
     * [Getting Started](#Getting-Started)
     * [Example Projects](#Example-Projects)
+    * [Dependency Injection Quick-Start](#dependency-injection-quick-start)
+      * [Constructor Injection](#constructor-injection)
+      * [Public Field Injection](#public-field-injection)
+      * [Public Property Injection](#public-property-injection) 
     * [Advanced Features](#Advanced-Features)
 * [TinYard Internals](#TinYard-Internals)
 * [TinYard Extensions](#TinYard-Extensions)
@@ -77,6 +81,80 @@ A lot of the above is performed for you in the [`MVC Bundle`](#MVC-Bundle) exten
 ### Example Projects
 
 * [Example To Do List](https://github.com/TinYard/TinYard-Basic-Example)
+
+## Dependency Injection Quick-Start
+
+A core feature of TinYard is dependency injection. All of this is achieved through the [IInjector](#iinjector) which is implemented (by default) in the [TinYard Injector](#tinyardinjector).
+
+Currently, there are three ways to get your dependencies into your classes:
+
+* Constructor Injection
+* Inject attribute on Public Fields
+* Inject attribute on Public Properties
+
+> NB: Due to the way non-constructor based injection happens, the most reliable way is Constructor Injection. You have a guarantee of when these values are provided.
+
+### Constructor Injection
+
+To have your class be provided dependencies at construction, you'll need to make use of the `IInjector` and call the `CreateInjected<T>` method - With the `T` generic being the type of class that you want created and injected into.
+
+Your constructor does not need to be marked with the `Inject` attribute but is suggested if you have a preferred constructor. If no constructor is marked with the attribute, or multiple are, then the `IInjector` will look for the constructor it can provide the most values for.
+
+E.g:
+
+```c#
+public ExampleConstructor(IInjector injector) {}
+
+//The IInjector will create the object with this constructor
+public ExampleConstructor(IInjector injector, IMapper) {}
+```
+
+### Public Field Injection
+
+This is the classic, original way to have your dependencies injected. Simply tag your public Field with the `Inject` attribute, and ensure that the `IInjector.Inject` method is called with the target object being provided to it.
+
+E.g:
+```c#
+public class InjectableExample
+{
+    [Inject]
+    public IMapper mapper;
+    ...
+}
+...
+//Elsewhere in your application
+InjectableExample example = new InjectableExample();
+
+IInjector injector = context.Injector;
+injector.Inject(example);
+```
+
+### Public Property Injection
+
+This is similar to the [Public Field Injection](#public-field-injection) method but with added benefit of properties.
+
+Obviously, you may not want everything to be a public field that is accessible to all - The furthest we can get from this is allowing public properties with private setters.
+
+This works identically to [Public Field Injection](#public-field-injection).
+
+E.g:
+
+```c#
+public class InjectableExample
+{
+    [Inject]
+    public IMapper Mapper { get; private set; }
+    ...
+}
+...
+//Elsewhere in your application
+InjectableExample example = new InjectableExample();
+
+IInjector injector = context.Injector;
+injector.Inject(example);
+```
+
+---
 
 ### Advanced Features
 
