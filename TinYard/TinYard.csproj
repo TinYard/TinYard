@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -11,23 +11,21 @@
     <PackageTags>C#, dll, framework, DI, Events, Dependency Injection, IoC, Commands</PackageTags>
     <AssemblyVersion>1.1.1.0</AssemblyVersion>
     <FileVersion>1.1.1.0</FileVersion>
-    <Version>1.2.0</Version>
-    <PackageReleaseNotes>Release 1.2.0
+    <Version>1.3.0</Version>
+    <PackageReleaseNotes>Release 1.3.0
 
 * What is new?
-  * Command System Extension, and Guards for Commands
-  * Callback Timer Extension
-  * Context Detain and Release functionality
-
+  * Properties can be injected into
+  * Multiple Binding Injection
+  * Environments
+  * Named Injection values
+  * Constructor Injection
 * What has changed?
-  * Mediators can be mapped to Interfaces
-  * Multiple Mediators can be mapped to a View
-  * Context has a `PostInitialize` Hook
-  * GetMappingValue&lt;T&gt; returns object of Type T
-  * Values being Injected into another class are also injected into prior to injection
-
-* Bug fixes
-    * EventDispatcher `AddListener&lt;T&gt;` function now will not throw an error when being used. `AddListener(Enum type, Action callback)` will now not throw an exception if type is null also.</PackageReleaseNotes>
+  * Guards can have an event injected into them
+  * Bundles now install in the correct order
+  * Mediator Map Extension installation fixed
+  * Mapper build method delegation
+  * Better documentation</PackageReleaseNotes>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
