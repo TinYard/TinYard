@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TinYard.API.Interfaces;
 using TinYard.Extensions.MediatorMap.API.Interfaces;
+using TinYard.Extensions.ViewController;
 
 namespace TinYard.Extensions.MediatorMap.Tests
 {
@@ -33,6 +34,7 @@ namespace TinYard.Extensions.MediatorMap.Tests
         [TestMethod]
         public void Context_Installs_Extension()
         {
+            _context.Install(new ViewControllerExtension());
             _context.Install(_extension);
             _context.Initialize();
         }
@@ -47,6 +49,7 @@ namespace TinYard.Extensions.MediatorMap.Tests
 
         private void SetupExtension()
         {
+            _context.Install(new ViewControllerExtension());
             _context.Install(_extension);
             _context.Initialize();
         }

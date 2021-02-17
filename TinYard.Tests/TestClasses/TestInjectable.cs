@@ -1,10 +1,36 @@
-﻿using TinYard.Framework.Impl.Attributes;
+﻿using System.Collections;
+using System.Collections.Generic;
+using TinYard.Framework.Impl.Attributes;
 
-namespace TinYard_Tests.TestClasses
+namespace TinYard.Tests.TestClasses
 {
     public class TestInjectable
     {
         [Inject]
         public int Value;
+
+        [Inject("TestIn")]
+        public string NamedInjectable;
+
+        [Inject(allowMultiple: true)]
+        public IEnumerable<double> MultipleInjectedDoubles;
+
+        public float ConstructedFloat { get; private set; }
+
+        [Inject]
+        public double InjectableProperty { get; set; }
+
+        [Inject]
+        public double InjectablePrivateProperty { get; private set; }
+
+        public TestInjectable()
+        {
+
+        }
+
+        public TestInjectable(float injectableFloat)
+        {
+            ConstructedFloat = injectableFloat;
+        }
     }
 }

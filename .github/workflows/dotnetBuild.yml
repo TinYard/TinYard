@@ -13,7 +13,7 @@ jobs:
     steps:
      
     - name: Environment setup
-      run: echo "::set-env name=DLL_OUTPUT_PATH::$HOME/Outputs/"
+      run: echo "DLL_OUTPUT_PATH=$HOME/Outputs/" >> $GITHUB_ENV
      
    
     - name: Path echo

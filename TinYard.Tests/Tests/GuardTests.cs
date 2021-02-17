@@ -57,7 +57,7 @@ namespace TinYard.Tests
 
             _commandMap.Map<TestEvent>(TestEvent.Type.Test1).ToCommand<TestGuardedCommand>().WithGuard<TestGuard>();
 
-            _context.Mapper.Map<object>().ToValue(new object());
+            _context.Mapper.Map<string>().ToValue("69");
 
             _eventDispatcher.Dispatch(new TestEvent(TestEvent.Type.Test1));
 

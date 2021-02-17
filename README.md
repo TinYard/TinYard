@@ -9,11 +9,18 @@
 * [Table Of Contents](#Table-Of-Contents)
 * [What is TinYard?](#What-Is-TinYard)
 * [Using TinYard](#Using-TinYard)
+    * [Getting Started](#Getting-Started)
+    * [Example Projects](#Example-Projects)
+    * [Dependency Injection Quick-Start](#dependency-injection-quick-start)
+      * [Constructor Injection](#constructor-injection)
+      * [Public Field Injection](#public-field-injection)
+      * [Public Property Injection](#public-property-injection) 
+    * [Advanced Features](#Advanced-Features)
 * [TinYard Internals](#TinYard-Internals)
 * [TinYard Extensions](#TinYard-Extensions)
 * [TinYard Bundles](#TinYard-Bundles)
 * [How to contribute](#Contribution)
-    * [Monetary Contribution](#Funding.)
+    * [Monetary Contribution](#Funding)
     * [Coffee Contribution](#Buy-me-a-coffee)
 
 
@@ -35,9 +42,192 @@ It's also super easy to add your own [extensions](#TinYard-Extensions), you just
 
 ## Using TinYard
 
-Take a look at the internals below, or have a look at the example projects!
+Take a look at the [internals](#TinYard-Internals) below, have a look at the [example projects](#Example-Projects), or read the [getting started guide](#Getting-Started).
+
+### Getting Started
+
+Using TinYard is super simple - especially when only wanting its IoC capabilities.
+
+To get up and running with TinYard all you need is a [`Context`](#Context):
+
+```c#
+Context context = new Context();
+
+context.Mapper.Map<IExampleInterface>().ToValue<ExampleImplementation>();
+```
+
+With the snippet above setup, you can [`Inject`](#Inject-Attribute) the `ExampleImplementation` into another class by asking for the `IExampleInterface` in the class like so:
+
+```c#
+public class InjectableExample
+{
+    [Inject]
+    public IExampleInterface implementation;
+
+    //..
+}
+```
+Now, to get this `InjectableExample` provided with the value, we have two options:
+
+1. Map `InjectableExample` on the `context.Mapper` (as shown above)
+2. Call `Inject` on the `context.Injector`
+
+Often, you'll find you end up doing option 1 without thinking about it as it can be handy to `Map` many objects.. but sometimes, you really will not want to do that!
+
+This is where option 2 can come in. The `context.Injector` handles all `injections`, so simply call `context.Inject(injectableExampleInstance)` and voila!
+
+A lot of the above is performed for you in the [`MVC Bundle`](#MVC-Bundle) extensions, making it a great tool for more complex use. To learn a bit more about this, take a look at [extensions](#TinYard-Extensions). 
+
+### Example Projects
 
 * [Example To Do List](https://github.com/TinYard/TinYard-Basic-Example)
+
+## Dependency Injection Quick-Start
+
+A core feature of TinYard is dependency injection. All of this is achieved through the [IInjector](#iinjector) which is implemented (by default) in the [TinYard Injector](#tinyardinjector).
+
+Currently, there are three ways to get your dependencies into your classes:
+
+* Constructor Injection
+* Inject attribute on Public Fields
+* Inject attribute on Public Properties
+
+> NB: Due to the way non-constructor based injection happens, the most reliable way is Constructor Injection. You have a guarantee of when these values are provided.
+
+### Constructor Injection
+
+To have your class be provided dependencies at construction, you'll need to make use of the `IInjector` and call the `CreateInjected<T>` method - With the `T` generic being the type of class that you want created and injected into.
+
+Your constructor does not need to be marked with the `Inject` attribute but is suggested if you have a preferred constructor. If no constructor is marked with the attribute, or multiple are, then the `IInjector` will look for the constructor it can provide the most values for.
+
+E.g:
+
+```c#
+public ExampleConstructor(IInjector injector) {}
+
+//The IInjector will create the object with this constructor
+public ExampleConstructor(IInjector injector, IMapper) {}
+```
+
+### Public Field Injection
+
+This is the classic, original way to have your dependencies injected. Simply tag your public Field with the `Inject` attribute, and ensure that the `IInjector.Inject` method is called with the target object being provided to it.
+
+E.g:
+```c#
+public class InjectableExample
+{
+    [Inject]
+    public IMapper mapper;
+    ...
+}
+...
+//Elsewhere in your application
+InjectableExample example = new InjectableExample();
+
+IInjector injector = context.Injector;
+injector.Inject(example);
+```
+
+### Public Property Injection
+
+This is similar to the [Public Field Injection](#public-field-injection) method but with added benefit of properties.
+
+Obviously, you may not want everything to be a public field that is accessible to all - The furthest we can get from this is allowing public properties with private setters.
+
+This works identically to [Public Field Injection](#public-field-injection).
+
+E.g:
+
+```c#
+public class InjectableExample
+{
+    [Inject]
+    public IMapper Mapper { get; private set; }
+    ...
+}
+...
+//Elsewhere in your application
+InjectableExample example = new InjectableExample();
+
+IInjector injector = context.Injector;
+injector.Inject(example);
+```
+
+---
+
+### Advanced Features
+
+TinYard has more advanced features for those who need unlimited power.
+
+Here's some advanced features:
+
+* [Environments](#Environments)
+* [Inject Multiple](#Inject-Multiple)
+
+### Environments
+
+`Environment`s are a feature that allow for easier cross-platform/multi-target development. `Environment`s are an optional feature so you don't need to be worried about them unless you want to use them.
+
+Technically, `Environment`s are always in-play. The default `Environment` is `null` so if you ever need to switch back to the default setup set `Environment` on your `IContext` to `null`.
+
+When an `IMappingObject` is mapped via your `IMapper`, an `Environment` property should be set on the `IMappingObject`. In the `ValueMapper` implementation of `IMapper`, the `Environment` set is the same as `ValueMapper.Environment`. The `IMapper` should provide the ability to filter through mappings via `Environment`, and the `IInjector` that is mapped to your `IContext` should be requesting only mappings that have the same `Environment` as the `IInjector.Environment`.  
+
+The primary, and safest way, to change `Environment`s is to call `SetEnvironment` on your `IContext`. Your `IContext` should then change the `Environment` on the correct objects so that it works across the board.  
+
+The primary use-case `Environment`s were created for is for switching between production and test systems without the need for a recompile.
+
+For example: You could easily setup two `IConfig`s, one for test and one for production - Rather than having to change which `IConfig` you compile with based on where you will be deploying, you could instead install the two `IConfig`s with different `Environment`s. Upon launch, you could load a config file that determines which `Environment` to set on the `IContext` - Allowing you to switch `Environment`s simply from altering a config file and restarting the program.
+
+NB: Make sure that if you're using specific Configurations or Extensions based on the `Environment` that you set the `Environment` before calling `Initialize` on your `IContext`.
+
+Tip: If you only need to change the `Config` used based on the `Environment`, you can still use an `IExtension` to load any `Config` file that determines this - Just use the `IContext.PostExtensionsInstalled` or `IContext.PreConfigsInstalled` hook to set the `Environment` after the `IExtension` is installed but before your `IConfig` is.   
+
+
+### Inject Multiple
+
+Sometimes (very rarely most likely!), you are going to want all of the values that can be provided for a certain type injected into your class. This is where the `allowMultiple` override comes into play on the [`Inject`](#inject-attribute) attribute.
+
+This is best explained with an example:
+
+Imagine you have multiple types of 'beverages' that implement an `IBeverage` interface in your application and you have all of these mapped under the `IBeverage` interface with different values - In your `RestockFridgeCommand` you want to know all the types of `IBeverage` mapped, so that you can restock your fridge with them of course!
+
+Here's how you would get hold of these `IBeverage`'s:
+
+```csharp
+public class RestockFridgeCommand : ICommand
+{
+    [Inject(allowMultiple: true)]
+    public IEnumerable<IBeverage> beverages;
+
+    [Inject]
+    public IFridge barFridge;
+
+    public void Execute()
+    {
+        //Iterate each mapped IBeverage to restock the fridge
+        foreach(IBeverage beverage in beverages)
+        {
+            barFridge.Restock(beverage);
+        }
+    } 
+}
+```
+
+Notice what we did? I'll point it out: 
+```csharp
+[Inject(allowMultiple: true)]
+public IEnumerable<IBeverage> beverages;
+```
+
+> NB: Now, this is probably not the best example - Let us know if you come up with a better example. 
+Realistically, the types of `IBeverage` available should probably be coming from a `Model` or `Service` instead that provides information of what's _actually_ available.
+
+When you want to be 'provided' with multiple of a type like above, you should be using an `IEnumerable<T>` of what you want ***and*** `allowMultiple` to be `true`. If this is not the case, it probably will throw an error!
+
+Don't worry though, if `allowMultiple` isn't set to `true` (which is the case by default) you can still be provided with an `IEnumerable` as long as it's mapped as one.
+
+---
 
 ## TinYard Internals
 
@@ -91,30 +281,29 @@ The [`Context`](#Context), [`Mapper`](#IMapper), and [`Injector`](#IInjector) ar
 
 The [`Context`](#Context) can only be 'Initalized' once - This means you can only call the [`Initalize`](#Initialize) method once, any more calls to it will raise a [Context Exception](#ContextException).
 
-The `Initalize` method has four steps:
-* [Install Bundles](#Install-Bundles)
+The `Initalize` method has three steps:
 * [Install Extensions](#Install-Extensions)
 * [Install Configs](#Install-Configs)
 * [Post Initialize](#Post-Initialize)
 
+A pre-cursor to the `Initialize` method is the [Install Bundles step](#install-bundles).
+
 Each step has two `event` hook that can be subscribed to, one is invoked before the step and the other is invoked afterwards - Except for [Post Initialize](#Post-Initialize).
 
 Hook order:
-1. `PreBundlesInstalled`
-2. `PostBundlesInstalled`
-3. `PreExtensionsInstalled`
-4. `PostExtensionsInstalled`
-5. `PreConfigsInstalled`
-6. `PostConfigsInstalled`
-7. `PostInitialize`
+1. `PreExtensionsInstalled`
+2. `PostExtensionsInstalled`
+3. `PreConfigsInstalled`
+4. `PostConfigsInstalled`
+5. `PostInitialize`
 
 ##### Install Bundles
 
-Install Bundles is the first of the four steps. It runs first, as it has a direct effect on the next two steps.
+Install Bundles is a unique step and so isn't included above. It runs first, as it has a direct effect on the next steps.
 
-[Bundles](#IBundle) should typically be just installing [`IExtension`](#IExtension)'s and [`IConfig`](#IConfig)'s.  
+[Bundles](#IBundle) are installed instantly. When you call the `Install` method on your `Context` and pass it a `Bundle`, it will call the `Install` method instantly on the `Bundle` so that each `Extension` and `Config` within gets added to the `Context` in the correct order.
 
-When an [`IBundle`](#IBundle) is installed via the `Install(IBundle bundle)` method, it is added to a `private List<IBundle> _bundlesToInstall`. When the [`Context`](#Context) goes to install the List of `IBundle`'s it simply calls the `Install` method on each and passes itself to the Bundle, which in form then usually calls `Install(IExtension extension)` and `Configure(IConfig config)` onto the [`Context`](#Context), just making the installation of multiple Extensions and Configs that are together a bit tidier.
+[Bundles](#IBundle) should be just installing [`IExtension`](#IExtension)'s and [`IConfig`](#IConfig)'s, except in unique cases. This is due to the manner in which they are treated as explained above.
 
 So, Bundles are simply just wrappers for installing multiple Extensions and Configs. Because of that, this is why they are installed first - So that the actual extensions and configs installation has the extensions and configs from these bundles in their lists.
 
@@ -148,7 +337,7 @@ Currently, all that happens here is that the Post Initalize Hook is invoked.
 
 `IMapper` should be implemented by an object that is going to be providing Mapping functionality.
 
-Mapping is where we can 'map' an object, to another - They're linked.
+Mapping is where we can 'map' an object, to another - They're linked. When we `Map` something, we can also provide it with a `Name` to help with filtering later on. This should be an optional parameter in the `Map` functions.
 
 `IMapper` should also make use of [`IMappingObject`](#IMappingObject)'s to be consistent across implementations.
 
@@ -176,12 +365,18 @@ This example, means that when we request the Value of [`IContext`](#IContext) fr
 
 `IMappingObject` is used in tandem with [`IMapper`](#IMapper). 
 
-`IMappingObject` has two components:
+`IMappingObject` has three components, the two main ones are:
 
 * `MappedType`
 * `MappedValue`
 
 `MappedType` is the `type` that this `IMappingObject` is a reference to.
+
+The third component is:
+
+* `Name`
+
+The `Name` is simply an extra, and optional, property to help differentiate `IMappingObject`s.
 
 So, looking at the example used in [Value Mapper](#ValueMapper):
 
@@ -191,37 +386,56 @@ Internally, `Map<T>()` on the `ValueMapper` calls `Map<T>()` on a newly created 
 
 `MappedValue` is then the value that is set with the `ToValue(object value)` method.
 
-The `BuildValue<T>()` function can create the `MappedValue` object of type `T` for you. It should be doing this via a Factory it has access to.
+The `BuildValue<T>()` function can create the `MappedValue` object of type `T` for you. This should have a default implementation, but you can also modify how this works by setting the `BuildDelegate<IMappingObject, Type>` Action.
+
+The `BuildDelegate<IMappingObject, Type>` Action, when invoked, should provide you the `IMappingObject` that is calling it and the type of the generic `T` passed into the `BuildValue<T>` function.
 
 #### MappingObject
 
 `MappingObject` provides a super-simple implementation of [`IMappingObject`](#IMappingObject) that is used by [`ValueMapper`](#ValueMapper). 
 
-`MappingObject` optionally has a reference to the `IMapper` that creates it, passed to it via the constructor. This is so that it can use the Factory that the `IMapper` has to build an object when `BuildValue<T>` is called on the `MappingObject`. If no `IMapper` is provided, it will simply not be able to build the value.
+`MappingObject` optionally has a reference to the `IMapper` that creates it, passed to it via the constructor. This is so that it can use the Factory that the `IMapper` has to build an object when the default `BuildValue<T>` is called on the `MappingObject`. If no `IMapper` is provided, it will simply not be able to build the value unless an override has been provided on the `BuildDelegate<IMappingObject, Type>` Action.
 
 ### IInjector
 
-An `IInjector` should provide two easy-to-use `Inject` methods.
+An `IInjector` should provide two easy-to-use `Inject` methods, and two `CreateInjected` methods.
 
-One `Inject` method should provide an object, that has been provided as a parameter, values to any Field that has the [`Inject` attribute](#Inject-Attribute).
+The first `Inject` method should provide an object, that has been provided as a parameter, values to any Field that has the [`Inject` attribute](#Inject-Attribute).
 
-The other `Inject` method should have `target` and `value` objects passed as arguments. The `target` object should be injected into, specifically looking to provide it with the `value` object if possible.
+The second `Inject` method should have `target` and `value` objects passed as arguments. The `target` object should be injected into, specifically looking to provide it with the `value` object if possible.
  
+The `CreateInjected` method has two versions:
+
+One should be provided with a Generic `T` parameter. This method will create and return an instance of Type `T` that is has created via Constructor Injection and provided dependencies.
+
+The other is identical except that it accepts a `Type` parameter instead of a Generic.
+
 All [`IInjector`](#IInjector)'s should also have an internal collection of values that can be injected into any class when the first `Inject` method is called upon it. This collection should be added to / provided to the [`IInjector`](#IInjector) via the `AddInjectable` method. 
 
 #### TinYardInjector
 
 `TinYardInjector` is the standard implementation of [`IInjector`](#IInjector) used by the [standard `IContext` implementation](#Context).
 
-`TinYardInjector` requires an [`IContext`](#IContext) object to be passed to it when constructed.
+`TinYardInjector` requires an [`IContext`](#IContext) and an [`IMapper`](#IMapper) to be passed to it when constructed.
 
-`TinYardInjector` provides the 'injected' value of a Field by finding a [`Mapping`](#IMappingObject) of the Field via the [`IContext`](#IContext) provided in construction and the [`IMapper`](#IMapper) that it has, alongside its internal collection that can be added to via the `AddInjectable` method.
+`TinYardInjector` provides the 'injected' value of a Field by finding a [`Mapping`](#IMappingObject) of the Field (with the `mappingName`, if provided) via the [`IMapper`](#IMapper) that it has access to, alongside its internal collection that can be added to via the `AddInjectable` method.
+
+To perform Construction Injection, you need to use one of the `CreateInjected` methods. Internally these methods are identical, the Generic version calls the non-Generic version with `typeof(T)`. The `TinYardInjector` will firstly identify any constructors for the object Type that are marked with the [`Inject` attribute](#Inject-Attribute), if any are found it will attempt to create the object with these constructors as a priority - it then will attempt to create the object by finding the constructor it can provide the most parameters to.
 
 #### Inject Attribute
 
-The `Inject` attribute can be added to any Field.
+The `Inject` attribute can be added to any Field or Class Constructor.
 
-The `Inject` attribute acts as a flag to the [`IMapper`](#IMapper) in your [`IContext`](#IContext).
+The `Inject` attribute acts as a flag to the [`IInjector`](#IInjector) in your [`IContext`](#IContext).
+
+When you add the `Inject` attribute you can also provide an optional `Name` value. This will be used by the `IInjector` to provide the specific `Mapping` with the same `Name` when injecting the value - Be careful with this though. The current implementation of [`TinYardInjector`](#TinYardInjector) will not provide a value if it can't find a `Mapping` with an identical `Name`.
+
+Example of a `Named` `Inject` attribute:
+
+```c-sharp
+[Inject("ExampleFoo")]
+public int FooBar;
+```
 
 In the standard implementation of [`IContext`](#IContext), [`Context`](#Context) -
 When a value is added to an [`IMappingObject`](#IMappingObject), the [`IMapper`](#IMapper) lets the [`IContext`](#IContext) know that the value needs injecting into, which in turn tells its [`IInjector`](#IInjector) to Inject into it.
@@ -245,6 +459,8 @@ It is expected that most, if not all, [`Factories`](#Factories) will override th
 The [`MappingValueFactory`](#MappingValueFactory) is used by the [`ValueMapper`](#ValueMapper), and aids in creation of [`IMappingObject`](#IMappingObject)'s values.
 
 As all [`IMappingObject`](#IMappingObject)'s have a method that might need a value object to be created, the [`ValueMapper`](#ValueMapper) provides the [`MappingObject`](#MappingObject) with its factory to create that value from.
+
+Internally, the `BuildValue<T>` method uses the [`IInjector`](#IInjector) that is mapped to its parent [`IMapper`](#IMapper) after determining the type required.  
 
 #### GuardFactory
 
@@ -446,6 +662,12 @@ The job of [`ViewRegister`](#ViewRegister) is to provide a place where all [`Vie
 
 ## Mediator Map Extension
 
+### Notes
+
+TinYard versions `v1.2.0` and below (that have this extension within) may have trouble regarding accessing the `IMediatorMapper` in their `IExtension`s and `IConfig`s.
+
+Original implementation of this `IExtension` added the `IMediatorMapper` to the `Context.IMapper` using the `Context.PostConfigsInstalled` hook and thus require you to access it there too. This is a pain, hence the fix! 
+
 ### Dependencies
 
 This Extension is dependant on:
@@ -470,8 +692,6 @@ The [Mediator Map Extension](#Mediator-Map-Extension) provides:
 
 To install the [Mediator Map Extension](#Mediator-Map-Extension), install the [`MediatorMapExtension`](#Mediator-Map-Extension) class into your [Context](#IContext).
 
-Currently, there are no configurations for the Extension.
-
 ### IMediator
 
 A [`Mediator`](#IMediator) provides the ability for each [`View`](#View) to send and receive events from every [`IEventDispatcher`](#IEventDispatcher) linked to the [`IContext`](#IContext).
@@ -489,6 +709,7 @@ When the related [`IView`](#IView) property, known as ViewComponent, is set the 
 The base [`Mediator`](#Mediator) class provides methods to add listeners to the [`IView`](#IView), as well as to the [`IContext`](#IContext)'s mapped [`IEventDispatcher`](#IEventDispatcher).
 
 ##### Configure
+
 When creating your own [`Mediator`](#Mediator), you will have to provide a `Configure` method implementation. This is where you should add any listeners, as you will not have a reference to your [`IView`](#IView) in the constructor but this method should be called when a [`IView`](#IView) is provided.
 
 ##### Attached View
@@ -577,7 +798,7 @@ Internally it does this by having reference to the mapped [`IEventDispatcher`](#
 
 Before any [`Command`](#ICommand) is executed, the [`ICommandMapping`](#ICommandMapping) is checked for [`Guards`](#Guards). If any [`Guards`](#Guards) are related to the mapping:   
    * They are built via the [`GuardFactory`](#GuardFactory).
-   * They are then injected into.
+   * They are then injected into. The `event` that has caused the `ICommand` to be created is also injected into the `Guard`.
    * The `Satisfies` method is then called.
        * If the method returns false, the [`ICommand`](#ICommand) is not executed and we return early.
        * If the method returns true, we move onto the next [`Guard`](#IGuard) until all have been satisifed. If all are satisfied, we execute the [`ICommand`](#ICommand).

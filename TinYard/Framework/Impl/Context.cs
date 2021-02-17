@@ -16,9 +16,6 @@ namespace TinYard
         public event Action PreExtensionsInstalled;
         public event Action PostExtensionsInstalled;
         
-        public event Action PreBundlesInstalled;
-        public event Action PostBundlesInstalled;
-
         public event Action PreConfigsInstalled;
         public event Action PostConfigsInstalled;
 
@@ -31,11 +28,13 @@ namespace TinYard
         public IInjector Injector { get { return _injector; } }
         private IInjector _injector;
 
+        public object Environment { get { return _environment; } set { SetEnvironment(value); } }
+        private object _environment;
+
         //Private variables
         private List<IExtension> _extensionsToInstall;
         private HashSet<IExtension> _extensionsInstalled;
 
-        private List<IBundle> _bundlesToInstall;
         private HashSet<IBundle> _bundlesInstalled;
 
         private List<IConfig> _configsToInstall;
@@ -47,7 +46,7 @@ namespace TinYard
 
         public Context()
         {
-            _bundlesToInstall = new List<IBundle>();
+            _bundlesInstalled = new HashSet<IBundle>();
             _extensionsToInstall = new List<IExtension>();
             _configsToInstall = new List<IConfig>();
 
@@ -57,7 +56,7 @@ namespace TinYard
             _mapper = new ValueMapper();
             _mapper.OnValueMapped += InjectValueMapper;
 
-            _injector = new TinYardInjector(this);
+            _injector = new TinYardInjector(this, _mapper);
 
             //Ensure the context, mapper and injector are mapped for injection needs
             _mapper.Map<IContext>().ToValue(this);
@@ -77,8 +76,16 @@ namespace TinYard
 
         public IContext Install(IBundle bundle)
         {
-            _bundlesToInstall.Add(bundle);
-            
+            //Unpack the bundle now so order integrity is kept
+            bundle.Install(this);
+
+            bool added = _bundlesInstalled.Add(bundle);
+
+            if (!added)
+            {
+                throw new ContextException("Bundle " + bundle.ToString() + " already installed");
+            }
+
             return this;
         }
 
@@ -110,13 +117,6 @@ namespace TinYard
             if (_initialized)
                 throw new ContextException("Context already initialized");
 
-            //Install bundles first as they'll be adding to the extensions and configs list - Don't want this happening when we're enumerating those lists
-            PreBundlesInstalled?.Invoke();
-
-            InstallBundles();
-
-            PostBundlesInstalled?.Invoke();
-
             //Let anything know we're about to install extensions
             PreExtensionsInstalled?.Invoke();
 
@@ -147,30 +147,15 @@ namespace TinYard
                 _detainedObjs.Remove(objToRelease);
         }
 
-        private void InstallBundles()
-        {
-            _bundlesInstalled = new HashSet<IBundle>();
-            foreach(IBundle bundle in _bundlesToInstall)
-            {
-                //This simply passes the Context into the Bundle so that it can call
-                //context.install(extension).Configure(config);
-                bundle.Install(this);
-                bool added = _bundlesInstalled.Add(bundle);
-
-                if(!added)
-                {
-                    throw new ContextException("Bundle " + bundle.ToString() + " already installed");
-                }
-            }
-
-            _bundlesToInstall.Clear();
-        }
-
         private void InstallExtensions()
         {
             _extensionsInstalled = new HashSet<IExtension>();
             foreach (IExtension currentExtension in _extensionsToInstall)
             {
+                //Skip the extension if it's in a different environment
+                if (currentExtension.Environment != Environment)
+                    break;
+
                 currentExtension.Install(this);
                 bool added = _extensionsInstalled.Add(currentExtension);
 
@@ -190,6 +175,10 @@ namespace TinYard
 
             foreach(IConfig currentConfig in _configsToInstall)
             {
+                //Skip the config if it's in a different environment
+                if (currentConfig.Environment != Environment)
+                    break;
+
                 //Inject into the config before we call configure, ensuring it has anything needed
                 _injector.Inject(currentConfig);
 
@@ -205,6 +194,14 @@ namespace TinYard
             }
 
             _configsToInstall.Clear();
+        }
+
+        private void SetEnvironment(object newEnvironment)
+        {
+            _environment = newEnvironment;
+
+            _injector.Environment = newEnvironment;
+            _mapper.Environment = newEnvironment;
         }
 
         private void InjectValueMapper(IMappingObject mappingObject)
