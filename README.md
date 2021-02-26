@@ -1,6 +1,6 @@
 # TinYard
 [![GitHub license](https://img.shields.io/github/license/TinYard/TinYard.svg)](https://github.com/TinYard/TinYard/blob/master/LICENSE)    
-![.NET](https://github.com/KieranBond/TinYard/workflows/.NET/badge.svg) ![.NET Test Suite](https://github.com/KieranBond/TinYard/workflows/.NET%20Test%20Suite/badge.svg)     
+![.NET Build and Test](https://github.com/KieranBond/TinYard/workflows/.NET/badge.svg)
 ![NuGet](https://img.shields.io/nuget/v/TinYard)
 
 ## Table Of Contents
