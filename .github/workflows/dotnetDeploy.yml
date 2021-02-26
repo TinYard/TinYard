@@ -5,8 +5,12 @@ on:
     branches: [ master ]
     tags:  
       - 'v*.*.*' # Only do this on version tags
+    env:
+        version: ${GITHUB_REF#refs/*/} # Get Tag from Git refs
   pull_request:
     branches: [ master ]
+    env:
+      version: v1.3.1
 
 jobs:
   build:
@@ -15,8 +19,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-      env:
-        version: ${GITHUB_REF#refs/*/} #Get Tag from Git refs
+      #env:
+        #version: ${GITHUB_REF#refs/*/} #Get Tag from Git refs
     
     - name: Output Version
       run: echo $version
