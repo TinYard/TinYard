@@ -17,8 +17,8 @@ jobs:
     - uses: actions/checkout@v2
       #env:
         #version: ${GITHUB_REF#refs/*/} #Get Tag from Git refs
-        env:
-            version: v1.3.1
+      env:
+        version: v1.3.1
     
     - name: Output Version
       run: echo $version
