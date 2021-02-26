@@ -33,11 +33,8 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
       
-    - name: Build
-      run: dotnet build --no-restore
-      
     - name: Release Test
-      run: dotnet test --no-build --verbosity normal -c Release
+      run: dotnet test --verbosity normal -c Release
       
     - name: Pack
-      run: dotnet pack --include-source --no-build --no-restore --version-suffix $version
+      run: dotnet pack --include-source --no-restore --version-suffix $version
