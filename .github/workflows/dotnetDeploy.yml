@@ -1,0 +1,37 @@
+name: .NET Deploy
+
+on:
+  push:
+    branches: [ master ]
+    tags:  
+      - 'v*.*.*' # Only do this on version tags
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+      env:
+        version: ${GITHUB_REF#refs/*/} #Get Tag from Git refs
+    
+    - name: Output Version
+      run: echo $version
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.x
+        
+    - name: Restore dependencies
+      run: dotnet restore
+      
+    - name: Build
+      run: dotnet build --no-restore
+      
+    - name: Release Test
+      run: dotnet test --no-build --verbosity normal -c Release
+      
+    - name: Pack
+      run: dotnet pack --include-source --no-build --no-restore --version-suffix $version
