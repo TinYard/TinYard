@@ -8,10 +8,6 @@ on:
   pull_request:
     branches: [ master ]
 
-env:
-    version: ${GITHUB_REF#refs/*/} #Get Tag from Git refs
-
-
 jobs:
   build:
 
@@ -19,8 +15,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-      #env:
-        #version: ${GITHUB_REF#refs/*/} #Get Tag from Git refs
+      env:
+        version: ${github_ref#refs/*/} #get tag from git refs
     
     - name: Output Version
       run: echo $version
