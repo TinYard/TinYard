@@ -40,3 +40,10 @@ jobs:
 
     - name: Pack
       run: dotnet pack --include-source --no-build --no-restore --version-suffix "${{ env.version }}" -c Release
+      
+    - name: Upload dlls
+      uses: actions/upload-artifact@v2
+      with:
+        name: "TinYard ${{ env.version }}"
+        path: "TinYard/bin/Release/"
+        
