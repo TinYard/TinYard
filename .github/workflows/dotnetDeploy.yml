@@ -34,9 +34,12 @@ jobs:
       
     - name: Build
       run: dotnet build --no-restore -c Release
-      
+
     - name: Release Test
       run: dotnet test --no-restore --no-build --verbosity normal -c Release
+
+    - name: Output files
+      run: ls
       
     - name: Pack
       run: dotnet pack --include-source --no-build --no-restore --version-suffix "${{ env.version }}"
