@@ -27,7 +27,7 @@ jobs:
       run: dotnet build --no-restore -c Release
       
     - name: Debug Test
-      run: dotnet test --no-build --verbosity normal -c Debug
+      run: dotnet test --verbosity normal -c Debug
       
     - name: Release Test
       run: dotnet test --no-build --verbosity normal -c Release
