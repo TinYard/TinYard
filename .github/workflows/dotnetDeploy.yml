@@ -9,7 +9,7 @@ on:
     branches: [ master ]
 
 jobs:
-  build:
+  build, test, deploy:
 
     runs-on: ubuntu-latest
 
@@ -19,7 +19,7 @@ jobs:
         version: ${github_ref#refs/*/} #get tag from git refs
     
     - name: Output Version
-      run: echo $version
+      run: echo ${{ env.version }}
     
     - name: Setup .NET
       uses: actions/setup-dotnet@v1
@@ -38,7 +38,7 @@ jobs:
     - name: Pack
       run: dotnet pack --include-source --no-build --no-restore --version-suffix "${{ env.version }}" -c Release
       
-    - name: Upload dlls
+    - name: Upload dlls as Artifacts
       uses: actions/upload-artifact@v2
       with:
         name: "TinYard ${{ env.version }}"
