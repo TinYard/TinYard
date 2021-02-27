@@ -5,9 +5,7 @@ on:
     branches: [ master ]
     tags:  
       - 'v*.*.*' # Only do this on version tags
-  pull_request:
-    branches: [ master ]
-
+      
 jobs:
   build_test_deploy:
 
