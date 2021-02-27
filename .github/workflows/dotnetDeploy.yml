@@ -9,7 +9,7 @@ on:
     branches: [ master ]
 
 jobs:
-  build, test, deploy:
+  build_test_deploy:
 
     runs-on: ubuntu-latest
 
