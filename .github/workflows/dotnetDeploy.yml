@@ -1,0 +1,44 @@
+name: .NET Deploy
+
+on:
+  push:
+    branches: [ master ]
+    tags:  
+      - 'v*.*.*' # Only do this on version tags
+      
+jobs:
+  build_test_deploy:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+      env:
+        version: ${github_ref#refs/*/} #get tag from git refs
+    
+    - name: Output Version
+      run: echo ${{ env.version }}
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.x
+        
+    - name: Restore dependencies
+      run: dotnet restore
+      
+    - name: Build
+      run: dotnet build --no-restore -c Release
+
+    - name: Release Test
+      run: dotnet test --no-restore --no-build --verbosity normal -c Release
+
+    - name: Pack
+      run: dotnet pack --include-source --no-build --no-restore --version-suffix "${{ env.version }}" -c Release
+      
+    - name: Upload dlls as Artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: "TinYard ${{ env.version }}"
+        path: "TinYard/bin/Release/"
+        

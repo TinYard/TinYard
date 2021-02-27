@@ -3,6 +3,8 @@ name: .NET
 on:
   push:
     branches: [ master ]
+    tags-ignore:
+        - '*'
   pull_request:
     branches: [ master ]
 
@@ -17,11 +19,15 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.x
+        
     - name: Restore dependencies
       run: dotnet restore
+      
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build --no-restore -c Release
+      
     - name: Debug Test
-      run: dotnet test --no-build --verbosity normal -c Debug
+      run: dotnet test --verbosity normal -c Debug
+      
     - name: Release Test
       run: dotnet test --no-build --verbosity normal -c Release
