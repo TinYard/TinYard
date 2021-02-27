@@ -31,3 +31,8 @@ jobs:
       
     - name: Release Test
       run: dotnet test --no-build --verbosity normal -c Release /p:CollectCoverage=true
+      
+    - name: Test & publish code coverage
+      uses: paambaati/codeclimate-action@v2.7.5
+      env:
+        CC_TEST_REPORTER_ID: ${{ env.CODECLIMATE_TEST_REPORTER_ID }}
