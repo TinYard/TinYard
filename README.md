@@ -3,6 +3,9 @@
 ![.NET Build and Test](https://github.com/KieranBond/TinYard/workflows/.NET/badge.svg)
 ![NuGet](https://img.shields.io/nuget/v/TinYard)
 
+[![Maintainability](https://api.codeclimate.com/v1/badges/c2b8abb88c2359c31073/maintainability)](https://codeclimate.com/github/TinYard/TinYard/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/c2b8abb88c2359c31073/test_coverage)](https://codeclimate.com/github/TinYard/TinYard/test_coverage)
+
 ## Table Of Contents
 
 * [TinYard](#TinYard)
