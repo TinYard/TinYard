@@ -37,4 +37,4 @@ jobs:
       env:
         CC_TEST_REPORTER_ID: ${{ secrets.CODECLIMATE_TEST_REPORTER_ID }}
       with:
-        coverageLocations: ${{github.workspace}}/TinYard.Tests/coverage.info
+        coverageLocations: ${{github.workspace}}/TinYard.Tests/coverage.info:lcov
