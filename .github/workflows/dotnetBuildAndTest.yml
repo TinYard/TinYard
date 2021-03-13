@@ -26,8 +26,12 @@ jobs:
     - name: Build
       run: dotnet build --no-restore -c Release
       
-    - name: Debug Test
-      run: dotnet test --verbosity normal -c Debug
+    - name: Test & Collect Coverage
+      run: dotnet test --no-build -c Release /p:CollectCoverage=true /p:CoverletOutputFormat=lcov TinYard.Tests/TinYard.Tests.csproj
       
-    - name: Release Test
-      run: dotnet test --no-build --verbosity normal -c Release
+    - name: Publish Coverage
+      uses: paambaati/codeclimate-action@v2.7.5
+      env:
+        CC_TEST_REPORTER_ID: ${{ secrets.CODECLIMATE_TEST_REPORTER_ID }}
+      with:
+        coverageLocations: ${{github.workspace}}/TinYard.Tests/coverage.info:lcov
