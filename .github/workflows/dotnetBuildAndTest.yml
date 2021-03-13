@@ -35,3 +35,4 @@ jobs:
         CC_TEST_REPORTER_ID: ${{ env.CODECLIMATE_TEST_REPORTER_ID }}
       with:
         coverageCommand: dotnet test --no-build -c Release /p:CollectCoverage=true /p:CoverletOutputFormat=lcov /p:CoverletOutput=coverage
+        coverageLocations: | ${{github.workspace}}/TinYard.Tests/coverage.info
