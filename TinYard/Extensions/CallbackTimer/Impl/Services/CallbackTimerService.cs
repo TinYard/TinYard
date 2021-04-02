@@ -68,6 +68,17 @@ namespace TinYard.Extensions.CallbackTimer.Impl.Services
             CreateTimer(seconds, callback);
         }
 
+        public void AddRecurringTimer(int ticks, Action callback)
+        {
+            double ticksInSeconds = GetDurationOfTicksInSeconds(ticks);
+            AddRecurringTimer(ticksInSeconds, callback);
+        }
+
+        public void AddRecurringTimer(double seconds, Action callback)
+        {
+            CreateRecurringTimer(seconds, callback);
+        }
+
         public bool RemoveTimer(Action callbackToRemove)
         {
             int timersRemoved = 0;
@@ -85,6 +96,14 @@ namespace TinYard.Extensions.CallbackTimer.Impl.Services
 
             lock (_timers)
                 _timers.Add(timer);
+        }
+
+        private void CreateRecurringTimer(double seconds, Action callback)
+        {
+            Timer recurringTimer = new RecurringTimer(seconds, callback);
+
+            lock (_timers)
+                _timers.Add(recurringTimer);
         }
 
         private double GetDurationOfTicksInSeconds(int ticks)

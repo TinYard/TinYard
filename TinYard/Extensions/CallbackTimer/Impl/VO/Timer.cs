@@ -4,13 +4,13 @@ namespace TinYard.Extensions.CallbackTimer.Impl.VO
 {
     public class Timer
     {
-        public Action TimerCallback { get; private set; }
+        public Action TimerCallback { get; protected set; }
 
-        public double TimerDuration { get; private set; }
+        public double TimerDuration { get; protected set; }
 
-        public double CurrentLifetime { get; private set; }
+        public double CurrentLifetime { get; protected set; }
 
-        private bool _timerFinished = false;
+        protected bool _timerFinished = false;
 
         public Timer(double durationInSeconds, Action timerCallback)
         {
@@ -20,7 +20,7 @@ namespace TinYard.Extensions.CallbackTimer.Impl.VO
             TimerCallback = timerCallback;
         }
 
-        public void Update(double deltaTime)
+        public virtual void Update(double deltaTime)
         {
             CurrentLifetime += deltaTime;
 
