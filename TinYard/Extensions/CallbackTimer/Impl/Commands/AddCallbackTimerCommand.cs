@@ -17,14 +17,30 @@ namespace TinYard.Extensions.CallbackTimer.Impl.Commands
         public void Execute()
         {
             Action callback = evt.OnFinishedCallback;
+            bool recurringTimer = false;
 
-            if(evt.SecondsDuration >= 0d)
+            switch (evt.type)
             {
-                callbackTimer.AddTimer(evt.SecondsDuration, callback);
+                case AddCallbackTimerEvent.Type.AddRecurring:
+
+                    recurringTimer = true;
+
+                    break;
             }
-            else if(evt.TicksDuration >= 0)
+
+            if (evt.SecondsDuration >= 0d)
             {
-                callbackTimer.AddTimer(evt.TicksDuration, callback);
+                if(recurringTimer)
+                    callbackTimer.AddRecurringTimer(evt.SecondsDuration, callback);
+                else
+                    callbackTimer.AddTimer(evt.SecondsDuration, callback);
+            }
+            else if (evt.TicksDuration >= 0)
+            {
+                if(recurringTimer)
+                    callbackTimer.AddRecurringTimer(evt.TicksDuration, callback);
+                else
+                    callbackTimer.AddTimer(evt.TicksDuration, callback);
             }
         }
     }

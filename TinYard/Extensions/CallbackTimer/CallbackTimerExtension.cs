@@ -19,11 +19,15 @@ namespace TinYard.Extensions.CallbackTimer
 
         public void Install(IContext context)
         {
-            context.Mapper.Map<ICallbackTimer>().ToValue(new CallbackTimerService());
+            var callbackTimerService = new CallbackTimerService();
+            callbackTimerService.Startup();
+
+            context.Mapper.Map<ICallbackTimer>().ToValue(callbackTimerService);
 
             ICommandMap commandMap = context.Mapper.GetMappingValue<ICommandMap>();
 
             commandMap.Map<AddCallbackTimerEvent>(AddCallbackTimerEvent.Type.Add).ToCommand<AddCallbackTimerCommand>();
+            commandMap.Map<AddCallbackTimerEvent>(AddCallbackTimerEvent.Type.AddRecurring).ToCommand<AddCallbackTimerCommand>();
             commandMap.Map<RemoveCallbackTimerEvent>(RemoveCallbackTimerEvent.Type.Remove).ToCommand<RemoveCallbackTimerCommand>();
         }
     }

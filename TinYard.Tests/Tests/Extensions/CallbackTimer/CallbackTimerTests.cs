@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using FluentAssertions;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using TinYard.Extensions.CallbackTimer.API.Services;
 using TinYard.Extensions.CallbackTimer.Impl.Services;
@@ -39,15 +40,35 @@ namespace TinYard.Extensions.CallbackTimer.Tests
         {
             bool invoked = false;
 
-            _callbackTimer.AddTimer(0, () =>
+            _callbackTimer.AddTimer(100d, () =>
             {
                 invoked = true;
             });
 
             //So that we're not relying on System time and whatnot, invoke it directly
-            _callbackTimer.UpdateTimers(0d);
+            _callbackTimer.UpdateTimers(100d);
 
             Assert.IsTrue(invoked);
+        }
+
+        [TestMethod]
+        public void CallbackTimer_Invokes_Callback_Recurring()
+        {
+            int invokeCount = 0;
+
+            // Can't set value to 0 as otherwise the timer will be removed
+            _callbackTimer.AddRecurringTimer(100d, () =>
+            {
+                invokeCount++;
+            });
+
+            int noOfUpdates = 3;
+            for(int i = 0; i < noOfUpdates; i++)
+            {
+                _callbackTimer.UpdateTimers(1000d);
+            }
+
+            invokeCount.Should().BeGreaterOrEqualTo(noOfUpdates);
         }
 
         [TestMethod]

@@ -1,7 +1,7 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using FluentAssertions;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using TinYard.API.Interfaces;
-using TinYard.Extensions.CallbackTimer;
 using TinYard.Extensions.CallbackTimer.API.Events;
 using TinYard.Extensions.CallbackTimer.API.Services;
 using TinYard.Extensions.CallbackTimer.Impl.Services;
@@ -46,6 +46,12 @@ namespace TinYard.Extensions.CallbackTimer.Tests
         }
 
         [TestMethod]
+        public void Can_Add_Recurring_Timer_Through_Events()
+        {
+            _contextEventDispatcher.Dispatch(new AddCallbackTimerEvent(AddCallbackTimerEvent.Type.AddRecurring, 0, () => { }));
+        }
+
+        [TestMethod]
         public void Event_Added_Timer_Gets_Added_And_Invoked()
         {
             bool invoked = false;
@@ -57,6 +63,21 @@ namespace TinYard.Extensions.CallbackTimer.Tests
             _contextEventDispatcher.Dispatch(new AddCallbackTimerEvent(AddCallbackTimerEvent.Type.Add, 0d, callback));
 
             _callbackTimer.UpdateTimers(0d);
+
+            invoked.Should().BeTrue();
+        }
+
+        [TestMethod]
+        public void Event_Added_Recurring_Timer_Gets_Added_And_Invoked()
+        {
+            bool invoked = false;
+            Action callback = () =>
+            {
+                invoked = true;
+            };
+
+            _contextEventDispatcher.Dispatch(new AddCallbackTimerEvent(AddCallbackTimerEvent.Type.AddRecurring, 100d, callback));
+            _callbackTimer.UpdateTimers(100d);
 
             Assert.IsTrue(invoked);
         }

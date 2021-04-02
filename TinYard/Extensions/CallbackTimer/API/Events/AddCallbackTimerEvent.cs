@@ -9,7 +9,8 @@ namespace TinYard.Extensions.CallbackTimer.API.Events
     {
         public enum Type
         {
-            Add
+            Add,
+            AddRecurring
         }
 
         public int TicksDuration { get; private set; } = -1;
