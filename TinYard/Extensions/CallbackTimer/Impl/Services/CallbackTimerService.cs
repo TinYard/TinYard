@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using TinYard.API.Interfaces;
 using TinYard.Extensions.CallbackTimer.API.Services;
 using TinYard.Extensions.CallbackTimer.Impl.VO;
-using TinYard.Framework.Impl.Attributes;
 
 namespace TinYard.Extensions.CallbackTimer.Impl.Services
 {
@@ -18,7 +16,10 @@ namespace TinYard.Extensions.CallbackTimer.Impl.Services
         public CallbackTimerService()
         {
             _timers = new List<Timer>();
+        }
 
+        public void Startup()
+        {
             _updateTask = Task.Run(Update);
         }
 

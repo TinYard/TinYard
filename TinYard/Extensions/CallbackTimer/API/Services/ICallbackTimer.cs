@@ -4,6 +4,8 @@ namespace TinYard.Extensions.CallbackTimer.API.Services
 {
     public interface ICallbackTimer
     {
+        void Startup();
+
         void AddTimer(int ticks, Action callback);
         void AddTimer(double seconds, Action callback);
 
