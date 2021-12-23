@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 using System;
 using System.Collections.Generic;
 using TinYard.API.Interfaces;
@@ -35,6 +34,7 @@ namespace TinYard
         private object _environment;
 
         //Private variables
+        private ILoggerFactory _loggerFactory;
         private ILogger<Context> _logger;
 
         private List<IExtension> _extensionsToInstall;
@@ -49,14 +49,10 @@ namespace TinYard
 
         private bool _initialized = false;
 
-        /// <summary>
-        /// Use this Ctor only when wanting no logging
-        /// </summary>
-        public Context() : this( NullLogger<Context>.Instance ) { }
-
-        public Context( ILogger<Context> logger )
+        public Context( ILoggerFactory loggerFactory = null)
         {
-            _logger = logger;
+            _loggerFactory = loggerFactory;
+            _logger = loggerFactory?.CreateLogger<Context>();
             _logger.Debug("TinYard Context spinning up");
 
             _bundlesInstalled = new HashSet<IBundle>();
@@ -66,10 +62,10 @@ namespace TinYard
             _detainedObjs = new HashSet<object>();
 
             //Create our mapper, then add a hook so that we can inject into anything that gets mapped
-            _mapper = new ValueMapper();
+            _mapper = new ValueMapper( loggerFactory?.CreateLogger<ValueMapper>() );
             _mapper.OnValueMapped += InjectValueMapper;
 
-            _injector = new TinYardInjector(this, _mapper);
+            _injector = new TinYardInjector(_mapper, loggerFactory?.CreateLogger<TinYardInjector>());
 
             //Ensure the context, mapper and injector are mapped for injection needs
             _mapper.Map<IContext>().ToValue(this);
