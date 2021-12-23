@@ -34,24 +34,22 @@ namespace TinYard
         private object _environment;
 
         //Private variables
-        private ILoggerFactory _loggerFactory;
-        private ILogger<Context> _logger;
+        private readonly ILogger<Context> _logger;
 
-        private List<IExtension> _extensionsToInstall;
+        private readonly List<IExtension> _extensionsToInstall;
         private HashSet<IExtension> _extensionsInstalled;
 
-        private HashSet<IBundle> _bundlesInstalled;
+        private readonly HashSet<IBundle> _bundlesInstalled;
 
-        private List<IConfig> _configsToInstall;
+        private readonly List<IConfig> _configsToInstall;
         private HashSet<IConfig> _configsInstalled;
 
-        private HashSet<object> _detainedObjs;
+        private readonly HashSet<object> _detainedObjs;
 
         private bool _initialized = false;
 
         public Context( ILoggerFactory loggerFactory = null)
         {
-            _loggerFactory = loggerFactory;
             _logger = loggerFactory?.CreateLogger<Context>();
             _logger.Debug("TinYard Context spinning up");
 
