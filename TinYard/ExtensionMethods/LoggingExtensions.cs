@@ -6,22 +6,22 @@ namespace TinYard.ExtensionMethods
     {
         public static void Debug<T>(this ILogger<T> logger, string message, params object[] args)
         {
-            logger.LogDebug(message, args);
+            logger?.LogDebug(message, args);
         }
 
         public static void Info<T>(this ILogger<T> logger, string message, params object[] args)
         {
-            logger.LogInformation(message, args);
+            logger?.LogInformation(message, args);
         }
 
         public static void Warning<T>(this ILogger<T> logger, string message, params object[] args)
         {
-            logger.LogWarning(message, args);
+            logger?.LogWarning(message, args);
         }
 
         public static void Error<T>(this ILogger<T> logger, string message, params object[] args)
         {
-            logger.LogError(message, args);
+            logger?.LogError(message, args);
         }
     }
 }
