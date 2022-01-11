@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -16,14 +17,14 @@ namespace TinYard.Framework.Impl.Injectors
         public object Environment { get { return _environment; } set { _environment = value; } }
         private object _environment;
 
-        private IContext _context;
-        private IMapper _mapper;
+        private readonly ILogger<TinYardInjector> _logger;
+        private readonly IMapper _mapper;
 
-        private Dictionary<Type, object> _extraInjectables;
+        private readonly Dictionary<Type, object> _extraInjectables;
 
-        public TinYardInjector(IContext context, IMapper mapper)
+        public TinYardInjector(IMapper mapper, ILogger<TinYardInjector> logger = null)
         {
-            _context = context;
+            _logger = logger;
             _mapper = mapper;
 
             _extraInjectables = new Dictionary<Type, object>();
@@ -31,6 +32,7 @@ namespace TinYard.Framework.Impl.Injectors
 
         public void AddInjectable(Type injectableType, object injectableObject)
         {
+            _logger.Debug("Adding {injectableObject} to extra Injectables", injectableObject);
             _extraInjectables[injectableType] = injectableObject;
         }
 
@@ -42,6 +44,7 @@ namespace TinYard.Framework.Impl.Injectors
 
         public object CreateInjected(Type targetType)
         {
+
             //Prefer constructors with an attribute over non-attributed constructors
             ConstructorInfo bestMatchedConstructor = GetTargetConstructor(targetType);
 
@@ -50,7 +53,11 @@ namespace TinYard.Framework.Impl.Injectors
                 object[] parameters = CreateConstructorParameters(bestMatchedConstructor);
 
                 object constructedObj = bestMatchedConstructor.Invoke(parameters);
+                _logger.Debug("Creating Injected instance of {targetType}", targetType);
+
                 Inject(constructedObj);
+
+                _logger.Debug("Created Injected instance of {targetType} as {constructedObj}", targetType, constructedObj);
 
                 return constructedObj;
             }
@@ -66,7 +73,9 @@ namespace TinYard.Framework.Impl.Injectors
             var injectableInformations = GetInjectableInformation(target);
 
             //If IEnumerable, and specifically asking for multiple
-            if (target is System.Collections.IEnumerable && (injectableInformations.Count() > 0 && injectableInformations.ToList()[0].Attribute.AllowMultiple))
+            if (target is System.Collections.IEnumerable && 
+                injectableInformations.Count() > 0 && 
+                injectableInformations.ToList()[0].Attribute.AllowMultiple)
             {
                 HandleIEnumerableInjection(target as System.Collections.IEnumerable);
             }
@@ -96,6 +105,8 @@ namespace TinYard.Framework.Impl.Injectors
 
         public void Inject(object target, object value)
         {
+            _logger.Debug("Beginning injection of {target} with {value}", target, value);
+
             Type targetType = target.GetType();
             List<InjectableInformation> injectables = InjectAttribute.GetInjectableInformation(targetType);
 

@@ -165,8 +165,19 @@ TinYard has more advanced features for those who need unlimited power.
 
 Here's some advanced features:
 
+* [Logging](#Logging)
 * [Environments](#Environments)
 * [Inject Multiple](#Inject-Multiple)
+
+### Logging
+
+TinYard has some minimal Logging internally - But has to be opted into.
+
+Your TinYard Context(s) can take a `Microsoft.Extensions.Logging.ILoggerFactory` as a Constructor parameter. If you provide one of these, then an `ILogger` is created from the Factory for the `IContext`, `IMapper`, and `IInjector` that do the core work for TinYard.
+
+You don't have to provide one however. If you do not, then no logging is created and thus no extra noise.
+
+Most logs that TinYard creates are at a `Debug` level, but it has a few errors in cases where it throws an exception (these should be quite rare).
 
 ### Environments
 

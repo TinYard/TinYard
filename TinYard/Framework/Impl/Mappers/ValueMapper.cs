@@ -1,7 +1,9 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using TinYard.API.Interfaces;
+using TinYard.ExtensionMethods;
 using TinYard.Framework.API.Interfaces;
 using TinYard.Framework.Impl.Factories;
 using TinYard.Impl.VO;
@@ -10,6 +12,8 @@ namespace TinYard.Impl.Mappers
 {
     public class ValueMapper : IMapper
     {
+        private readonly ILogger<ValueMapper> _logger;
+
         public event Action<IMappingObject> OnValueMapped;
 
         protected List<IMappingObject> _mappingObjects = new List<IMappingObject>();
@@ -20,8 +24,9 @@ namespace TinYard.Impl.Mappers
         public object Environment { get { return _environment; } set { _environment = value; }}
         private object _environment;
 
-        public ValueMapper()
+        public ValueMapper( ILogger<ValueMapper> logger = null )
         {
+            _logger = logger;
             _mappingFactory = new MappingValueFactory(this);
         }
 
@@ -46,6 +51,8 @@ namespace TinYard.Impl.Mappers
             {
                 environment = Environment;
             }
+
+            _logger.Debug("Creating Mapping Object in {environment} with {mappingName}", environment, mappingName);
 
             var mappingObj = new MappingObject(this, environment).Map<T>(mappingName);
 
@@ -106,9 +113,11 @@ namespace TinYard.Impl.Mappers
                 environment = Environment;
             }
 
+            _logger.Debug("Searching for Mapping of {type} with {mappingName} in {environment}", type, mappingName, environment);
+
             var filteredMappings = FilterByEnvironment(_mappingObjects, environment);
 
-            if(!String.IsNullOrWhiteSpace(mappingName))
+            if(!string.IsNullOrWhiteSpace(mappingName))
             {
                 filteredMappings = FilterByName(filteredMappings, mappingName);
             }
