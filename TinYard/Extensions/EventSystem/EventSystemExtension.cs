@@ -23,7 +23,7 @@ namespace TinYard.Extensions.EventSystem
             _context = context;
             _eventDispatcher = new EventDispatcher(context);
 
-            _context.Mapper.Map<IEventDispatcher>().ToValue(_eventDispatcher);
+            _context.Mapper.Map<IEventDispatcher>().ToSingleton(_eventDispatcher);
         }
     }
 }

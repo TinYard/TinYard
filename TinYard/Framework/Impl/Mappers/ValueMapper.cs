@@ -179,22 +179,26 @@ namespace TinYard.Impl.Mappers
 
         public object GetMappingValue(Type type)
         {
-            return GetMapping(type)?.MappedValue;
+            return GetMappingValue(type, null, null);
         }
 
         public object GetMappingValue(Type type, object environment)
         {
-            return GetMapping(type, environment)?.MappedValue;
+            return GetMappingValue(type, environment, null);
         }
 
         public object GetMappingValue(Type type, string mappingName)
         {
-            return GetMapping(type, mappingName)?.MappedValue;
+            return GetMappingValue(type, null, mappingName);
         }
 
         public object GetMappingValue(Type type, object environment, string mappingName)
         {
-            return GetMapping(type, environment, mappingName)?.MappedValue;
+            var mapping = GetMapping(type, environment, mappingName);
+            if( mapping == null )
+                return null;
+
+            return mapping.MappedValue ?? mapping.BuildDelegate.Invoke(mapping.MappedType);
         }
 
         private IEnumerable<IMappingObject> FilterByEnvironment(IEnumerable<IMappingObject> setToFilter, object filterEnvironment)

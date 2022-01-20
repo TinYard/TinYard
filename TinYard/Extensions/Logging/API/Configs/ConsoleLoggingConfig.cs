@@ -21,7 +21,7 @@ namespace TinYard.Extensions.Logging.API.Configs
         public void Configure()
         {
             ConsoleLogger consoleLogger = new ConsoleLogger();
-            mapper.Map<ILogger>().ToValue(consoleLogger);
+            mapper.Map<ILogger>().ToSingleton(consoleLogger);
         }
     }
 }

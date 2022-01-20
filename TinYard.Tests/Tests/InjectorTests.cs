@@ -38,7 +38,7 @@ namespace TinYard.Tests
         public void Injector_injects_into_class()
         {
             int valueToInject = 5;
-            _context.Mapper.Map<int>().ToValue(valueToInject);
+            _context.Mapper.Map<int>().ToSingleton(valueToInject);
 
             TestInjectable injectable = new TestInjectable();
 
@@ -88,7 +88,7 @@ namespace TinYard.Tests
         public void Injector_Injects_Into_Injectable_Values()
         {
             TestInjectable injectable = new TestInjectable();
-            _context.Mapper.Map<TestInjectable>().ToValue(injectable);
+            _context.Mapper.Map<TestInjectable>().ToSingleton(injectable);
 
             //Making sure it's not been set somehow by accident
             Assert.AreEqual(default(int), injectable.Value);
@@ -96,7 +96,7 @@ namespace TinYard.Tests
             //Map an int so that when we call `Inject` on a class that needs a `TestInjectable`, 
             //it can Inject this int into the `TestInjectable` value
             int expected = 5;
-            _context.Mapper.Map<int>().ToValue(expected);
+            _context.Mapper.Map<int>().ToSingleton(expected);
 
             _injector.Inject(new TestSecondaryInjectable());
 
@@ -107,7 +107,7 @@ namespace TinYard.Tests
         public void Injector_Can_Create_Injectable_Constructor()
         {
             float expected = 3.14f;
-            _context.Mapper.Map<float>().ToValue(expected);
+            _context.Mapper.Map<float>().ToSingleton(expected);
 
             TestInjectable constructed = _injector.CreateInjected<TestInjectable>();
 
@@ -120,8 +120,8 @@ namespace TinYard.Tests
             float expectedFloat = 3.14f;
             double expectedDouble = 3.147d;
 
-            _context.Mapper.Map<float>().ToValue(expectedFloat);
-            _context.Mapper.Map<double>().ToValue(expectedDouble);
+            _context.Mapper.Map<float>().ToSingleton(expectedFloat);
+            _context.Mapper.Map<double>().ToSingleton(expectedDouble);
 
             TestSecondaryInjectable constructed = _injector.CreateInjected<TestSecondaryInjectable>();
 
@@ -133,7 +133,7 @@ namespace TinYard.Tests
         public void Injector_Injects_Into_Named_Attributes()
         {
             string valueToInject = "foobar";
-            _context.Mapper.Map<string>("TestIn").ToValue(valueToInject);
+            _context.Mapper.Map<string>("TestIn").ToSingleton(valueToInject);
 
             TestInjectable injectable = new TestInjectable();
 
@@ -151,7 +151,7 @@ namespace TinYard.Tests
         public void Injector_Can_Inject_Into_Property()
         {
             double expected = 69d;
-            _context.Mapper.Map<double>().ToValue(expected);
+            _context.Mapper.Map<double>().ToSingleton(expected);
 
             TestInjectable injectable = new TestInjectable();
 
@@ -164,7 +164,7 @@ namespace TinYard.Tests
         public void Injector_Can_Inject_Into_Private_Set_Property()
         {
             double expected = 69d;
-            _context.Mapper.Map<double>().ToValue(expected);
+            _context.Mapper.Map<double>().ToSingleton(expected);
 
             TestInjectable injectable = new TestInjectable();
 
@@ -202,8 +202,8 @@ namespace TinYard.Tests
         {
             double valToInject1 = 3.14d;
             double valToInject2 = 7.28d;
-            _context.Mapper.Map<double>().ToValue(valToInject1);
-            _context.Mapper.Map<double>().ToValue(valToInject2);
+            _context.Mapper.Map<double>().ToSingleton(valToInject1);
+            _context.Mapper.Map<double>().ToSingleton(valToInject2);
 
             TestInjectable injectable = new TestInjectable();
             _injector.Inject(injectable);
@@ -221,16 +221,16 @@ namespace TinYard.Tests
         {
             double valToInject1 = 3.14d;
             double valToInject2 = 7.28d;
-            _context.Mapper.Map<double>().ToValue(valToInject1);
-            _context.Mapper.Map<double>().ToValue(valToInject2);
+            _context.Mapper.Map<double>().ToSingleton(valToInject1);
+            _context.Mapper.Map<double>().ToSingleton(valToInject2);
 
             int valToInject3 = 69;
-            _context.Mapper.Map<int>().ToValue(valToInject3);
+            _context.Mapper.Map<int>().ToSingleton(valToInject3);
 
             TestInjectable valToInject4 = new TestInjectable();
             TestInjectable valToInject5 = new TestInjectable();
-            _context.Mapper.Map<TestInjectable>().ToValue(valToInject4);
-            _context.Mapper.Map<TestInjectable>().ToValue(valToInject5);
+            _context.Mapper.Map<TestInjectable>().ToSingleton(valToInject4);
+            _context.Mapper.Map<TestInjectable>().ToSingleton(valToInject5);
 
             TestTertiaryInjectable injectable = new TestTertiaryInjectable();
             _injector.Inject(injectable);
@@ -253,11 +253,11 @@ namespace TinYard.Tests
         {
             double valToInject1 = 3.14d;
             double valToInject2 = 7.28d;
-            _context.Mapper.Map<double>().ToValue(valToInject1);
-            _context.Mapper.Map<double>().ToValue(valToInject2);
+            _context.Mapper.Map<double>().ToSingleton(valToInject1);
+            _context.Mapper.Map<double>().ToSingleton(valToInject2);
 
             int valToInject3 = 69;
-            _context.Mapper.Map<int>().ToValue(valToInject3);
+            _context.Mapper.Map<int>().ToSingleton(valToInject3);
 
             List<TestInjectable> valToInject4 = new List<TestInjectable>();
             var mockVal1 = new TestInjectable();
@@ -268,9 +268,9 @@ namespace TinYard.Tests
             TestInjectable valToInject5 = new TestInjectable();
             TestInjectable valToInject6 = new TestInjectable();
 
-            _context.Mapper.Map<IEnumerable<TestInjectable>>().ToValue(valToInject4);
-            _context.Mapper.Map<TestInjectable>().ToValue(valToInject5);
-            _context.Mapper.Map<TestInjectable>().ToValue(valToInject6);
+            _context.Mapper.Map<IEnumerable<TestInjectable>>().ToSingleton(valToInject4);
+            _context.Mapper.Map<TestInjectable>().ToSingleton(valToInject5);
+            _context.Mapper.Map<TestInjectable>().ToSingleton(valToInject6);
 
             TestTertiaryInjectable injectable = new TestTertiaryInjectable();
             _injector.Inject(injectable);

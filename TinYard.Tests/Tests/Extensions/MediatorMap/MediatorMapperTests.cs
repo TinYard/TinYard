@@ -24,7 +24,7 @@ namespace TinYard.Extensions.MediatorMap.Tests
         {
             _context = new Context();
             _context.Install(new ViewControllerExtension());
-            _context.Mapper.Map<IEventDispatcher>().ToValue(new EventSystem.Impl.EventDispatcher(_context));
+            _context.Mapper.Map<IEventDispatcher>().ToSingleton(new EventSystem.Impl.EventDispatcher(_context));
             _context.Initialize();
             
             _viewRegister = _context.Mapper.GetMappingValue<IViewRegister>();

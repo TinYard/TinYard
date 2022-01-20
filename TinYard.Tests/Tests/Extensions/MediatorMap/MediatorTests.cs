@@ -39,7 +39,7 @@ namespace TinYard.Extensions.MediatorMap.Tests
             //Inject a dispatcher into the Test Mediator, normally done by MediatorMapper
             Context context = new Context();
             IEventDispatcher dispatcher = new EventDispatcher();
-            context.Mapper.Map<IEventDispatcher>().ToValue(dispatcher);
+            context.Mapper.Map<IEventDispatcher>().ToSingleton(dispatcher);
             context.Injector.Inject(_mediator);
 
             bool listenerInvoked = false;
@@ -60,7 +60,7 @@ namespace TinYard.Extensions.MediatorMap.Tests
             //Setup ViewRegister and Injector for our mapper
             Context context = new Context();
             IEventDispatcher eventDispatcher = new EventDispatcher(context);
-            context.Mapper.Map<IEventDispatcher>().ToValue(eventDispatcher);
+            context.Mapper.Map<IEventDispatcher>().ToSingleton(eventDispatcher);
 
             TestView testView = new TestView();
 

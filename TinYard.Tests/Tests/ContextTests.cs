@@ -169,10 +169,10 @@ namespace TinYard.Tests
             Assert.IsTrue(preInjectValue != testValue);
 
             //Map an int value so that we can test if it's changed later
-            _context.Mapper.Map<int>().ToValue(testValue);
+            _context.Mapper.Map<int>().ToSingleton(testValue);
 
             //Injector should run on this happening
-            _context.Mapper.Map<TestInjectable>().ToValue(testInjectable);
+            _context.Mapper.Map<TestInjectable>().ToSingleton(testInjectable);
 
             int postInjectValue = testInjectable.Value;
 

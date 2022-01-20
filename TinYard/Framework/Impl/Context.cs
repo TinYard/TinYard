@@ -59,12 +59,12 @@ namespace TinYard
             _injector = new TinYardInjector(this, _mapper);
 
             //Ensure the context, mapper and injector are mapped for injection needs
-            _mapper.Map<IContext>().ToValue(this);
-            _mapper.Map<IMapper>().ToValue(_mapper);
-            _mapper.Map<IInjector>().ToValue(_injector);
+            _mapper.Map<IContext>().ToSingleton(this);
+            _mapper.Map<IMapper>().ToSingleton(_mapper);
+            _mapper.Map<IInjector>().ToSingleton(_injector);
 
 
-            _mapper.Map<IGuardFactory>().ToValue(new GuardFactory());
+            _mapper.Map<IGuardFactory>().ToSingleton(new GuardFactory());
         }
 
         public IContext Install(IExtension extension)
