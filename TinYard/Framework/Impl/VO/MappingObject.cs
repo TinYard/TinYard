@@ -8,10 +8,11 @@ namespace TinYard.Impl.VO
         public Type MappedType { get { return _mappedType; } }
         private Type _mappedType = null;
      
+        /// <summary>
+        /// Do not use this. Only an implementer of `IMapper` should be touching this.
+        /// </summary>
         public object MappedValue { get { return _mappedValue; } }
         private object _mappedValue = null;
-
-        public bool IsMapped { get; private set; }
 
         public string Name { get { return _name; } }
         private string _name = null;
