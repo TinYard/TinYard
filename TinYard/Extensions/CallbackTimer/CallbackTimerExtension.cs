@@ -22,7 +22,7 @@ namespace TinYard.Extensions.CallbackTimer
             var callbackTimerService = new CallbackTimerService();
             callbackTimerService.Startup();
 
-            context.Mapper.Map<ICallbackTimer>().ToValue(callbackTimerService);
+            context.Mapper.Map<ICallbackTimer>().ToSingleton(callbackTimerService);
 
             ICommandMap commandMap = context.Mapper.GetMappingValue<ICommandMap>();
 

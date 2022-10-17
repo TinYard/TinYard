@@ -8,6 +8,9 @@ namespace TinYard.Impl.VO
         public Type MappedType { get { return _mappedType; } }
         private Type _mappedType = null;
      
+        /// <summary>
+        /// Do not use this unless you have very good reason. Only an implementer of `IMapper` should be touching this.
+        /// </summary>
         public object MappedValue { get { return _mappedValue; } }
         private object _mappedValue = null;
 
@@ -19,14 +22,23 @@ namespace TinYard.Impl.VO
 
         public event Action<IMappingObject> OnValueMapped;
 
-        public Action<IMappingObject, Type> BuildDelegate { get; set; }
-        private readonly Action<IMappingObject, Type> _defaultBuildDelegate;
+        public Func<Type, object> BuildDelegate 
+        { 
+            get 
+            {
+                return _buildDelegate ?? _defaultBuildDelegate;
+            }
+            set { _buildDelegate = value; }
+        }
+        private Func<Type, object> _buildDelegate = null;
+        private readonly Func<Type, object> _defaultBuildDelegate;
 
         private IMapper _parentMapper;
 
         public MappingObject()
         {
-            _defaultBuildDelegate = (obj, _) => obj.ToValue(_parentMapper?.MappingFactory?.Build(obj).MappedValue);
+            _defaultBuildDelegate = (type) =>
+                _parentMapper?.MappingFactory?.Build(type);
         }
 
         public MappingObject(object environment) : this()
@@ -70,32 +82,22 @@ namespace TinYard.Impl.VO
             return this;
         }
 
-        public IMappingObject ToValue(object value)
+        public IMappingObject ToSingleton<T>(T value)
         {
             _mappedValue = value;
 
-            if (OnValueMapped != null)
-                OnValueMapped.Invoke(this);
+            OnValueMapped?.Invoke(this);
 
             return this;
         }
-
-        public IMappingObject BuildValue<T>()
+    
+        public IMappingObject ToSingleton<T>()
         {
             Type valueType = typeof(T);
 
-            if (BuildDelegate != null)
-            {
-                BuildDelegate.Invoke(this, valueType);
-            }
-            else
-            {
-                _mappedValue = typeof(T);
-                _defaultBuildDelegate.Invoke(this, valueType);
-            }
+            _mappedValue = BuildDelegate.Invoke(valueType);
 
-            if (OnValueMapped != null)
-                OnValueMapped.Invoke(this);
+            OnValueMapped?.Invoke(this);
 
             return this;
         }

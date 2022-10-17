@@ -24,7 +24,7 @@ namespace TinYard.Extensions.MediatorMap
             var viewRegister = _context.Mapper.GetMappingValue<IViewRegister>();
 
             MediatorMapper mediatorMapper = new MediatorMapper(context, viewRegister);
-            _context.Mapper.Map<IMediatorMapper>().ToValue(mediatorMapper);
+            _context.Mapper.Map<IMediatorMapper>().ToSingleton(mediatorMapper);
         }
     }
 }

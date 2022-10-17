@@ -38,7 +38,7 @@ namespace TinYard.Extensions.Logging.API.Configs
 
             _fileLogger = new FileLogger(_fileDestination, _fileNamePrefix, _maxLogPerFile);
 
-            _context.Mapper.Map<ILogger>().ToValue(_fileLogger);
+            _context.Mapper.Map<ILogger>().ToSingleton(_fileLogger);
         }
 
         public FileLoggingConfig WithFileDestination(string destination)

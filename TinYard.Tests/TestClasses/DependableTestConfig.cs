@@ -15,7 +15,7 @@ namespace TinYard.Tests.TestClasses
 
         public void Configure()
         {
-            context.Mapper.Map<int>().ToValue(69);
+            context.Mapper.Map<int>().ToSingleton(69);
         }
     }
 }

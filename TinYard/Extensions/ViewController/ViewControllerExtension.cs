@@ -18,7 +18,7 @@ namespace TinYard.Extensions.ViewController
         {
             ViewRegister viewRegister = new ViewRegister(context);
 
-            context.Mapper.Map<IViewRegister>().ToValue(viewRegister);
+            context.Mapper.Map<IViewRegister>().ToSingleton(viewRegister);
         }
     }
 }

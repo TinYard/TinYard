@@ -8,12 +8,11 @@ namespace TinYard.Impl.VO
         object MappedValue { get; }
 
         string Name { get; }
-
         object Environment { get; }
 
         event Action<IMappingObject> OnValueMapped;
 
-        Action<IMappingObject, Type> BuildDelegate { get; set; }
+        Func<Type, object> BuildDelegate { get; set; }
 
         IMappingObject Map<T>();
         IMappingObject Map<T>(string mappingName);
@@ -21,7 +20,8 @@ namespace TinYard.Impl.VO
         IMappingObject Map(Type type);
         IMappingObject Map(Type type, string mappingName);
 
-        IMappingObject ToValue(object value);
-        IMappingObject BuildValue<T>();
+        IMappingObject ToSingleton<T>(T value);
+
+        IMappingObject ToSingleton<T>();
     }
 }

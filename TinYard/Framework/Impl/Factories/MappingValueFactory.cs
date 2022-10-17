@@ -26,25 +26,26 @@ namespace TinYard.Framework.Impl.Factories
                 {
                     builtObjects.Add(Build(argument as IMappingObject));
                 }
+                else if(argument is Type)
+                {
+                    builtObjects.Add(Build(argument as Type));
+                }
             }
 
             return builtObjects.ToArray();
         }
 
-        public IMappingObject Build(IMappingObject mappingObject)
+        public T Build<T>() where T : class
         {
-            Type type = mappingObject.MappedValue as Type;
+            return Build(typeof(T)) as T;
+        }
 
-            //In the odd case that the factory is being used when an actual value is already set, we'll get its type
-            if (type == null)
-                type = mappingObject.MappedValue.GetType();
+        public object Build(Type valueType)
+        {
+            if (valueType == null)
+                return null;
 
-            //Last resort, hope it's not an interface
-            if (type == null)
-                type = mappingObject.MappedType;
-
-            object value = _mapper.GetMappingValue<IInjector>().CreateInjected(type);
-            return mappingObject.ToValue(value);
+            return _mapper.GetMappingValue<IInjector>().CreateInjected(valueType);
         }
     }
 }

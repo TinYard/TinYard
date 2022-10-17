@@ -57,7 +57,7 @@ namespace TinYard.Extensions.CommandSystem.Tests
         [TestMethod]
         public void CommandFactory_Injects_Command()
         {
-            _context.Mapper.Map<TestInjectable>().ToValue(new TestInjectable());
+            _context.Mapper.Map<TestInjectable>().ToSingleton(new TestInjectable());
 
             TestEvent tEvent = new TestEvent(TestEvent.Type.Test1);
             var command = _commandFactory.Build<TestCommand>(tEvent);
@@ -70,7 +70,7 @@ namespace TinYard.Extensions.CommandSystem.Tests
         public void CommandFactory_Injects_Command_Correctly()
         {
             var expectedInjectable = new TestInjectable();
-            _context.Mapper.Map<TestInjectable>().ToValue(expectedInjectable);
+            _context.Mapper.Map<TestInjectable>().ToSingleton(expectedInjectable);
 
             TestEvent expectedEvent = new TestEvent(TestEvent.Type.Test1);
             var command = _commandFactory.Build<TestCommand>(expectedEvent);

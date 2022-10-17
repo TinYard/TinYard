@@ -31,7 +31,7 @@ namespace TinYard.Extensions.CommandSystem
             var injector = _context.Injector;
 
             EventCommandMap commandMap = new EventCommandMap(eventDispatcher, injector);
-            _context.Mapper.Map<ICommandMap>().ToValue(commandMap);
+            _context.Mapper.Map<ICommandMap>().ToSingleton(commandMap);
         }
     }
 }
