@@ -56,7 +56,7 @@ To get up and running with TinYard all you need is a [`Context`](#Context):
 ```c#
 Context context = new Context();
 
-context.Mapper.Map<IExampleInterface>().ToValue<ExampleImplementation>();
+context.Mapper.Map<IExampleInterface>().ToSingleton<ExampleImplementation>();
 ```
 
 With the snippet above setup, you can [`Inject`](#Inject-Attribute) the `ExampleImplementation` into another class by asking for the `IExampleInterface` in the class like so:
@@ -355,7 +355,7 @@ An example of this is the [`ValueMapper`](#ValueMapper).
 An example of how to use it:
 
 ```c-sharp
-valueMapper.Map<IContext>().ToValue(context);
+valueMapper.Map<IContext>().ToSingleton<IContext>(context);
 ```
 
 This example, means that when we request the Value of [`IContext`](#IContext) from the `valueMapper` object, we receive the `context` object - Whatever that is.
@@ -387,17 +387,17 @@ When `Map<T>()` is called on the `ValueMapper`, it returns the `IMappingObject`.
 
 Internally, `Map<T>()` on the `ValueMapper` calls `Map<T>()` on a newly created `IMappingObject` and then returns this newly created object. This `Map<T>()` method on IMappingObject should set the `MappedType` to the type of `T`.
 
-`MappedValue` is then the value that is set with the `ToValue(object value)` method.
+`MappedValue` is then the value that is set with the `ToSingleton<T>(T value)` method.
 
-The `BuildValue<T>()` function can create the `MappedValue` object of type `T` for you. This should have a default implementation, but you can also modify how this works by setting the `BuildDelegate<IMappingObject, Type>` Action.
+The `ToSingleton<T>()` function can create the `MappedValue` object of type `T` for you. This should have a default implementation, but you can also modify how this works by setting the `BuildDelegate<IMappingObject, Type>` Action.
 
-The `BuildDelegate<IMappingObject, Type>` Action, when invoked, should provide you the `IMappingObject` that is calling it and the type of the generic `T` passed into the `BuildValue<T>` function.
+The `BuildDelegate<IMappingObject, Type>` Action, when invoked, should provide you the `IMappingObject` that is calling it and the type of the generic `T` passed into the `ToSingleton<T>` function.
 
 #### MappingObject
 
 `MappingObject` provides a super-simple implementation of [`IMappingObject`](#IMappingObject) that is used by [`ValueMapper`](#ValueMapper). 
 
-`MappingObject` optionally has a reference to the `IMapper` that creates it, passed to it via the constructor. This is so that it can use the Factory that the `IMapper` has to build an object when the default `BuildValue<T>` is called on the `MappingObject`. If no `IMapper` is provided, it will simply not be able to build the value unless an override has been provided on the `BuildDelegate<IMappingObject, Type>` Action.
+`MappingObject` optionally has a reference to the `IMapper` that creates it, passed to it via the constructor. This is so that it can use the Factory that the `IMapper` has to build an object when the default `ToSingleton<T>` is called on the `MappingObject`. If no `IMapper` is provided, it will simply not be able to build the value unless an override has been provided on the `BuildDelegate<IMappingObject, Type>` Action.
 
 ### IInjector
 
@@ -463,7 +463,7 @@ The [`MappingValueFactory`](#MappingValueFactory) is used by the [`ValueMapper`]
 
 As all [`IMappingObject`](#IMappingObject)'s have a method that might need a value object to be created, the [`ValueMapper`](#ValueMapper) provides the [`MappingObject`](#MappingObject) with its factory to create that value from.
 
-Internally, the `BuildValue<T>` method uses the [`IInjector`](#IInjector) that is mapped to its parent [`IMapper`](#IMapper) after determining the type required.  
+Internally, the `ToSingleton<T>` method uses the [`IInjector`](#IInjector) that is mapped to its parent [`IMapper`](#IMapper) after determining the type required.  
 
 #### GuardFactory
 

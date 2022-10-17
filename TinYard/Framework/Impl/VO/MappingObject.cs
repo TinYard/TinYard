@@ -9,7 +9,7 @@ namespace TinYard.Impl.VO
         private Type _mappedType = null;
      
         /// <summary>
-        /// Do not use this. Only an implementer of `IMapper` should be touching this.
+        /// Do not use this unless you have very good reason. Only an implementer of `IMapper` should be touching this.
         /// </summary>
         public object MappedValue { get { return _mappedValue; } }
         private object _mappedValue = null;
