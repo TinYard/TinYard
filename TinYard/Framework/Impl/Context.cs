@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using TinYard.API.Interfaces;
+using TinYard.ExtensionMethods;
 using TinYard.Framework.API.Interfaces;
 using TinYard.Framework.Impl.Factories;
 using TinYard.Framework.Impl.Injectors;
@@ -32,20 +34,25 @@ namespace TinYard
         private object _environment;
 
         //Private variables
-        private List<IExtension> _extensionsToInstall;
+        private readonly ILogger<Context> _logger;
+
+        private readonly List<IExtension> _extensionsToInstall;
         private HashSet<IExtension> _extensionsInstalled;
 
-        private HashSet<IBundle> _bundlesInstalled;
+        private readonly HashSet<IBundle> _bundlesInstalled;
 
-        private List<IConfig> _configsToInstall;
+        private readonly List<IConfig> _configsToInstall;
         private HashSet<IConfig> _configsInstalled;
 
-        private HashSet<object> _detainedObjs;
+        private readonly HashSet<object> _detainedObjs;
 
         private bool _initialized = false;
 
-        public Context()
+        public Context( ILoggerFactory loggerFactory = null)
         {
+            _logger = loggerFactory?.CreateLogger<Context>();
+            _logger.Debug("TinYard Context spinning up");
+
             _bundlesInstalled = new HashSet<IBundle>();
             _extensionsToInstall = new List<IExtension>();
             _configsToInstall = new List<IConfig>();
@@ -53,22 +60,25 @@ namespace TinYard
             _detainedObjs = new HashSet<object>();
 
             //Create our mapper, then add a hook so that we can inject into anything that gets mapped
-            _mapper = new ValueMapper();
+            _mapper = new ValueMapper( loggerFactory?.CreateLogger<ValueMapper>() );
             _mapper.OnValueMapped += InjectValueMapper;
 
-            _injector = new TinYardInjector(this, _mapper);
+            _injector = new TinYardInjector(_mapper, loggerFactory?.CreateLogger<TinYardInjector>());
 
             //Ensure the context, mapper and injector are mapped for injection needs
             _mapper.Map<IContext>().ToSingleton(this);
             _mapper.Map<IMapper>().ToSingleton(_mapper);
             _mapper.Map<IInjector>().ToSingleton(_injector);
 
-
             _mapper.Map<IGuardFactory>().ToSingleton(new GuardFactory());
+
+            _logger.Debug("TinYard Context spun up successfully");
         }
 
         public IContext Install(IExtension extension)
         {
+            _logger.Debug("Adding {extension} to list of extensions to install", extension);
+
             _extensionsToInstall.Add(extension);
 
             return this;
@@ -83,6 +93,7 @@ namespace TinYard
 
             if (!added)
             {
+                _logger.Error("Attempted to install already installed {bundle}", bundle);
                 throw new ContextException("Bundle " + bundle.ToString() + " already installed");
             }
 
@@ -91,6 +102,8 @@ namespace TinYard
 
         public IContext Configure(IConfig config)
         {
+            _logger.Debug("Adding {config} to list of Configs to install", config);
+
             _configsToInstall.Add(config);
 
             return this;
@@ -115,36 +128,50 @@ namespace TinYard
         public void Initialize()
         {
             if (_initialized)
+            {
+                _logger.Error("TinYard {Context} already installed", this);
                 throw new ContextException("Context already initialized");
+            }
 
             //Let anything know we're about to install extensions
+            _logger.Debug("Invoking {PreExtensionsInstalled} in Timeline", PreExtensionsInstalled);
             PreExtensionsInstalled?.Invoke();
 
+            _logger.Debug("Installing {Extensions}", _extensionsToInstall);
             InstallExtensions();
 
             //Invoke anything listening to when Extensions are finished installing
+            _logger.Debug("Invoking {PostExtensionsInstalled} in Timeline", PostExtensionsInstalled);
             PostExtensionsInstalled?.Invoke();
 
+            _logger.Debug("Invoking {PreConfigsInstalled} in Timeline", PreConfigsInstalled);
             PreConfigsInstalled?.Invoke();
 
+            _logger.Debug("Installing {Configs}", _configsToInstall);
             InstallConfigs();
 
+            _logger.Debug("Invoking {PostConfigsInstalled} in Timeline", PostConfigsInstalled);
             PostConfigsInstalled?.Invoke();
 
             _initialized = true;
 
+            _logger.Debug("Invoking {PostInitialize} in Timeline", PostInitialize);
             PostInitialize?.Invoke();
         }
 
         public void Detain(object objToDetain)
         {
+            _logger.Debug("Detaining {object}", objToDetain);
             _detainedObjs.Add(objToDetain);
         }
 
         public void Release(object objToRelease)
         {
             if(_detainedObjs.Contains(objToRelease))
+            {
+                _logger.Debug("Releasing {object}", objToRelease);
                 _detainedObjs.Remove(objToRelease);
+            }
         }
 
         private void InstallExtensions()
@@ -156,12 +183,14 @@ namespace TinYard
                 if (currentExtension.Environment != Environment)
                     break;
 
+                _logger.Debug("Attempting to install {extension}", currentExtension);
                 currentExtension.Install(this);
                 bool added = _extensionsInstalled.Add(currentExtension);
 
                 //We don't want any extensions installed multiple times
                 if (!added)
                 {
+                    _logger.Error("Failed to install {extension} - Already installed", currentExtension);
                     throw new ContextException("Extension " + currentExtension.ToString() + " already installed");
                 }
             }
@@ -179,9 +208,11 @@ namespace TinYard
                 if (currentConfig.Environment != Environment)
                     break;
 
+                _logger.Debug("Injecting {config}", currentConfig);
                 //Inject into the config before we call configure, ensuring it has anything needed
                 _injector.Inject(currentConfig);
 
+                _logger.Debug("Attempting to configure {config}", currentConfig);
                 currentConfig.Configure();
 
                 bool added = _configsInstalled.Add(currentConfig);
@@ -189,6 +220,7 @@ namespace TinYard
                 //We don't want configs installed multiple times
                 if(!added)
                 {
+                    _logger.Error("Failed to configure {config} - Already configured", currentConfig);
                     throw new ContextException("Config " + currentConfig.ToString() + " already configured");
                 }
             }
@@ -198,6 +230,8 @@ namespace TinYard
 
         private void SetEnvironment(object newEnvironment)
         {
+            _logger.Debug("Changing from {OldEnvironment} to {NewEnvironment}", _environment, newEnvironment);
+            
             _environment = newEnvironment;
 
             _injector.Environment = newEnvironment;
